@@ -1,0 +1,444 @@
+import { useRef, useState, type PointerEvent, type TouchEvent } from "react";
+import { Link } from "@tanstack/react-router";
+import { Heart, Eye } from "lucide-react";
+import { toast } from "sonner";
+import { fmtToman, discountPercent, isSizeAvailable, type Product } from "@/lib/products";
+import { CATEGORIES } from "@/lib/categories";
+import { productImage } from "@/lib/product-images";
+import { useCart } from "@/lib/cart";
+import { useWishlist } from "@/lib/wishlist";
+import { useQuickView } from "@/lib/quickview";
+import type { BackendCatalogCard } from "@/lib/backend-storefront";
+import { isLiveBackend } from "@/lib/backend-api";
+import { colorName } from "@/lib/color-names";
+import { isUsableMannequinProfile } from "@/lib/style-mannequin";
+import { StyleMannequin } from "@/components/lbb/product/StyleMannequin";
+import { Frame, StatusTag, TechLabel } from "@/components/lbb/ui/primitives";
+
+export type ProductCardModel = Product | BackendCatalogCard;
+
+function isBackendCard(product: ProductCardModel): product is BackendCatalogCard {
+  return "source" in product && product.source === "backend";
+}
+
+export function ProductCard({ p, priority = false }: { p: ProductCardModel; priority?: boolean }) {
+  const backend = isBackendCard(p);
+  const [showMannequin, setShowMannequin] = useState(false);
+  const [previewIndex, setPreviewIndex] = useState(0);
+  const touchStart = useRef<{ x: number; y: number; index: number } | null>(null);
+  const suppressNextMediaClick = useRef(false);
+  const { add, openDrawer } = useCart();
+  const { has, toggle } = useWishlist();
+  const { open: openQuickView } = useQuickView();
+
+  const previewImages = backend
+    ? p.previewImages.length > 0
+      ? p.previewImages
+      : p.primaryImage
+        ? [p.primaryImage]
+        : []
+    : [productImage(p.slug)].filter((value): value is string => Boolean(value));
+  const primaryImage = previewImages[previewIndex] ?? previewImages[0] ?? null;
+  const mannequin = backend && isUsableMannequinProfile(p.mannequin) ? p.mannequin : null;
+  const name = p.name;
+  const categoryLabel = backend ? p.categoryLabel : CATEGORIES[p.category].nameFa;
+  const liked = has(p.slug);
+  const discount = backend ? 0 : discountPercent(p);
+  const available = backend ? p.availability : p.inStock;
+  const priceFrom = backend ? p.priceFromToman : p.price;
+  const priceTo = backend ? p.priceToToman : p.price;
+  const sizeLabels = backend
+    ? p.sizes.map((size) => size.code || size.name).filter(Boolean)
+    : p.sizes;
+
+  if (!backend && isLiveBackend()) {
+    return (
+      <article className="flex min-h-72 flex-col justify-between border border-hairline bg-carbon p-5">
+        <div>
+          <TechLabel tone="metal">محصولات فروشگاه</TechLabel>
+          <p className="mt-4 text-sm leading-7 text-metal">
+            این محصول فعلاً برای خرید در دسترس نیست. محصولات موجود را در فروشگاه ببینید.
+          </p>
+        </div>
+        <Link
+          to="/shop"
+          search={{}}
+          className="mt-6 inline-flex min-h-11 items-center justify-center border border-hairline px-3 text-xs font-semibold text-bone transition hover:border-signal hover:text-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
+        >
+          مشاهده محصولات فروشگاه
+        </Link>
+      </article>
+    );
+  }
+
+  const addWithSize = (size: string) => {
+    if (backend) return;
+    add({
+      slug: p.slug,
+      name: p.name,
+      price: p.price,
+      source: "prototype",
+      color: p.colors[0] ?? "",
+      size,
+      qty: 1,
+    });
+    toast.success("به سبد خرید اضافه شد", { description: `${p.name} — سایز ${size}` });
+    openDrawer();
+  };
+
+  const selectPreviewFromPointer = (event: PointerEvent<HTMLDivElement>) => {
+    if (!backend || showMannequin || previewImages.length < 2 || event.pointerType === "touch")
+      return;
+    const bounds = event.currentTarget.getBoundingClientRect();
+    if (bounds.width <= 0) return;
+    const ratio = Math.max(0, Math.min(0.999, (event.clientX - bounds.left) / bounds.width));
+    setPreviewIndex(Math.min(previewImages.length - 1, Math.floor(ratio * previewImages.length)));
+  };
+
+  const startSwipe = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.changedTouches[0];
+    touchStart.current = touch ? { x: touch.clientX, y: touch.clientY, index: previewIndex } : null;
+    suppressNextMediaClick.current = false;
+  };
+
+  const moveSwipe = (event: TouchEvent<HTMLDivElement>) => {
+    const start = touchStart.current;
+    const touch = event.changedTouches[0];
+    if (!backend || showMannequin || previewImages.length < 2 || !start || !touch) return;
+    const dx = start.x - touch.clientX;
+    const dy = Math.abs(start.y - touch.clientY);
+    if (Math.abs(dx) < 18 || Math.abs(dx) <= dy * 1.2) return;
+    const target =
+      dx > 0 ? Math.max(0, start.index - 1) : Math.min(previewImages.length - 1, start.index + 1);
+    if (target === start.index) return;
+    suppressNextMediaClick.current = true;
+    setPreviewIndex(target);
+  };
+
+  const overlay = (
+    <CardOverlay
+      p={p}
+      liked={liked}
+      discount={discount}
+      available={available}
+      mannequinAvailable={mannequin !== null}
+      showMannequin={showMannequin}
+      onToggleMannequin={() => setShowMannequin((current) => !current)}
+      onToggleWishlist={() => toggle(p.slug)}
+      onQuickView={(button) => openQuickView(p, button)}
+      onAddWithSize={addWithSize}
+    />
+  );
+
+  const cardImage =
+    showMannequin && mannequin ? (
+      <div className="product-card__media relative aspect-[4/5] overflow-hidden bg-white">
+        <StyleMannequin profile={mannequin} productName={name} priority={priority} />
+        {overlay}
+      </div>
+    ) : primaryImage ? (
+      <div
+        className="relative touch-pan-y"
+        onPointerMove={selectPreviewFromPointer}
+        onPointerLeave={(event) => {
+          if (event.pointerType === "mouse") setPreviewIndex(0);
+        }}
+        onTouchStart={startSwipe}
+        onTouchMove={moveSwipe}
+        onTouchCancel={() => {
+          touchStart.current = null;
+          suppressNextMediaClick.current = false;
+        }}
+        onTouchEnd={(event) => {
+          moveSwipe(event);
+          touchStart.current = null;
+        }}
+        onClickCapture={(event) => {
+          if (!suppressNextMediaClick.current) return;
+          suppressNextMediaClick.current = false;
+          event.preventDefault();
+          event.stopPropagation();
+        }}
+      >
+        <Frame
+          src={primaryImage}
+          alt={name}
+          ratio="4/5"
+          width={1024}
+          height={1280}
+          priority={priority && previewIndex === 0}
+          zoom={false}
+          className="product-card__media bg-white"
+          imgClassName="object-cover"
+        >
+          {overlay}
+        </Frame>
+        {backend && previewImages.length > 1 && previewIndex === 0 ? (
+          <img
+            src={previewImages[1]}
+            alt=""
+            aria-hidden="true"
+            width={1024}
+            height={1280}
+            loading="lazy"
+            decoding="async"
+            className="pointer-events-none absolute inset-0 h-full w-full opacity-0"
+          />
+        ) : null}
+        {backend && previewImages.length > 1 ? (
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute bottom-3 left-1/2 z-30 flex -translate-x-1/2 gap-1 rounded-full bg-obsidian/65 px-2 py-1.5 backdrop-blur"
+          >
+            {previewImages.map((image, index) => (
+              <span
+                key={`${image}-${index}`}
+                className={`h-1.5 rounded-full transition-[width,background-color] ${
+                  previewIndex === index ? "w-4 bg-signal" : "w-1.5 bg-bone/55"
+                }`}
+              />
+            ))}
+          </div>
+        ) : null}
+      </div>
+    ) : (
+      <div className="product-card__media relative aspect-[4/5] overflow-hidden bg-white">
+        <div className="absolute inset-0 grid place-items-center px-6 text-center text-xs leading-6 text-mute">
+          تصویر تأییدشده برای این محصول منتشر نشده است.
+        </div>
+        {overlay}
+      </div>
+    );
+
+  return (
+    <article
+      dir="rtl"
+      className="product-card group relative flex min-w-0 flex-col overflow-hidden rounded-[26px] border border-white/10 bg-[#111113] shadow-[0_14px_42px_rgba(0,0,0,0.3)] transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-signal/55 hover:shadow-[0_24px_60px_rgba(0,0,0,0.46)]"
+    >
+      {cardImage}
+
+      <div className="flex h-[292px] min-w-0 flex-col p-3 sm:h-auto sm:flex-1 sm:p-4">
+        <TechLabel tone="metal" className="truncate text-[9px] sm:text-[10px]">
+          {backend ? categoryLabel : `${categoryLabel} / ${p.latinName}`}
+        </TechLabel>
+        <h3 className="mt-1.5 line-clamp-2 min-h-[2.5rem] text-[13px] font-extrabold leading-[1.55] text-bone sm:text-base">
+          <Link
+            to="/product/$slug"
+            params={{ slug: p.slug }}
+            className="rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
+          >
+            {name}
+          </Link>
+        </h3>
+        <div className="mt-2 flex min-h-10 flex-wrap items-baseline gap-2">
+          {priceFrom !== null ? (
+            <span className="num text-[13px] font-bold text-bone sm:text-sm">
+              {priceTo !== null && priceTo !== priceFrom
+                ? `${fmtToman(priceFrom)} تا ${fmtToman(priceTo)}`
+                : fmtToman(priceFrom)}
+            </span>
+          ) : (
+            <span className="text-xs font-semibold text-metal">قیمت عمومی منتشر نشده</span>
+          )}
+          {!backend && p.originalPrice ? (
+            <span className="num text-xs text-mute line-through">{fmtToman(p.originalPrice)}</span>
+          ) : null}
+        </div>
+        {sizeLabels.length > 0 ? (
+          <div
+            className={`mt-3 flex min-h-7 flex-nowrap gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden ${backend ? "" : "md:hidden"}`}
+            aria-label="سایزهای محصول"
+            tabIndex={0}
+          >
+            {backend
+              ? sizeLabels.map((size) => (
+                  <span
+                    key={size}
+                    className={`grid min-h-7 min-w-8 shrink-0 place-items-center rounded-lg border px-1.5 text-[10px] font-black ${
+                      available
+                        ? "border-white/15 bg-white/5 text-bone"
+                        : "border-white/10 bg-white/5 text-mute line-through"
+                    }`}
+                  >
+                    {size}
+                  </span>
+                ))
+              : sizeLabels.map((size) => {
+                  const sizeAvailable = isSizeAvailable(p, size);
+                  return (
+                    <span
+                      key={size}
+                      className={`grid min-h-7 min-w-8 shrink-0 place-items-center rounded-lg px-1.5 text-[10px] font-black ${
+                        sizeAvailable
+                          ? "bg-signal text-obsidian"
+                          : "border border-white/10 bg-white/5 text-mute line-through"
+                      }`}
+                    >
+                      {size}
+                    </span>
+                  );
+                })}
+          </div>
+        ) : null}
+        <div
+          role="group"
+          className="mt-3 flex gap-2"
+          aria-label={`رنگ‌های موجود: ${
+            backend
+              ? p.colors.map((color) => color.name).join("، ")
+              : p.colors.map(colorName).join("، ")
+          }`}
+        >
+          {backend
+            ? p.colors.map((color) => (
+                <span
+                  key={color.publicId}
+                  title={color.name}
+                  className="h-3 w-3 rounded-full border border-white/30 ring-1 ring-black"
+                  style={color.hex ? { background: color.hex } : undefined}
+                  aria-hidden="true"
+                />
+              ))
+            : p.colors.map((color) => (
+                <span
+                  key={color}
+                  aria-hidden="true"
+                  className="h-3 w-3 rounded-full border border-white/30 ring-1 ring-black"
+                  style={{ background: color }}
+                />
+              ))}
+        </div>
+        <button
+          type="button"
+          onClick={(event) => openQuickView(p, event.currentTarget)}
+          className="mt-auto inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-signal/35 bg-signal/10 px-3 text-xs font-semibold text-signal transition hover:bg-signal hover:text-obsidian focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
+        >
+          <Eye size={15} aria-hidden="true" />
+          {backend ? "نمای سریع و انتخاب سایز" : p.inStock ? "انتخاب سایز و خرید" : "مشاهده محصول"}
+        </button>
+      </div>
+    </article>
+  );
+}
+
+function CardOverlay({
+  p,
+  liked,
+  discount,
+  available,
+  mannequinAvailable,
+  showMannequin,
+  onToggleMannequin,
+  onToggleWishlist,
+  onQuickView,
+  onAddWithSize,
+}: {
+  p: ProductCardModel;
+  liked: boolean;
+  discount: number;
+  available: boolean;
+  mannequinAvailable: boolean;
+  showMannequin: boolean;
+  onToggleMannequin: () => void;
+  onToggleWishlist: () => void;
+  onQuickView: ((button: HTMLButtonElement) => void) | null;
+  onAddWithSize: (size: string) => void;
+}) {
+  const backend = isBackendCard(p);
+
+  return (
+    <>
+      <Link
+        to="/product/$slug"
+        params={{ slug: p.slug }}
+        aria-label={`مشاهده ${p.name}`}
+        className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-signal"
+      />
+
+      <div className="pointer-events-none absolute start-2 top-2 z-20 flex flex-col items-start gap-1">
+        {!backend && p.isNew ? <StatusTag tone="signal">جدید</StatusTag> : null}
+        {discount > 0 ? <StatusTag tone="bone">{discount}٪ تخفیف</StatusTag> : null}
+        {!available ? <StatusTag tone="out">ناموجود</StatusTag> : null}
+        {backend && p.stockState === "low_stock" ? (
+          <StatusTag tone="neutral">موجودی محدود</StatusTag>
+        ) : null}
+      </div>
+
+      <button
+        type="button"
+        onClick={(event) => {
+          event.preventDefault();
+          onToggleWishlist();
+          toast(liked ? "از علاقه‌مندی‌ها حذف شد" : "به علاقه‌مندی‌ها اضافه شد", {
+            description: p.name,
+          });
+        }}
+        aria-label={liked ? `حذف ${p.name} از علاقه‌مندی‌ها` : `افزودن ${p.name} به علاقه‌مندی‌ها`}
+        aria-pressed={liked}
+        className="tap-target absolute end-2 top-2 z-20 grid place-items-center rounded-xl border border-white/10 bg-obsidian/75 text-bone shadow-raised backdrop-blur transition-colors hover:border-signal hover:text-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
+      >
+        <Heart
+          size={16}
+          strokeWidth={1.6}
+          className={liked ? "fill-signal text-signal" : ""}
+          aria-hidden="true"
+        />
+      </button>
+
+      {onQuickView ? (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.preventDefault();
+            onQuickView(event.currentTarget);
+          }}
+          aria-label={`نمای سریع ${p.name}`}
+          className="tap-target absolute end-2 top-14 z-20 grid place-items-center rounded-xl border border-white/10 bg-obsidian/75 text-bone shadow-raised backdrop-blur transition-colors hover:border-signal hover:text-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
+        >
+          <Eye size={16} strokeWidth={1.6} aria-hidden="true" />
+        </button>
+      ) : null}
+
+      {mannequinAvailable ? (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onToggleMannequin();
+          }}
+          aria-label={
+            showMannequin ? `بازگشت به تصویر ${p.name}` : `نمایش ${p.name} روی مانکن دوبعدی`
+          }
+          aria-pressed={showMannequin}
+          className="absolute bottom-2 start-2 z-30 min-h-9 rounded-xl border border-black/10 bg-white/90 px-3 text-[10px] font-black text-obsidian shadow-raised backdrop-blur transition-colors hover:bg-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal motion-reduce:transition-none"
+        >
+          {showMannequin ? "تصویر محصول" : "تن‌خور 2D"}
+        </button>
+      ) : null}
+
+      {!backend && p.sizes.length > 0 ? (
+        <div className="pointer-events-none absolute inset-x-3 bottom-3 z-20 hidden translate-y-3 flex-wrap justify-center gap-1.5 rounded-2xl border border-white/15 bg-obsidian/88 p-2.5 opacity-0 shadow-raised backdrop-blur-xl transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 md:flex">
+          {p.sizes.map((size) => {
+            const sizeAvailable = isSizeAvailable(p, size);
+            return (
+              <button
+                key={size}
+                type="button"
+                disabled={!sizeAvailable}
+                onClick={(event) => {
+                  event.preventDefault();
+                  if (sizeAvailable) onAddWithSize(size);
+                }}
+                aria-label={sizeAvailable ? `افزودن سایز ${size} به سبد` : `سایز ${size} ناموجود`}
+                className={`pointer-events-auto grid min-h-9 min-w-10 place-items-center rounded-xl border px-2 text-[11px] font-black transition ${sizeAvailable ? "border-signal bg-signal text-obsidian hover:bg-bone" : "size-chip-disabled border-white/10 bg-white/5 text-mute"}`}
+              >
+                {size}
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
+    </>
+  );
+}

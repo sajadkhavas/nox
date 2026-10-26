@@ -1,0 +1,285 @@
+import { useState } from "react";
+import { SlidersHorizontal } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Slider } from "@/components/ui/slider";
+import { CATEGORIES, CATEGORY_SLUGS } from "@/lib/categories";
+import { colorName } from "@/lib/color-names";
+import type { FacetCounts } from "@/lib/catalog-discovery";
+import type { Filters } from "@/lib/product-filter";
+import { fmtToman, type CategorySlug } from "@/lib/products";
+import { TechLabel } from "@/components/lbb/ui/primitives";
+
+type CategoryOption = { slug: string; label: string };
+
+type Props = {
+  filters: Filters;
+  onChange: (filters: Filters) => void;
+  colors: readonly string[];
+  sizes: readonly string[];
+  priceCeil: number;
+  showCategory?: boolean;
+  showSale?: boolean;
+  categoryOptions?: readonly CategoryOption[];
+  colorLabels?: Readonly<Record<string, string>>;
+  colorSwatches?: Readonly<Record<string, string | null>>;
+  facetCounts?: FacetCounts;
+};
+
+function toggleValue(list: string[], value: string): string[] {
+  return list.includes(value) ? list.filter((item) => item !== value) : [...list, value];
+}
+
+function isUnavailable(active: boolean, count: number | undefined) {
+  return !active && count === 0;
+}
+
+function FacetCount({ value }: { value: number | undefined }) {
+  if (value === undefined) return null;
+  return (
+    <span className="num ms-auto text-[10px] text-mute" aria-hidden="true">
+      {value.toLocaleString("fa-IR")}
+    </span>
+  );
+}
+
+export function ProductFilters({
+  filters,
+  onChange,
+  colors,
+  sizes,
+  priceCeil,
+  showCategory,
+  showSale = true,
+  categoryOptions,
+  colorLabels,
+  colorSwatches,
+  facetCounts,
+}: Props) {
+  const effectiveMax = filters.max > 0 ? Math.min(filters.max, priceCeil) : priceCeil;
+  const priceStep = priceCeil < 50000 ? Math.max(1, Math.floor(priceCeil / 10)) : 50000;
+  const quickPrices = Array.from(
+    new Set(
+      [0.25, 0.5, 0.75]
+        .map((fraction) => Math.floor((priceCeil * fraction) / priceStep) * priceStep)
+        .filter((value) => value > 0 && value < priceCeil),
+    ),
+  );
+  const [draftMax, setDraftMax] = useState<number | null>(null);
+  const displayedMax = draftMax ?? effectiveMax;
+  const categories: readonly CategoryOption[] =
+    categoryOptions ??
+    CATEGORY_SLUGS.map((slug: CategorySlug) => ({ slug, label: CATEGORIES[slug].nameFa }));
+
+  const commitMax = (value: number) => {
+    setDraftMax(null);
+    const normalized = value >= priceCeil ? 0 : Math.max(0, Math.floor(value));
+    if (normalized !== filters.max) onChange({ ...filters, max: normalized });
+  };
+
+  return (
+    <div dir="rtl" className="flex flex-col gap-8">
+      <div className="flex items-center gap-2">
+        <SlidersHorizontal size={15} className="text-signal" aria-hidden="true" />
+        <TechLabel tone="signal">فیلترها</TechLabel>
+        {filters.cats.length > 0 ||
+        filters.colors.length > 0 ||
+        filters.sizes.length > 0 ||
+        filters.max > 0 ||
+        filters.instock ||
+        filters.sale ? (
+          <button
+            type="button"
+            onClick={() =>
+              onChange({
+                ...filters,
+                cats: [],
+                colors: [],
+                sizes: [],
+                max: 0,
+                instock: false,
+                sale: false,
+              })
+            }
+            className="mr-auto min-h-11 text-xs text-signal underline-offset-4 hover:underline"
+          >
+            پاک‌کردن همه
+          </button>
+        ) : null}
+      </div>
+
+      {showCategory ? (
+        <fieldset className="flex flex-col gap-2">
+          <legend className="tech mb-1 text-metal">دسته‌بندی</legend>
+          {categories.map(({ slug, label }) => {
+            const active = filters.cats.includes(slug as CategorySlug);
+            const count = facetCounts?.categories[slug];
+            const unavailable = isUnavailable(active, count);
+            return (
+              <label
+                key={slug}
+                className={`flex min-h-11 items-center gap-2.5 text-sm ${
+                  unavailable ? "cursor-not-allowed text-metal" : "cursor-pointer text-bone"
+                }`}
+              >
+                <Checkbox
+                  checked={active}
+                  disabled={unavailable}
+                  onCheckedChange={() =>
+                    onChange({
+                      ...filters,
+                      cats: toggleValue(filters.cats, slug) as CategorySlug[],
+                    })
+                  }
+                />
+                <span>{label}</span>
+                <FacetCount value={count} />
+              </label>
+            );
+          })}
+        </fieldset>
+      ) : null}
+
+      <fieldset className="flex flex-col gap-2">
+        <legend className="tech mb-1 text-metal">موجودی</legend>
+        <label className="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm text-bone">
+          <Checkbox
+            checked={filters.instock}
+            onCheckedChange={(value) => onChange({ ...filters, instock: value === true })}
+          />
+          فقط کالاهای موجود
+        </label>
+        {showSale ? (
+          <label className="flex min-h-11 cursor-pointer items-center gap-2.5 text-sm text-bone">
+            <Checkbox
+              checked={filters.sale}
+              onCheckedChange={(value) => onChange({ ...filters, sale: value === true })}
+            />
+            فقط تخفیف‌دارها
+          </label>
+        ) : null}
+      </fieldset>
+
+      {colors.length > 0 ? (
+        <fieldset>
+          <legend className="tech mb-3 text-metal">رنگ</legend>
+          <div className="flex flex-wrap gap-2.5">
+            {colors.map((color) => {
+              const active = filters.colors.includes(color);
+              const label = colorLabels?.[color] || colorName(color) || color;
+              const count = facetCounts?.colors[color];
+              const unavailable = isUnavailable(active, count);
+              const swatch = colorSwatches?.[color] ?? color;
+              const visualColor = /^#[0-9a-f]{3,8}$/i.test(swatch) ? swatch : undefined;
+              return (
+                <button
+                  key={color}
+                  type="button"
+                  title={`${label}${count === undefined ? "" : ` · ${count.toLocaleString("fa-IR")} نتیجه`}`}
+                  aria-label={`${active ? "حذف" : "انتخاب"} رنگ ${label}${
+                    count === undefined ? "" : `، ${count.toLocaleString("fa-IR")} نتیجه`
+                  }`}
+                  aria-pressed={active}
+                  disabled={unavailable}
+                  onClick={() =>
+                    onChange({ ...filters, colors: toggleValue(filters.colors, color) })
+                  }
+                  className="tap-target relative flex min-w-12 flex-col items-center justify-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal disabled:cursor-not-allowed disabled:opacity-30"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="grid h-7 w-7 place-items-center rounded-full border text-[8px] transition-transform hover:scale-110"
+                    style={{
+                      background: visualColor ?? "var(--lbb-carbon)",
+                      borderColor: active ? "var(--lbb-signal)" : "var(--lbb-hairline)",
+                      boxShadow: active ? "0 0 0 2px var(--lbb-signal)" : "none",
+                    }}
+                  >
+                    {!visualColor ? label.slice(0, 1) : null}
+                  </span>
+                  <span className="max-w-20 truncate text-[10px] text-metal">{label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+      ) : null}
+
+      {sizes.length > 0 ? (
+        <fieldset>
+          <legend className="tech mb-3 text-metal">سایز قابل انتخاب</legend>
+          <div className="flex flex-wrap gap-2">
+            {sizes.map((size) => {
+              const active = filters.sizes.includes(size);
+              const count = facetCounts?.sizes[size];
+              const unavailable = isUnavailable(active, count);
+              return (
+                <button
+                  key={size}
+                  type="button"
+                  aria-pressed={active}
+                  aria-label={`${active ? "حذف" : "انتخاب"} فیلتر سایز ${size}${
+                    count === undefined ? "" : `، ${count.toLocaleString("fa-IR")} نتیجه`
+                  }`}
+                  disabled={unavailable}
+                  onClick={() => onChange({ ...filters, sizes: toggleValue(filters.sizes, size) })}
+                  className={`size-chip gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal disabled:cursor-not-allowed disabled:opacity-30 ${
+                    active ? "border-signal bg-signal text-obsidian" : "hover:border-bone"
+                  }`}
+                >
+                  <span>{size}</span>
+                  {count !== undefined ? (
+                    <span className="num text-[9px] opacity-70" aria-hidden="true">
+                      {count.toLocaleString("fa-IR")}
+                    </span>
+                  ) : null}
+                </button>
+              );
+            })}
+          </div>
+        </fieldset>
+      ) : null}
+
+      {priceCeil > 0 ? (
+        <fieldset>
+          <legend className="tech mb-3 flex w-full items-center justify-between gap-3 text-metal">
+            <span>حداکثر قیمت</span>
+            <output className="num text-bone" aria-live="polite">
+              {fmtToman(displayedMax)}
+            </output>
+          </legend>
+          <Slider
+            dir="ltr"
+            min={0}
+            max={priceCeil}
+            step={priceStep}
+            aria-label="حداکثر قیمت"
+            value={[displayedMax]}
+            onValueChange={([value]) => setDraftMax(value)}
+            onValueCommit={([value]) => commitMax(value)}
+          />
+          <div className="mt-4 flex flex-wrap gap-2" aria-label="محدوده‌های سریع قیمت">
+            {quickPrices.map((value) => (
+              <button
+                key={value}
+                type="button"
+                aria-pressed={filters.max === value}
+                onClick={() => commitMax(value)}
+                className="min-h-11 rounded-lg border border-hairline px-3 text-xs text-bone transition-colors hover:border-signal aria-pressed:border-signal aria-pressed:text-signal"
+              >
+                تا {fmtToman(value)}
+              </button>
+            ))}
+            <button
+              type="button"
+              aria-pressed={filters.max === 0}
+              onClick={() => commitMax(priceCeil)}
+              className="min-h-11 rounded-lg border border-hairline px-3 text-xs text-bone transition-colors hover:border-signal aria-pressed:border-signal aria-pressed:text-signal"
+            >
+              همه قیمت‌ها
+            </button>
+          </div>
+        </fieldset>
+      ) : null}
+    </div>
+  );
+}
