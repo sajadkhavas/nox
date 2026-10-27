@@ -104,15 +104,53 @@ export function Footer(_props: { theme?: "dark" | "light" } = {}) {
                   <Phone size={15} aria-hidden="true" />
                   <span dir="ltr">{contact.phone}</span>
                 </a>
-                <a
-                  href={whatsappHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex min-h-9 items-center gap-2 hover:text-signal"
-                >
-                  <MessageCircle size={15} aria-hidden="true" />
-                  <span dir="ltr">{contact.whatsapp}</span>
-                </a>
+                {contact.secondaryPhone ? (
+                  <a
+                    href={`tel:+98${contact.secondaryPhone.replace(/\D/g, "").replace(/^0/, "")}`}
+                    className="inline-flex min-h-9 items-center gap-2 hover:text-signal"
+                  >
+                    <Phone size={15} aria-hidden="true" />
+                    <span dir="ltr">{contact.secondaryPhone}</span>
+                  </a>
+                ) : null}
+                {contact.whatsapp ? (
+                  <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex min-h-9 items-center gap-2 hover:text-signal"
+                  >
+                    <MessageCircle size={15} aria-hidden="true" />
+                    <span dir="ltr">{contact.whatsapp}</span>
+                  </a>
+                ) : null}
+                {contact.openingHours.map((hours) => (
+                  <p key={hours} className="text-xs leading-7">
+                    {hours}
+                  </p>
+                ))}
+                {contact.telegramChannel ? (
+                  <a
+                    className="inline-flex min-h-9 items-center gap-2 hover:text-signal"
+                    href={contact.telegramChannel}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MessageCircle size={15} aria-hidden="true" />
+                    کانال تلگرام NOX
+                  </a>
+                ) : null}
+                {contact.telegramContact ? (
+                  <a
+                    className="inline-flex min-h-9 items-center gap-2 hover:text-signal"
+                    href={contact.telegramContact}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <MessageCircle size={15} aria-hidden="true" />
+                    ارتباط در تلگرام
+                  </a>
+                ) : null}
               </div>
             ) : null}
             <a
@@ -154,11 +192,7 @@ export function Footer(_props: { theme?: "dark" | "light" } = {}) {
 
         <div className="grid gap-4 border-t border-hairline pt-6 text-mute md:grid-cols-[1fr_auto] md:items-center">
           <div>
-            <p className="tech">
-              {isPrototype
-                ? `© ${currentYear} ال‌بی‌بی — کرج / مهستان`
-                : `© ${currentYear} ${brand.nameFa} — ${contact.locationLabel}`}
-            </p>
+            <p className="tech">{`© ${currentYear} ${brand.nameFa} — ${contact.locationLabel}`}</p>
             <p className="mt-2 text-[11px] leading-6">{brand.shortIntroduction}</p>
             <p className="mt-2 text-[11px] leading-6">طراحی شده توسط مجموعه shinethree</p>
           </div>

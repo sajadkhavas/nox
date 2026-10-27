@@ -17,22 +17,22 @@
   color-scheme: dark;
 
   /* --- Primitive palette --- */
-  --lbb-ink-1000: #020202;
-  --lbb-obsidian: #050505;
-  --lbb-carbon: #0c0c0d;
-  --lbb-carbon-2: #141416;
-  --lbb-graphite: #1c1c1f;
-  --lbb-steel: #29292d;
-  --lbb-bone: #f4f0e8;
-  --lbb-paper: #ddd7cb;
-  --lbb-metal: #b0ada6;
-  --lbb-mute: #8d8a84;
-  --lbb-signal: #ff5148;
-  --lbb-signal-hover: #ff6e66;
-  --lbb-signal-deep: #cf2f2a;
-  --lbb-green: #62d994;
-  --lbb-amber: #f2b84d;
-  --lbb-blue: #82adff;
+  --lbb-ink-1000: #000000;
+  --lbb-obsidian: #000000;
+  --lbb-carbon: #0c0c0c;
+  --lbb-carbon-2: #141414;
+  --lbb-graphite: #1c1c1c;
+  --lbb-steel: #292929;
+  --lbb-bone: #ffffff;
+  --lbb-paper: #dedede;
+  --lbb-metal: #b5b5b5;
+  --lbb-mute: #949494;
+  --lbb-signal: #ffffff;
+  --lbb-signal-hover: #e3e3e3;
+  --lbb-signal-deep: #c7c7c7;
+  --lbb-green: #e5e5e5;
+  --lbb-amber: #d0d0d0;
+  --lbb-blue: #c4c4c4;
 
   /* --- Semantic surfaces --- */
   --lbb-surface-canvas: var(--lbb-obsidian);
@@ -665,8 +665,156 @@ img {
   width: auto;
   height: auto;
   border-radius: 0.75rem;
-  background: var(--color-signal, #e30613);
+  background: var(--color-signal, #ffffff);
   color: #0a0a0a;
   padding: 0.6rem 1rem;
   font-weight: 700;
+}
+
+/* NOX identity foundation: UI is monochrome; product media retain original colors. */
+.nox-storefront {
+  position: relative;
+  isolation: isolate;
+  --nox-announcement-h: 36px;
+}
+.nox-site-content {
+  position: relative;
+  z-index: 1;
+  padding-top: var(--nox-announcement-h);
+}
+.nox-site-content main.bg-obsidian {
+  background-color: transparent;
+}
+.nox-brand-watermark {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+.nox-brand-watermark img {
+  width: min(78vw, 760px);
+  height: auto;
+  opacity: 0.055;
+}
+.nox-logo {
+  mix-blend-mode: screen;
+}
+.nox-navbar {
+  background: #000;
+}
+.nox-announcements {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: calc(var(--z-nav) + 1);
+  height: 36px;
+  display: flex;
+  direction: ltr;
+  background: #fff;
+  color: #000;
+  border-bottom: 1px solid #d4d4d4;
+}
+.nox-announcements__viewport {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+.nox-announcements__track {
+  display: flex;
+  width: max-content;
+  height: 36px;
+  animation: nox-announcement-loop 42s linear infinite;
+}
+.nox-announcements__group {
+  display: flex;
+  flex: 0 0 auto;
+  min-width: 100vw;
+  align-items: center;
+  justify-content: space-around;
+}
+.nox-announcements__item {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 36px;
+  padding-inline: 18px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.nox-announcements__item a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  color: #000;
+}
+.nox-announcements__divider {
+  font-size: 13px;
+}
+.nox-announcements__toggle {
+  width: 44px;
+  flex: 0 0 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-inline-start: 1px solid #ccc;
+  background: #fff;
+  color: #000;
+}
+.nox-announcements:hover .nox-announcements__track,
+.nox-announcements:focus-within .nox-announcements__track,
+.nox-announcements__track[data-paused="true"] {
+  animation-play-state: paused;
+}
+/* Tabbing to a message must not focus an offscreen moving link. */
+.nox-announcements:focus-within .nox-announcements__viewport {
+  overflow-x: auto;
+}
+.nox-announcements:focus-within .nox-announcements__track {
+  animation: none;
+  transform: none;
+}
+.bg-signal,
+.bg-signal-hover,
+[class~="hover:bg-signal"]:hover,
+[class~="hover:bg-signal-hover"]:hover {
+  color: #000;
+}
+html {
+  scroll-padding-top: calc(var(--lbb-nav-h) + 48px);
+}
+[id] {
+  scroll-margin-top: calc(var(--lbb-nav-h) + 48px);
+}
+@keyframes nox-announcement-loop {
+  to {
+    transform: translateX(-50%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nox-announcements__track {
+    animation: none;
+    transform: none;
+    width: auto;
+  }
+  .nox-announcements__viewport {
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .nox-announcements__group[aria-hidden="true"],
+  .nox-announcements__toggle {
+    display: none;
+  }
+}
+@media (max-width: 640px) {
+  .nox-brand-watermark img {
+    width: 96vw;
+    opacity: 0.04;
+  }
+  .nox-announcements__item {
+    font-size: 10px;
+  }
 }

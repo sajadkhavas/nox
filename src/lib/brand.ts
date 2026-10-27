@@ -1,32 +1,30 @@
 export const BRAND = {
-  name: "LBB",
-  nameFa: "ال‌بی‌بی",
-  category: "پوشاک خیابانی و استریت‌ویر",
-  city: "کرج",
-  province: "البرز",
-  physicalLocation: "پاساژ مهستان",
-  physicalLocationShort: "کرج، پاساژ مهستان",
-  instagramHandle: "@lbbclo",
-  instagramUrl: "https://www.instagram.com/lbbclo",
-  slogan: "الهام‌گرفته از ذهنی خلاق",
-  storyTitle: "از رگال تا فروشگاه",
-  descriptor:
-    "پوشاک خیابانی، استریت‌ویر و آیتم‌های وارداتی منتخب LBB در کرج؛ با راهنمای سایز و جزئیات روشن محصول.",
+  name: "NOX Collection",
+  nameFa: "نوکس",
+  category: "پوشاک استریت‌ور یونیسکس",
+  city: "تهران",
+  province: "تهران",
+  physicalLocation: "پاساژ فردوسی",
+  physicalLocationShort: "تهران، چهارراه استانبول، پاساژ فردوسی",
+  instagramHandle: "@collection_nox",
+  instagramUrl: "https://www.instagram.com/collection_nox",
+  slogan: "NOX ON TOP",
+  storyTitle: "از استایل شخصی تا NOX",
+  descriptor: "پوشاک استریت‌ور یونیسکس؛ فرم‌های آزاد، لش و بگ از NOX Collection در تهران.",
   shortIntroduction:
-    "LBB فروشگاه پوشاک خیابانی و استریت‌ویر در کرج است؛ با مجموعه‌ای منتخب از تولیدات و آیتم‌های وارداتی.",
+    "NOX از سال ۲۰۲۱ با الهام از استایل شخصی استریت، لش و بگ شکل گرفت؛ محصولاتی که به سلیقه مجموعه توسط تولیدکننده طرف قرارداد تولید می‌شوند.",
 } as const;
 
 export const BRAND_COPY = {
-  homepageTitle: "LBB | پوشاک خیابانی و استریت‌ویر در کرج",
+  homepageTitle: "NOX Collection | پوشاک استریت‌ور یونیسکس",
   homepageDescription:
-    "خرید پوشاک خیابانی و استریت‌ویر LBB در کرج؛ تیشرت، شلوار، کتونی و آیتم‌های وارداتی منتخب با راهنمای سایز و جزئیات محصول.",
-  heroEyebrow: "LBB / STREETWEAR / KARAJ",
-  heroTitle: "از پینترست تا رگال LBB",
-  heroBody:
-    "آیتم‌های استریت‌ویر منتخب، از فرم‌های ترند و الهام‌های روز تا پوشاک وارداتی؛ با راهنمای سایز و جزئیات هر محصول برای انتخاب دقیق‌تر.",
-  primaryCta: "خرید جدیدترین‌ها",
-  secondaryCta: "اطلاعات فروشگاه حضوری",
-  storeLocationLabel: "فروشگاه حضوری ال‌بی‌بی — کرج، پاساژ مهستان",
+    "پوشاک استریت‌ور NOX؛ تیشرت باکسی، هودی و دورس، شلوار بگ و جین، وست و کت. فروش تکی، ارسال با تیپاکس به سراسر ایران و خرید حضوری در تهران.",
+  heroEyebrow: "NOX / STREETWEAR / EST. 2021",
+  heroTitle: "استایل خودت را بساز",
+  heroBody: "فرم‌های آزاد، لش و بگ؛ برای سلیقه تو، فراتر از سن و جنسیت.",
+  primaryCta: "مشاهده تازه‌ها",
+  secondaryCta: "فروشگاه حضوری",
+  storeLocationLabel: "تهران، چهارراه استانبول، پاساژ فردوسی، طبقه ۲، پلاک ۳۵۷",
 } as const;
 
 export const PRODUCTION_COPY_RULES = {

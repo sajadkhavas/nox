@@ -83,16 +83,16 @@
 
 ## 6. Homepage section map (پیشنهادی، نه پیاده‌سازی‌شده)
 
-00. Header & Navigation
-01. Hero — مجسمه واقعی NOX + هویت گاتیک + لینک خرید
-02. Product Categories — لینک‌های فارسی به دسته‌ها
-03. Daily New Arrivals — جدیدترین محصولات واقعی
-04. Featured Collections — کالکشن‌ها / دسته‌های منتخب
-05. Best Sellers — تنها با داده واقعی
-06. Size & Fit Guide — اطلاعات معتبر محصولات
-07. Shop the Look — ترکیب‌ها و پرتره‌های هنری با ارتباط به کالاها
-08. Our Story / NOX Culture — داستان برند و هنر دیواری
-09. Style Journal / Underground Stories — محتوای اختصاصی، UFO artwork
+0.  Header & Navigation
+1.  Hero — مجسمه واقعی NOX + هویت گاتیک + لینک خرید
+2.  Product Categories — لینک‌های فارسی به دسته‌ها
+3.  Daily New Arrivals — جدیدترین محصولات واقعی
+4.  Featured Collections — کالکشن‌ها / دسته‌های منتخب
+5.  Best Sellers — تنها با داده واقعی
+6.  Size & Fit Guide — اطلاعات معتبر محصولات
+7.  Shop the Look — ترکیب‌ها و پرتره‌های هنری با ارتباط به کالاها
+8.  Our Story / NOX Culture — داستان برند و هنر دیواری
+9.  Style Journal / Underground Stories — محتوای اختصاصی، UFO artwork
 10. Shopping, Shipping & Returns — تیپاکس و تعویض معتبر
 11. Visit Our Store — تهران/چهارراه استانبول
 12. Community / Instagram — شبکه‌های اجتماعی
@@ -128,3 +128,13 @@
 **NEXT:** clone و تست محلی هر دو مخزن؛ اصلاح تنظیمات اختصاصی برند NOX و جداسازی از LBB؛ سپس طراحی اولیه Header + Hero با دارک گاتیک، لوگوی ثابت کم‌رنگ، تصاویر واقعی مجسمه و معیارهای SEO/Performance.
 
 **برای ادامه در چت جدید:** اول `PROJECT_CONTINUITY.md` را بخوان؛ نسخه فعلی مخزن را بررسی کن و قبل از هر تغییر، این سند را با وضعیت واقعی GitHub/اجرای محلی تطبیق بده.
+
+## 10. Foundation handoff — 2026-10-27
+
+- اجرای محلی فرانت و بک‌اند در لپ‌تاپ کاربر انجام شده؛ ورود ادمین و API محصولات با پاسخ success=true و data=[] توسط کاربر تأیید شد.
+- Backend: PHP 8.3 / Herd، MySQL 8.4 در Docker با دیتابیس nox و پورت 13316؛ سرور PHP از پوشه public روی 127.0.0.1:8010.
+- Frontend: design/nox-homepage، پورت 4181 و API محلی؛ اصلاح اجرای Nitro در vite.config.ts فقط در لپ‌تاپ کاربر است و این مرحله آن را تغییر نمی‌دهد.
+- پایه هویت در شاخه design/nox-foundation-20261027 هر دو مخزن آماده شده: لوگوی اصلی، نوار پیوسته بالای هدر، پوسته خنثی، پس‌زمینه لوگوی ثابت، اطلاعات عمومی NOX. جزئیات و اعتبارسنجی: docs/NOX_BRAND_FOUNDATION_20261027_FA.md.
+- ثبت داده‌های برند در دیتابیس هنوز نیازمند اجرای صریح NoxBrandFoundationSeeder روی دیتابیس محلی کاربر است؛ ساختار و منطق تجارت تغییر نکرده‌اند.
+- تست TypeScript و ساخت SSR پاس شده؛ تست تصویری و اجرای واقعی seeder در محیط کاربر باقی است.
+- Exact NEXT: دریافت تغییرات هر دو شاخه با حفظ تغییرات محلی، اجرای seeder، تأیید تماس/درباره/bootstrap و نوار اطلاعیه؛ بعد بازطراحی سکشن‌ها یکی‌یکی.

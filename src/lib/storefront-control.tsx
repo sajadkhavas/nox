@@ -57,6 +57,9 @@ export type BrandCopy = {
 
 export type PublicContact = {
   phone: string;
+  secondaryPhone?: string;
+  telegramChannel?: string;
+  telegramContact?: string;
   whatsapp: string;
   email: string | null;
   instagramHandle: string;
@@ -293,10 +296,11 @@ const LOCAL_CONTROL: StorefrontControl = {
   copy: { ...BRAND_COPY },
   contact: {
     phone:
-      STORE_SETTINGS.contacts.find((channel) => channel.kind === "phone")?.value ?? "026-3256-0477",
-    whatsapp:
-      STORE_SETTINGS.contacts.find((channel) => channel.kind === "whatsapp")?.value ??
-      "0902-858-4879",
+      STORE_SETTINGS.contacts.find((channel) => channel.kind === "phone")?.value ?? "09309599920",
+    whatsapp: "",
+    secondaryPhone: "09101872731",
+    telegramChannel: "https://t.me/noxcolection",
+    telegramContact: "https://t.me/nox_collection",
     email: STORE_SETTINGS.contacts.find((channel) => channel.kind === "email")?.value ?? null,
     instagramHandle: BRAND.instagramHandle,
     instagramUrl: BRAND.instagramUrl,
@@ -308,8 +312,8 @@ const LOCAL_CONTROL: StorefrontControl = {
     province: BRAND.province,
   },
   announcements: [
-    { text: "LBB؛ الهام‌گرفته از ذهنی خلاق", href: "/shop" },
-    { text: "فروشگاه حضوری LBB — کرج، پاساژ مهستان", href: "/contact" },
+    { text: "NOX ON TOP", href: "/shop" },
+    { text: "فروشگاه حضوری NOX — تهران، پاساژ فردوسی", href: "/contact" },
     { text: "راهنمای سایز اختصاصی برای انتخاب دقیق‌تر", href: "/size-guide" },
   ],
   navigation: {
@@ -321,14 +325,14 @@ const LOCAL_CONTROL: StorefrontControl = {
   intro: {
     enabled: true,
     version: "v1",
-    eyebrow: "LBB / STREETWEAR",
+    eyebrow: "NOX / STREETWEAR",
     title: BRAND.storyTitle,
-    body: `LBB؛ ${BRAND.slogan}`,
-    storyCta: "داستان LBB",
+    body: `NOX؛ ${BRAND.slogan}`,
+    storyCta: "داستان NOX",
     storeCta: "ورود به فروشگاه",
   },
   home: {
-    heroProductSlug: "lbb-signature-tee",
+    heroProductSlug: "",
     categoryOrder: ["tshirts", "hoodies", "pants", "shoes", "socks"],
     sections: [
       "ticker",
@@ -341,7 +345,7 @@ const LOCAL_CONTROL: StorefrontControl = {
       "instagram",
     ],
   },
-  ticker: ["ال‌بی‌بی", "پوشاک خیابانی", "تیشرت", "شلوار", "کتونی", "جوراب", "کرج", "پاساژ مهستان"],
+  ticker: ["نوکس", "پوشاک خیابانی", "تیشرت", "شلوار", "کتونی", "جوراب", "تهران", "پاساژ فردوسی"],
   trust: [
     {
       icon: "details",
@@ -359,7 +363,7 @@ const LOCAL_CONTROL: StorefrontControl = {
     },
     {
       icon: "location",
-      title: "حضور در کرج",
+      title: "حضور در تهران",
       description: BRAND_COPY.storeLocationLabel,
       href: "/contact",
       enabled: true,
@@ -378,7 +382,7 @@ const LOCAL_CONTROL: StorefrontControl = {
       actionLabel: "همه محصولات",
     },
     products: {
-      label: "انتخاب‌های ال‌بی‌بی",
+      label: "انتخاب‌های نوکس",
       title: "تازه‌ها و انتخاب‌های این هفته",
       lede: "چند انتخاب آماده برای شروع؛ قیمت، رنگ و سایز موجود همین‌جا مشخص است.",
       actionLabel: "کاتالوگ کامل",
@@ -398,7 +402,7 @@ const LOCAL_CONTROL: StorefrontControl = {
       "تن‌خور و جدول اندازه را پیش از انتخاب ببین",
       "رنگ و سایزهای موجود هر محصول را همان لحظه بررسی کن",
       "جنس پارچه و روش نگهداری را در صفحه محصول بخوان",
-      "برای پرو و خرید حضوری به فروشگاه مهستان سر بزن",
+      "برای پرو و خرید حضوری به فروشگاه فردوسی سر بزن",
     ],
     links: [
       {
@@ -417,9 +421,9 @@ const LOCAL_CONTROL: StorefrontControl = {
   },
   localStore: {
     enabled: true,
-    eyebrow: "فروشگاه حضوری ال‌بی‌بی",
-    title: "آنلاین ببین، در مهستان از نزدیک انتخاب کن.",
-    body: "مدل‌ها را در سایت مقایسه کن و اگر دوست داشتی برای دیدن رنگ، جنس و تن‌خور از نزدیک به فروشگاه ال‌بی‌بی در پاساژ مهستان کرج سر بزن.",
+    eyebrow: "فروشگاه حضوری نوکس",
+    title: "آنلاین ببین، در فردوسی از نزدیک انتخاب کن.",
+    body: "مدل‌ها را در سایت مقایسه کن و اگر دوست داشتی برای دیدن رنگ، جنس و تن‌خور از نزدیک به فروشگاه نوکس در پاساژ فردوسی تهران سر بزن.",
     imageUrl: null,
     addressTitle: "آدرس فروشگاه",
     instagramTitle: "مدل‌های تازه در اینستاگرام",
@@ -430,7 +434,7 @@ const LOCAL_CONTROL: StorefrontControl = {
   featuredStory: {
     enabled: false,
     collectionSlug: "",
-    eyebrow: "استایل پیشنهادی ال‌بی‌بی",
+    eyebrow: "استایل پیشنهادی نوکس",
     storyPoints: [],
     collectionCta: "دیدن کالکشن",
     lookbookCta: "ایده‌های بیشتر برای استایل",
@@ -463,7 +467,7 @@ const LOCAL_CONTROL: StorefrontControl = {
   seo: {
     siteName: BRAND.name,
     locale: "fa_IR",
-    organizationDescription: "برند پوشاک خیابانی و استریت‌ویر LBB",
+    organizationDescription: "برند پوشاک خیابانی و استریت‌ویر NOX",
     instagramUrl: BRAND.instagramUrl,
   },
 };

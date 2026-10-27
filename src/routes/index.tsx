@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useState, type ReactNode } from "react";
-import { AnnouncementBar, ANNOUNCEMENT_HEIGHT } from "@/components/lbb/AnnouncementBar";
+import { type ReactNode } from "react";
 import { Footer } from "@/components/lbb/Footer";
 import { BrandIntro } from "@/components/lbb/BrandIntro";
 import { InstagramStrip } from "@/components/lbb/InstagramStrip";
@@ -156,7 +155,7 @@ export const Route = createFileRoute("/")({
       name: control.brand.nameFa,
       alternateName: control.brand.name,
       url: absUrl("/"),
-      logo: absUrl("/brand/lbb-logo.jpeg"),
+      logo: absUrl("/brand/nox-logo.jpg"),
       description: control.brand.shortIntroduction,
       address: {
         "@type": "PostalAddress",
@@ -197,10 +196,6 @@ export const Route = createFileRoute("/")({
 function Home() {
   const { control, presentation, heroProduct, categories, products, lookbook, featuredStory } =
     Route.useLoaderData();
-  const [barVisible, setBarVisible] = useState(false);
-  const handleBarVisibility = useCallback((visible: boolean) => setBarVisible(visible), []);
-  const offsetTop = barVisible ? ANNOUNCEMENT_HEIGHT : 0;
-
   const sections: Record<string, ReactNode> = {
     ticker: <TickerStrip />,
     trust: <TrustStrip />,
@@ -217,12 +212,10 @@ function Home() {
       <a href="#main" className="sr-focusable">
         رفتن به محتوای اصلی
       </a>
-      <AnnouncementBar onVisibilityChange={handleBarVisibility} />
-      <Navbar theme="dark" offsetTop={offsetTop} />
+      <Navbar theme="dark" />
       <main
         id="main"
         className="bg-obsidian pb-bottombar text-bone transition-[padding] duration-300 md:pb-0"
-        style={{ paddingTop: offsetTop }}
         data-storefront-source={control.source}
       >
         {presentation.hero.enabled ? (

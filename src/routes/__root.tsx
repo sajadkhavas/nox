@@ -7,12 +7,14 @@ import {
   createRootRouteWithContext,
   useRouter,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, type ReactNode, type CSSProperties } from "react";
 
 import fontCss from "../fonts.css?url";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AccountStorefrontSync } from "@/components/lbb/AccountStorefrontSync";
+import { BrandWatermark } from "@/components/lbb/BrandWatermark";
+import { ANNOUNCEMENT_HEIGHT, publicAnnouncements } from "@/components/lbb/AnnouncementBar";
 import { CartDrawer } from "@/components/lbb/CartDrawer";
 import { ProductQuickView } from "@/components/lbb/ProductQuickView";
 import { PwaExperience } from "@/components/lbb/PwaExperience";
@@ -36,7 +38,7 @@ import { WishlistProvider } from "@/lib/wishlist";
 function NotFoundComponent() {
   return (
     <>
-      <title>صفحه پیدا نشد | LBB</title>
+      <title>صفحه پیدا نشد | NOX</title>
       <meta name="robots" content="noindex, nofollow" />
       <main
         id="main"
@@ -135,7 +137,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       "@type": "Organization",
       name: control.brand.name,
       url: absUrl("/"),
-      logo: absUrl("/brand/lbb-logo.jpeg"),
+      logo: absUrl("/brand/nox-logo.jpg"),
       description: control.seo.organizationDescription,
       sameAs: [control.seo.instagramUrl],
     };
@@ -157,9 +159,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       links: [
         { rel: "stylesheet", href: fontCss },
         { rel: "stylesheet", href: appCss },
-        { rel: "icon", href: "/favicon.png?v=lbb-20260926", type: "image/png" },
-        { rel: "shortcut icon", href: "/favicon.ico?v=lbb-20260926", type: "image/x-icon" },
-        { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
+        { rel: "icon", href: "/brand/nox-logo.jpg", type: "image/jpeg" },
+        { rel: "apple-touch-icon", href: "/brand/nox-logo.jpg" },
         { rel: "manifest", href: "/manifest.webmanifest" },
       ],
       scripts: [
@@ -194,6 +195,9 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const { storefront, presentation } = Route.useLoaderData();
+  const announcementHeight = publicAnnouncements(storefront.announcements).length
+    ? ANNOUNCEMENT_HEIGHT
+    : 0;
 
   useEffect(() => {
     void registerPwa();
@@ -208,7 +212,15 @@ function RootComponent() {
               <CartProvider>
                 <AccountStorefrontSync />
                 <QuickViewProvider>
-                  <Outlet />
+                  <div
+                    className="nox-storefront"
+                    style={{ "--nox-announcement-h": announcementHeight + "px" } as CSSProperties}
+                  >
+                    <BrandWatermark />
+                    <div className="nox-site-content">
+                      <Outlet />
+                    </div>
+                  </div>
                   <CartDrawer />
                   <ProductQuickView />
                   <PwaExperience />

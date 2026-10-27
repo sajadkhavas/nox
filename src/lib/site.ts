@@ -24,7 +24,7 @@ function normalizeSiteUrl(value: string | undefined): string {
 }
 
 export const SITE_URL = normalizeSiteUrl(import.meta.env["VITE_SITE_URL"] as string | undefined);
-export const SITE_NAME = "LBB";
+export const SITE_NAME = "NOX Collection";
 export const SITE_LOCALE = "fa_IR";
 
 /** `/shop` → `https://site/shop` in production and `/shop` during unconfigured development. */
@@ -38,7 +38,7 @@ export function absAsset(assetUrl: string): string {
   return absUrl(assetUrl);
 }
 
-export const OG_IMAGE = absUrl("/icons/icon-512.png");
+export const OG_IMAGE = absUrl("/brand/nox-logo.jpg");
 export const ROBOTS = {
   INDEX_FOLLOW: "index, follow",
   NOINDEX_FOLLOW: "noindex, follow",

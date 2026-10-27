@@ -42,11 +42,11 @@ export function MegaMenuOverlay({ offsetTop = 0 }: { offsetTop?: number }) {
         <div className="lbb-shell py-6 lg:py-9">
           <div className="flex items-start justify-between gap-6">
             <div>
-              <TechLabel tone="signal">LBB / CATALOG INDEX</TechLabel>
+              <TechLabel tone="signal">NOX / CATALOG INDEX</TechLabel>
               <h2 className="mt-2 text-display-3 text-bone">انتخاب سریع، بدون حدس</h2>
               <p className="mt-2 max-w-[54ch] text-sm leading-7 text-metal">
-                ساختار دسته‌بندی تأییدشده LBB را ببین؛ فقط دسته‌هایی که موجودی واقعی دارند لینک خرید
-                می‌گیرند و برای دسته‌های بدون موجودی صفحه خالی ساخته نمی‌شود.
+                دسته‌های NOX را ببین؛ فقط دسته‌هایی که موجودی واقعی دارند لینک خرید می‌گیرند و برای
+                دسته‌های بدون موجودی صفحه خالی ساخته نمی‌شود.
               </p>
             </div>
             <button
