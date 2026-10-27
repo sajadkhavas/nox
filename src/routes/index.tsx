@@ -215,7 +215,7 @@ function Home() {
       <Navbar theme="dark" />
       <main
         id="main"
-        className="bg-obsidian pb-bottombar text-bone transition-[padding] duration-300 md:pb-0"
+        className="nox-home bg-obsidian pb-bottombar text-bone transition-[padding] duration-300 md:pb-0"
         data-storefront-source={control.source}
       >
         {presentation.hero.enabled ? (

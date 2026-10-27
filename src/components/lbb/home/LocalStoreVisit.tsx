@@ -23,8 +23,10 @@ export function LocalStoreVisit() {
         aria-labelledby="local-store-title"
         className="border-t border-hairline bg-carbon py-12 md:py-16"
       >
-        <Shell className="grid !px-0 overflow-hidden rounded-3xl border border-hairline bg-obsidian shadow-overlay lg:grid-cols-2">
-          <div className="relative min-h-[400px] overflow-hidden bg-carbon-2 lg:min-h-[clamp(500px,50vw,840px)]">
+        <Shell className="grid !px-0 overflow-hidden rounded-3xl border border-hairline bg-obsidian/35 shadow-overlay lg:grid-cols-2">
+          <div
+            className={`relative min-h-[400px] overflow-hidden lg:min-h-[clamp(500px,50vw,840px)] ${imageUrl ? "bg-carbon-2" : "bg-transparent"}`}
+          >
             {imageUrl ? (
               <img
                 src={imageUrl}
@@ -119,7 +121,7 @@ export function LocalStoreVisit() {
       aria-labelledby="local-store-title"
       className="border-t border-hairline bg-carbon py-12 md:py-16"
     >
-      <Shell className="grid overflow-hidden rounded-3xl border border-hairline bg-obsidian shadow-overlay lg:grid-cols-2">
+      <Shell className="grid overflow-hidden rounded-3xl border border-hairline bg-obsidian/35 shadow-overlay lg:grid-cols-2">
         <div className="relative self-start overflow-hidden">
           <img
             src={lifestyle2}

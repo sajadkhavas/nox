@@ -818,3 +818,10 @@ html {
     font-size: 10px;
   }
 }
+
+/* The home page shares the stationary brand canvas with the other routes.
+   Only section shells are transparent; cards, images, and dialogs keep their surfaces. */
+.nox-home > section,
+.nox-home > div > section {
+  background-color: transparent;
+}

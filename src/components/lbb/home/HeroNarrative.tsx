@@ -184,7 +184,9 @@ export function HeroNarrative({
           </div>
         </div>
 
-        <div className="relative order-1 min-h-[58svh] overflow-hidden bg-[#f3f1ec] lg:order-2 lg:min-h-full">
+        <div
+          className={`relative order-1 min-h-[58svh] overflow-hidden lg:order-2 lg:min-h-full ${heroImage ? "bg-white" : "bg-transparent"}`}
+        >
           {heroImage ? (
             <img
               src={heroImage}
@@ -199,14 +201,16 @@ export function HeroNarrative({
               style={{ objectPosition: presentation.hero.imagePosition }}
             />
           ) : (
-            <div className="absolute inset-0 grid place-items-center p-8 text-center text-sm text-obsidian/60">
+            <div className="absolute inset-0 grid place-items-center p-8 text-center text-sm text-metal">
               تصویر تازه این بخش به‌زودی اضافه می‌شود.
             </div>
           )}
-          <span
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/10 to-transparent lg:bg-gradient-to-r lg:from-obsidian/65 lg:via-transparent"
-          />
+          {heroImage ? (
+            <span
+              aria-hidden="true"
+              className="absolute inset-0 bg-gradient-to-t from-obsidian via-obsidian/10 to-transparent lg:bg-gradient-to-r lg:from-obsidian/65 lg:via-transparent"
+            />
+          ) : null}
           <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-bone/30" />
 
           {heroProduct ? (
