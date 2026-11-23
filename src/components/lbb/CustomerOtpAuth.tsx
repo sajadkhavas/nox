@@ -38,7 +38,7 @@ export function CustomerOtpAuth({
       await ensureBackendCsrf();
       const response = await requestOtp(mobile.trim());
       setChallengeId(response.data.challengeId);
-      setTestCode(localOtpTestCode(response.data.testCode));
+      setTestCode(localOtpTestCode(response.data.debugCode ?? response.data.testCode));
       setSent(true);
     } catch (cause) {
       setChallengeId(null);

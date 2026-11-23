@@ -227,6 +227,8 @@ export type OtpChallengeDto = {
   expiresAt?: string;
   retryAfter?: number;
   testCode?: string;
+  debugCode?: string;
+  expiresIn?: number;
 };
 
 export type CartLineRequest = {
