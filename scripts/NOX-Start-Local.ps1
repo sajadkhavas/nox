@@ -30,6 +30,7 @@ if ((Read-EnvValue $environmentText 'DB_CONNECTION') -ne 'mysql' -or $databaseNa
 }
 function Write-EnvValues([string]$Path, [hashtable]$Values) {
     $text = if (Test-Path -LiteralPath $Path) { [IO.File]::ReadAllText($Path) } else { '' }
+    $text = $text.Replace("`r`n", "`n").Replace("`r", "`n")
     foreach ($name in $Values.Keys) {
         $value = [string]$Values[$name]
         if ($value -match '[\r\n]') { throw 'Invalid environment value.' }
@@ -38,7 +39,7 @@ function Write-EnvValues([string]$Path, [hashtable]$Values) {
         if ([regex]::IsMatch($text, $pattern)) {
             $replacement = $line
             $text = [regex]::Replace($text, $pattern, [System.Text.RegularExpressions.MatchEvaluator]{ param($m) $replacement })
-        } else { $text = $text.TrimEnd() + "`r`n" + $line + "`r`n" }
+        } else { $text = $text.TrimEnd() + "`n" + $line + "`n" }
     }
     [IO.File]::WriteAllText($Path, $text, (New-Object Text.UTF8Encoding $false))
 }
