@@ -19,14 +19,14 @@ export function ProductMoments({ liveProducts }: { liveProducts?: BackendCatalog
       <section
         dir="rtl"
         aria-labelledby="home-products-title"
-        className="border-t border-hairline bg-obsidian py-12 md:py-16"
+        className="nox-products-section border-t border-hairline bg-obsidian py-6 md:py-8"
       >
         <Shell>
           <SectionHead
             index="02"
             label={copy.label}
-            title={<span id="home-products-title">{copy.title}</span>}
-            lede={copy.lede}
+            title={<span id="home-products-title">ناکس را به تن کن</span>}
+            lede="انتخاب ما برای استایل تو؛ تیشرت گرافیکی، شلوار بگ، هودی و کت استریت‌ویر ناکس."
             action={
               <MerchantNavigationLink
                 item={{
@@ -70,14 +70,14 @@ export function ProductMoments({ liveProducts }: { liveProducts?: BackendCatalog
     <section
       dir="rtl"
       aria-labelledby="home-products-title"
-      className="border-t border-hairline bg-obsidian py-12 md:py-16"
+      className="nox-products-section border-t border-hairline bg-obsidian py-6 md:py-8"
     >
       <Shell>
         <SectionHead
           index="02"
           label="انتخاب‌های نوکس"
-          title={<span id="home-products-title">فرم، فراتر از قالب.</span>}
-          lede="انتخاب‌های استریت‌ویر · محصولات این پیش‌نمایش آزمایشی هستند."
+          title={<span id="home-products-title">ناکس را به تن کن</span>}
+          lede="انتخاب ما برای استایل تو؛ تیشرت گرافیکی، شلوار بگ، هودی و کت. محصولات این پیش‌نمایش آزمایشی‌اند."
           action={
             <Link to="/shop" className="tech inline-flex min-h-11 items-center gap-2 text-signal">
               کاتالوگ کامل

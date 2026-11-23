@@ -29,12 +29,14 @@ export function ProductCard({
   priority = false,
   autoplay = false,
   carouselImageIndex,
+  onCarouselImageChange,
   revealOrder = 0,
 }: {
   p: ProductCardModel;
   priority?: boolean;
   autoplay?: boolean;
   carouselImageIndex?: number;
+  onCarouselImageChange?: (index: number) => void;
   revealOrder?: number;
 }) {
   const backend = isBackendCard(p);
@@ -130,7 +132,7 @@ export function ProductCard({
     const start = touchStart.current;
     const touch = event.changedTouches[0];
     if (
-      carouselImageIndex !== undefined ||
+      (carouselImageIndex !== undefined && !onCarouselImageChange) ||
       !backend ||
       showMannequin ||
       previewImages.length < 2 ||
@@ -145,7 +147,8 @@ export function ProductCard({
       dx > 0 ? Math.max(0, start.index - 1) : Math.min(previewImages.length - 1, start.index + 1);
     if (target === start.index) return;
     suppressNextMediaClick.current = true;
-    setPreviewIndex(target);
+    if (onCarouselImageChange) onCarouselImageChange(target);
+    else setPreviewIndex(target);
   };
 
   const overlay = (
@@ -219,9 +222,9 @@ export function ProductCard({
                 onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
-                  setPreviewIndex(
-                    (index) => (index + direction + previewImages.length) % previewImages.length,
-                  );
+                  const next = (previewIndex + direction + previewImages.length) % previewImages.length;
+                  if (onCarouselImageChange) onCarouselImageChange(next);
+                  else setPreviewIndex(next);
                 }}
                 className="pointer-events-auto grid h-11 w-11 place-items-center rounded-full text-white drop-shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
               >

@@ -16,16 +16,7 @@ export function Logo({
 }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <img
-        src={NOX_LOGO_URL}
-        alt=""
-        width={size}
-        height={size}
-        decoding="async"
-        className="nox-logo shrink-0 object-contain"
-        data-square={square || undefined}
-        style={{ width: size, height: size }}
-      />
+      <span role="img" aria-label="نشان ناکس" className="nox-logo-cutout shrink-0" data-square={square || undefined} style={{ width: size, height: size, maskImage: `url(${NOX_LOGO_URL})`, maskMode: "luminance", maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center", backgroundColor: "currentColor", display: "inline-block" }} />
       {withWordmark ? <span className="sr-only">NOX Collection</span> : null}
     </span>
   );

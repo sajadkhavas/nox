@@ -78,7 +78,7 @@ export function Navbar({
             aria-label={`${brand.nameFa} — خانه`}
             className="flex min-w-0 shrink-0 items-center gap-2"
           >
-            {editorialHero ? <span className="nox-editorial-wordmark" dir="ltr">Nox</span> : <><Logo size={52} square /><span className="nox-nav-wordmark" dir="ltr">NOX<span>COLLECTION</span></span></>}
+            {editorialHero ? <><Logo size={48}/><span className="nox-editorial-wordmark" dir="ltr">NOX <small>COLLECTION</small></span></> : <><Logo size={52} square /><span className="nox-nav-wordmark" dir="ltr">NOX<span>COLLECTION</span></span></>}
           </Link>
 
           <div dir="rtl" className="hidden min-w-0 items-center justify-center lg:flex">

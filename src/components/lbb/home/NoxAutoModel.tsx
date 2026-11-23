@@ -19,6 +19,7 @@ export function NoxAutoModel({ modelUrl, detailUrl, name, interactive = false }:
   const fail = useCallback(() => setFailed(true), []);
 
   useEffect(() => {
+    void import("@/components/lbb/product/ProductModel3dViewer");
     const node = host.current;
     if (!node) return;
     if (!("IntersectionObserver" in window)) {
@@ -40,7 +41,8 @@ export function NoxAutoModel({ modelUrl, detailUrl, name, interactive = false }:
 
   return (
     <div ref={host} className="relative h-full w-full" data-model-failed={failed}>
-      {(!ready || failed) && <img src={fallback} alt={name} width={480} height={480} loading="eager" decoding="async" className="nox-model-fallback" />}
+      {!ready && !failed && <div className="nox-model-loader" role="status" aria-label="بارگذاری مجسمه ناکس"><span className="nox-model-loader__orbit"/><span className="nox-model-loader__mark">N</span><span className="sr-only">مجسمه در حال بارگذاری است</span></div>}
+      {failed && <img src={fallback} alt={name} width={480} height={480} loading="eager" decoding="async" className="nox-model-fallback" />}
       {mounted && !failed ? (
         <Suspense fallback={null}>
           <Viewer modelUrl={modelUrl} productName={name} onError={fail} presentation="showcase" interactive={interactive} detailUrl={detailUrl} onReady={markReady} />

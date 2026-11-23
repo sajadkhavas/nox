@@ -199,6 +199,7 @@ export const Route = createFileRoute("/")({
       links: [
         ...canonical("/"),
         { rel: "preload", as: "image", href: heroPhoto.url },
+        { rel: "preload", as: "fetch", href: "/__l5e/assets-v1/f822fece-bba9-428b-a354-7f5f54607696/nox-statue-lite.glb", crossOrigin: "anonymous" },
       ],
       scripts: [
         { type: "application/ld+json", children: JSON.stringify(websiteJsonLd) },

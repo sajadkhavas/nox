@@ -1091,3 +1091,37 @@ html[data-nox-intro="waiting"] :is(.nox-hero__topline,.nox-hero__editorial p,.no
 @media(max-width:768px) {.nox-cat-section {padding-top:24px;} .nox-hero__tagline {font-size:14px; max-width:34ch;} .nox-editorial-wordmark {font-size:27px;}}
 
 .nox-storefront:has(.nox-navbar--editorial) {--nox-announcement-h:0px!important;}
+
+/* Boutique glass lettering: original lightweight vector ornaments. */
+.nox-ticker--ink {height:76px; position:relative; color:#e8dfd2; background:transparent;}
+.nox-ink-repeat {display:flex; align-items:center; gap:24px; flex:none;}
+.nox-ink-repeat .nox-motif {width:360px; height:60px; color:#a13236;}
+.nox-ink-repeat > span {font-family:inherit; font-size:13px; line-height:1.8; white-space:nowrap;}
+.nox-ticker__brand {z-index:3; position:absolute; inset:0; margin:auto; width:110px; display:grid; place-items:center; background:radial-gradient(ellipse,#000 45%,transparent 75%); color:#f2ede4;}
+.nox-ticker__brand .nox-logo-cutout {filter:drop-shadow(0 0 3px #000);}
+.nox-editorial-wordmark {font-size:25px; display:flex; flex-direction:column; gap:5px;}
+.nox-editorial-wordmark small {font:900 10px/1.2 var(--nox-hero-font); letter-spacing:.15em;}
+.nox-cat-section {padding-block:24px 20px!important; background:transparent!important;}
+.nox-cat-head {padding-bottom:8px;}
+.nox-cat-head__title {font-size:clamp(25px,3.3vw,42px); line-height:1.5;}
+.nox-cat-intro {position:relative; z-index:2; margin:0 40px 12px; max-width:70ch; font-size:13px; line-height:1.9; color:var(--muted-foreground);}
+.nox-cat-layout {min-height:440px; align-items:start;}
+.nox-cat-statue {position:relative; margin-top:-56px;}
+.nox-cat-statue__wrap {height:400px; z-index:2;}
+.nox-cat-painting {width:76%; max-width:290px; height:auto; aspect-ratio:1; object-fit:contain; margin-top:-68px; position:relative; z-index:1;}
+.nox-cat-sideline {width:370px; height:60px; opacity:.16; transform:rotate(90deg);}
+.nox-cat-sideline .nox-motif {width:100%; height:100%;}
+.nox-cat-sideline[data-side="start"] {right:-140px;}.nox-cat-sideline[data-side="end"] {left:-140px;}
+.nox-model-loader {position:absolute; inset:0; display:grid; place-items:center; color:#f2ede4; pointer-events:none;}
+.nox-model-loader__orbit {width:76px; height:76px; border:1px solid #851c2033; border-top-color:#b94449; border-right-color:#f2ede4; border-radius:50%; animation:nox-loading-orbit 1.2s linear infinite;}
+.nox-model-loader__mark {position:absolute; font:900 32px var(--nox-hero-font);}
+@keyframes nox-loading-orbit {to {transform:rotate(360deg);}}
+.nox-home,.nox-home > div > section,.nox-products-section {background:transparent!important;}
+.nox-brand-watermark img {opacity:.13; mix-blend-mode:screen;}
+.nox-cat-card {background:color-mix(in srgb,var(--card) 87%,transparent);}
+@media(max-width:860px) {.nox-cat-head {padding-bottom:4px;}.nox-cat-intro {margin:0 20px 12px;}.nox-cat-statue {margin-top:0;}.nox-cat-statue__wrap {height:300px;}.nox-cat-painting {max-width:210px; margin-top:-56px;}.nox-cat-layout {min-height:0;}.nox-ticker--ink {height:64px;}}
+@media(prefers-reduced-motion:reduce) {.nox-model-loader__orbit {animation:none;}}
+
+.nox-hero__glass-ink {display:flex; flex-direction:column; justify-content:space-around; transform:rotate(-24deg) scale(1.15);}
+.nox-hero__glass-ink .nox-motif {width:100%; height:22%;}
+.nox-brand-story__grid {min-height:440px; padding-block:32px; gap:32px;}

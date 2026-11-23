@@ -1,5 +1,7 @@
 import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
+import wallArt from "@/assets/imported/public/brand/nox-wall-art.webp.asset.json";
+import { NoxMotif } from "@/components/lbb/NoxMotif";
 import { NoxAutoModel } from "./NoxAutoModel";
 import statueLite from "@/assets/imported/nox-statue-lite.glb.asset.json";
 import catTshirts from "@/assets/imported/nox-cat-tshirts.webp.asset.json";
@@ -179,10 +181,11 @@ function NoxCategoryStage({ liveCategories }: { liveCategories?: StorefrontCateg
       <NoxSideLine side="start" />
       <NoxSideLine side="end" />
       <div className="nox-cat-head">
-        <p className="nox-cat-head__label" dir="ltr">— COLLECTIONS</p>
-        <h2 id="home-categories-title" className="nox-cat-head__title">دسته‌بندی محصولات</h2>
+        <p className="nox-cat-head__label" dir="ltr">NOX COLLECTION</p>
+        <h2 id="home-categories-title" className="nox-cat-head__title">استایل تو، از اینجا شروع می‌شود</h2>
         <Link to="/shop" className="nox-cat-head__all">همه محصولات <ArrowUpLeft size={14} aria-hidden="true" /></Link>
       </div>
+      <p className="nox-cat-intro">در ناکس، تیشرت گرافیکی، شلوار بگ، جورتس، هودی و کت را برای کنار هم ساختن استایل تو جمع کرده‌ایم.</p>
       <div className="nox-cat-layout">
         <div className="nox-cat-column" data-column="start">
           {cards.slice(0, split).map((card, index) => <NoxCategoryCard key={card.slug} card={card} index={index} side="start" />)}
@@ -192,7 +195,7 @@ function NoxCategoryStage({ liveCategories }: { liveCategories?: StorefrontCateg
             <span className="nox-cat-statue__aura" aria-hidden="true" />
             <NoxAutoModel modelUrl={statueLite.url} detailUrl={STATUE_FULL_URL} name="مجسمه نوکس" interactive />
           </div>
-          <p className="nox-cat-statue__label">برای چرخاندن مجسمه، آن را بکشید</p>
+          <img className="nox-cat-painting" src={wallArt.url} alt="نقاشی دست‌ساز ناکس با نقش‌های رنگی و حلقهٔ فیروزه‌ای" width={600} height={600} loading="lazy" decoding="async" />
         </div>
         <div className="nox-cat-column" data-column="end">
           {cards.slice(split).map((card, index) => <NoxCategoryCard key={card.slug} card={card} index={index + split} side="end" />)}
@@ -218,12 +221,5 @@ function NoxCategoryStage({ liveCategories }: { liveCategories?: StorefrontCateg
 }
 
 function NoxSideLine({ side }: { side: "start" | "end" }) {
-  return (
-    <svg className="nox-cat-sideline" data-side={side} width="60" height="400" viewBox="0 0 60 400" aria-hidden="true">
-      <path d="M30 10 Q 50 80 20 150 Q 5 200 30 250 Q 55 300 20 380" strokeWidth="1.5" fill="none" />
-      <path d="M15 30 Q 40 60 10 100 Q -5 130 20 160" strokeWidth="0.8" fill="none" opacity="0.5" />
-      <path d="M45 50 L 15 50 M50 100 L 10 100" strokeWidth="0.5" />
-      <path d="M 10 200 Q 30 180 50 200 Q 70 220 50 240" strokeWidth="1" fill="none" />
-    </svg>
-  );
+ return <div className="nox-cat-sideline" data-side={side}><NoxMotif dense /></div>;
 }
