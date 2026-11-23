@@ -1,3 +1,4 @@
+import { useNoxVisuals } from "@/lib/nox-visuals";
 import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import wallArt from "@/assets/imported/public/brand/nox-wall-art.webp.asset.json";
@@ -159,10 +160,11 @@ function NoxCategoryCard({ card, index, side }: { card: CategoryStageCard; index
 }
 
 function NoxCategoryStage({ liveCategories }: { liveCategories?: StorefrontCategoryDto[] | null } = {}) {
+  const visuals = useNoxVisuals();
   const cards: CategoryStageCard[] = NOX_CATEGORY_CARDS.map((card) => {
     const aliases = card.slug === "hoodies" ? ["sweatshirts", "hoodies"] : [card.slug];
     const live = liveCategories?.find((category) => aliases.includes(category.slug));
-    return live ? { ...card, slug: live.slug, name: live.name, image: live.image || card.image } : { ...card };
+    return live ? { ...card, slug: live.slug, name: live.name, image: live.image || visuals.categories?.[live.slug] || card.image } : { ...card, image: visuals.categories?.[card.slug === "hoodies" ? "sweatshirts" : card.slug] || card.image };
   });
   for (const category of liveCategories ?? []) {
     if (category.showOnHome && !category.parentPublicId && !cards.some((card) => card.slug === category.slug)) {
@@ -181,7 +183,7 @@ function NoxCategoryStage({ liveCategories }: { liveCategories?: StorefrontCateg
       <NoxSideLine side="start" />
       <NoxSideLine side="end" />
       <div className="nox-cat-head">
-        <p className="nox-cat-head__label" dir="ltr">NOX COLLECTION</p>
+        <p className="nox-cat-head__label" dir="ltr">01 / NOX Category <span dir="rtl">دسته‌بندی‌های ناکس</span></p>
         <h2 id="home-categories-title" className="nox-cat-head__title">استایل تو، از اینجا شروع می‌شود</h2>
         <Link to="/shop" className="nox-cat-head__all">همه محصولات <ArrowUpLeft size={14} aria-hidden="true" /></Link>
       </div>
@@ -195,7 +197,7 @@ function NoxCategoryStage({ liveCategories }: { liveCategories?: StorefrontCateg
             <span className="nox-cat-statue__aura" aria-hidden="true" />
             <NoxAutoModel modelUrl={statueLite.url} detailUrl={STATUE_FULL_URL} name="مجسمه نوکس" interactive />
           </div>
-          <img className="nox-cat-painting" src={wallArt.url} alt="نقاشی دست‌ساز ناکس با نقش‌های رنگی و حلقهٔ فیروزه‌ای" width={600} height={600} loading="lazy" decoding="async" />
+          <img className="nox-cat-painting" src={visuals.painting ?? wallArt.url} alt="نقاشی دست‌ساز ناکس با نقش‌های رنگی و حلقهٔ فیروزه‌ای" width={600} height={600} loading="lazy" decoding="async" />
         </div>
         <div className="nox-cat-column" data-column="end">
           {cards.slice(split).map((card, index) => <NoxCategoryCard key={card.slug} card={card} index={index + split} side="end" />)}

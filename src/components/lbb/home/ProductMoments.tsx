@@ -24,7 +24,7 @@ export function ProductMoments({ liveProducts }: { liveProducts?: BackendCatalog
         <Shell>
           <SectionHead
             index="02"
-            label={copy.label}
+            label="NOX PICKS / انتخاب‌های ناکس"
             title={<span id="home-products-title">ناکس را به تن کن</span>}
             lede="انتخاب ما برای استایل تو؛ تیشرت گرافیکی، شلوار بگ، هودی و کت استریت‌ویر ناکس."
             action={
@@ -75,7 +75,7 @@ export function ProductMoments({ liveProducts }: { liveProducts?: BackendCatalog
       <Shell>
         <SectionHead
           index="02"
-          label="انتخاب‌های نوکس"
+          label="NOX PICKS / انتخاب‌های ناکس"
           title={<span id="home-products-title">ناکس را به تن کن</span>}
           lede="انتخاب ما برای استایل تو؛ تیشرت گرافیکی، شلوار بگ، هودی و کت. محصولات این پیش‌نمایش آزمایشی‌اند."
           action={

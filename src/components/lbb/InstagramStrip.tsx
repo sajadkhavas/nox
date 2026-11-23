@@ -30,7 +30,7 @@ export function InstagramStrip({ liveItems }: { liveItems?: StorefrontLookDto[] 
         aria-label="ویترین تصویری NOX"
       >
         <div className="mx-auto max-w-[1600px] text-center">
-          <p className="tech text-white/50">{brand.instagramHandle}</p>
+          <div className="nox-section-kicker"><span dir="ltr">06 / NOX COMMUNITY</span><span>استایل‌های دنیای ناکس</span></div><p className="tech text-white/50">{brand.instagramHandle}</p>
           <LookbookCarousel items={items} instagramUrl={brand.instagramUrl} compact />
           <div className="mt-3 flex flex-wrap justify-center gap-3">
             <a
@@ -64,7 +64,7 @@ export function InstagramStrip({ liveItems }: { liveItems?: StorefrontLookDto[] 
       aria-label="اینستاگرام NOX"
     >
       <div className="mx-auto max-w-[1600px] text-center">
-        <p className="tech text-white/50">@collection_nox</p>
+        <div className="nox-section-kicker"><span dir="ltr">06 / NOX COMMUNITY</span><span>استایل‌های دنیای ناکس</span></div><p className="tech text-white/50">@collection_nox</p>
         <LookbookCarousel
           compact
           instagramUrl="https://www.instagram.com/collection_nox"

@@ -73,7 +73,7 @@ export function NoxProductCarousel({ products }: { products: ProductCardModel[] 
     setPosition({ page: (page + direction + pageCount) % pageCount, photo: 0 });
 
   return (
-    <div ref={host} className="mt-4">
+    <div ref={host} className="nox-product-carousel mt-4">
       <div
         className="grid grid-cols-2 items-start gap-3 lg:grid-cols-4 lg:gap-4"
         onPointerDown={() => setTouching(true)}
@@ -106,7 +106,7 @@ export function NoxProductCarousel({ products }: { products: ProductCardModel[] 
         ))}
       </div>
       {canPlay ? (
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-sm">
+        <div className="nox-product-carousel__arrows">
           {pageCount > 1 ? (
             <Button variant="outline" size="icon" aria-label="محصولات قبلی" title="محصولات قبلی"
               type="button"

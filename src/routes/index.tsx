@@ -1,3 +1,5 @@
+import { NoxVisualsProvider, resolveNoxVisuals, type NoxVisuals } from "@/lib/nox-visuals";
+import { MobileBottomBar } from "@/components/lbb/MobileBottomBar";
 import { NoxAutoModel } from "@/components/lbb/home/NoxAutoModel";
 import { resolveStorefrontJournal, type StorefrontJournalDto } from "@/lib/storefront-control";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -41,6 +43,7 @@ type LiveHeroProduct = {
 };
 
 type HomeLoaderData = {
+  visuals?: NoxVisuals;
   journal?: StorefrontJournalDto[];
   control: Awaited<ReturnType<typeof resolveStorefrontControl>>;
   presentation: StorefrontPresentation;
@@ -143,11 +146,12 @@ export const Route = createFileRoute("/")({
         featuredStory,
       };
     };
-    const [home, articles] = await Promise.all([
+    const [home, articles, visuals] = await Promise.all([
       loadHome(),
       resolveStorefrontJournal().catch(() => []),
+      resolveNoxVisuals(),
     ]);
-    return { ...home, journal: home.control.source === "live" ? (articles ?? []).slice(0, 3) : [] };
+    return { ...home, visuals, journal: home.control.source === "live" ? (articles ?? []).slice(0, 3) : [] };
   },
   head: ({ loaderData }) => {
     const control = loaderData?.control;
@@ -192,7 +196,7 @@ export const Route = createFileRoute("/")({
           description: control.copy.homepageDescription,
           path: "/",
           type: "website",
-          image: heroPhoto.url,
+          image: loaderData?.visuals?.hero ?? heroPhoto.url,
         }),
         { name: "twitter:card", content: "summary_large_image" },
       ],
@@ -222,6 +226,7 @@ function Home() {
     featuredStory,
 
     journal,
+    visuals,
   } = Route.useLoaderData();
 
   const sections: Record<string, ReactNode> = {
@@ -240,6 +245,7 @@ function Home() {
       <a href="#main" className="sr-focusable">
         رفتن به محتوای اصلی
       </a>
+      <NoxVisualsProvider value={visuals ?? {}}>
       <Navbar theme="dark" editorialHero />
       <main
         id="main"
@@ -267,6 +273,7 @@ function Home() {
             className="border-t border-hairline py-10 md:py-14"
           >
             <div className="lbb-shell">
+              <div className="nox-section-kicker"><span dir="ltr">07 / NOX JOURNAL</span><span>خواندنی‌های ناکس</span></div>
               <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
                 <h2 id="home-journal-title" className="text-display-3">
                   از ژورنال NOX
@@ -310,6 +317,8 @@ function Home() {
       <Footer theme="dark" />
       <NoxEntry />
       <NoxReveal />
+      <MobileBottomBar />
+      </NoxVisualsProvider>
     </>
   );
 }

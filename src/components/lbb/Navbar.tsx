@@ -33,12 +33,13 @@ function CountBadge({ count }: { count: number }) {
 export function Navbar({
   theme: _theme = "dark",
   offsetTop = 0,
-  editorialHero = false,
+  editorialHero = true,
 }: {
   theme?: "dark" | "light";
   offsetTop?: number;
   editorialHero?: boolean;
 }) {
+  editorialHero = true;
   const { navigation, brand, announcements } = useStorefrontControl();
   const presentation = useStorefrontPresentation();
   const headerTop =
@@ -181,7 +182,7 @@ export function Navbar({
             </button>
           </div>
         </div>
-        <div className="nox-nav-divider"><NoxMotif /></div>
+
       </nav>
 
       {active === "mega" ? (

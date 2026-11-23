@@ -1,58 +1,16 @@
-import { NoxAutoModel } from "./NoxAutoModel";
-import { NoxMotif } from "@/components/lbb/NoxMotif";
-import { BRAND } from "@/lib/brand";
-import { CompactCollectionStory } from "./CompactCollectionStory";
 import { Link } from "@tanstack/react-router";
 import { ArrowUpLeft } from "lucide-react";
-import { CtaClasses, Shell, TechLabel } from "@/components/lbb/ui/primitives";
+import { useNoxVisuals } from "@/lib/nox-visuals";
+import { Shell } from "@/components/lbb/ui/primitives";
 import type { CollectionDto } from "@/lib/backend-api";
 import type { BackendCatalogCard } from "@/lib/backend-storefront";
-import { getCollectionEditorialViewBySlug } from "@/lib/editorial-commerce";
-import { productImage } from "@/lib/product-images";
-import { useStorefrontControl } from "@/lib/storefront-control";
-
-type ManagedCollectionDto = CollectionDto & { coverImage?: string | null };
-
-export type LiveFeaturedStory = {
-  collection: CollectionDto;
-  products: BackendCatalogCard[];
-};
-
-export function DropStory({ liveStory }: { liveStory?: LiveFeaturedStory | null }) {
-  const { source, featuredStory } = useStorefrontControl();
-
-  if (source === "live") {
-    if (!featuredStory.enabled || !liveStory) return null;
-
-    const { collection, products } = liveStory;
-    const collectionCover = (collection as ManagedCollectionDto).coverImage ?? null;
-    const heroImage =
-      collectionCover ?? products.find((product) => product.primaryImage)?.primaryImage ?? null;
-
-    return (
-      <CompactCollectionStory
-        collection={collection}
-        products={products}
-        heroImage={heroImage}
-        eyebrow={featuredStory.eyebrow}
-        cta={featuredStory.collectionCta}
-      />
-    );
-  }
-
-  return <section className="nox-brand-story" aria-labelledby="drop-story-title">
-    <div className="lbb-shell nox-brand-story__grid">
-      <div className="nox-brand-story__text">
-        <TechLabel>02 / THE NOX IDENTITY</TechLabel>
-        <h2 id="drop-story-title">از خیابان.<br />برای خودت.</h2>
-        <p>{BRAND.shortIntroduction}</p>
-        <Link to="/about" className={CtaClasses("line", "lg")}>داستان NOX <ArrowUpLeft size={18} /></Link>
-      </div>
-      <div className="nox-brand-story__art">
-        <span className="nox-brand-story__latin" dir="ltr" aria-hidden="true">NOT A<br />STANDARD.</span>
-        <div className="nox-doll-stage"><NoxAutoModel modelUrl="/__l5e/assets-v1/f6fd597a-2a5f-4ac4-91a7-21b148878e5a/nox-doll.glb" name="سر عروسک نوکس" /></div>
-      </div>
-    </div>
-    <div className="nox-brand-story__rule"><NoxMotif dense /></div>
-  </section>;
+export type LiveFeaturedStory = {collection:CollectionDto;products:BackendCatalogCard[]};
+const names=["چشم ناکس؛ شروع یک دنیای دیگر","استایل، بیرون از مدار همیشگی","از زمین تا دنیای خودت","جزئیات دنیای ناکس"];
+export function DropStory(_props:{liveStory?:LiveFeaturedStory|null}) {
+ const visuals=useNoxVisuals();const gallery=visuals.gallery?.length ? visuals.gallery : [0,1,2,3].map(i=>`/brand/editorial/art-${i}.webp`);
+ return <section className="nox-identity" aria-labelledby="drop-story-title" dir="rtl"><Shell>
+ <div className="nox-section-kicker"><span dir="ltr">03 / THE NOX IDENTITY</span><span>دنیای ناکس</span></div>
+ <div className="nox-identity__heading"><h2 id="drop-story-title">پوشاک ما، بخشی از دنیای ماست.</h2><div><p>ما ناکس را از سال ۲۰۲۱ با سلیقهٔ خودمان ساخته‌ایم؛ از تیشرت‌های گرافیکی و فرم‌های بگ تا نقاشی‌های روی دیوار فروشگاه. برای ما، استریت‌ویر فقط لباس نیست؛ راهی است برای نشان‌دادن چیزی که دوستش داری.</p><Link to="/about" className="nox-editorial-link">داستان ناکس <ArrowUpLeft size={18}/></Link></div></div>
+ <div className="nox-identity__gallery">{gallery.map((url,i)=><figure key={url}><img src={url} alt={names[i] ?? "نقاشی دنیای ناکس"} width={640} height={640} loading="lazy" decoding="async"/><figcaption><span dir="ltr">NOX ART / {String(i+1).padStart(2,"0")}</span><span>{names[i]}</span></figcaption></figure>)}</div>
+ </Shell></section>;
 }

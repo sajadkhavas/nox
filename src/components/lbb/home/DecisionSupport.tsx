@@ -68,7 +68,7 @@ export function DecisionSupport() {
             <div className="flex items-center gap-3">
               <TechLabel tone="signal">04</TechLabel>
               <span aria-hidden="true" className="h-px w-8 bg-hairline" />
-              <TechLabel>{decisionSupport.label}</TechLabel>
+              <TechLabel>YOUR NOX GUIDE / راهنمای خرید از ناکس</TechLabel>
             </div>
             <div className="md:justify-self-end md:text-left">
               <h2 id="decision-support-title" className="text-display-3 text-bone">
@@ -136,14 +136,14 @@ export function DecisionSupport() {
           <div className="flex items-center gap-3">
             <TechLabel tone="signal">04</TechLabel>
             <span aria-hidden="true" className="h-px w-8 bg-hairline" />
-            <TechLabel>راهنمای انتخاب</TechLabel>
+            <TechLabel>YOUR NOX GUIDE / راهنمای خرید از ناکس</TechLabel>
           </div>
           <div className="md:justify-self-end md:text-left">
             <h2 id="decision-support-title" className="text-display-3 text-bone">
-              قبل از انتخاب، جواب‌ها را داشته باش
+              برای انتخاب لباس، کنارت هستیم.
             </h2>
             <p className="mt-3 max-w-[58ch] text-sm leading-7 text-metal">
-              اگر بین دو سایز یا مدل مرددی، این راهنماها انتخاب را سریع‌تر و مطمئن‌تر می‌کنند.
+              راهنمای سایز و جزئیات هر لباس را آماده کرده‌ایم تا تیشرت، شلوار یا کت مناسب خودت را راحت‌تر انتخاب کنی.
             </p>
           </div>
         </header>
