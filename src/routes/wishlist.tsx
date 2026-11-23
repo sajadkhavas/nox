@@ -12,8 +12,8 @@ import { pageMeta, canonical } from "@/lib/site";
 import { BackendApiError, getProduct, isLiveBackend } from "@/lib/backend-api";
 import { backendCard, type BackendCatalogCard } from "@/lib/backend-storefront";
 
-const TITLE = "علاقه‌مندی‌ها | LBB";
-const DESC = "محصولات ذخیره‌شده شما در فروشگاه LBB.";
+const TITLE = "علاقه‌مندی‌ها | NOX";
+const DESC = "محصولات ذخیره‌شده شما در فروشگاه NOX.";
 
 export const Route = createFileRoute("/wishlist")({
   head: () => ({

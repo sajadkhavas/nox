@@ -191,8 +191,8 @@ export const Route = createFileRoute("/search")({
     const query = (match.search as SearchParams).q;
     return {
       meta: pageMeta({
-        title: query ? `نتایج جستجو برای «${query}» | LBB` : "جستجو | LBB",
-        description: query ? `نتایج جستجو برای «${query}» در LBB.` : "جستجو در کاتالوگ LBB.",
+        title: query ? `نتایج جستجو برای «${query}» | NOX` : "جستجو | NOX",
+        description: query ? `نتایج جستجو برای «${query}» در NOX.` : "جستجو در کاتالوگ NOX.",
         path: "/search",
         robots: "noindex, follow",
       }),
@@ -735,7 +735,7 @@ function PrototypeSearch() {
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
                 setDraft(event.target.value)
               }
-              placeholder="مثلاً هودی مشکی، DROP 001 یا LBB-HD-001"
+              placeholder="مثلاً هودی مشکی، DROP 001 یا NOX-HD-001"
               autoComplete="off"
               className="h-14 w-full rounded-xl border border-hairline bg-carbon ps-14 pe-28 text-sm text-bone outline-none tap-target placeholder:text-mute focus-visible:border-signal focus-visible:ring-2 focus-visible:ring-signal/40"
             />

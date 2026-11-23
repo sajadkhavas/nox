@@ -6,7 +6,8 @@ import { Footer } from "@/components/lbb/Footer";
 import { ManagedPageHead, ManagedPageIntro } from "@/components/lbb/ManagedPageIntro";
 import { MobileBottomBar } from "@/components/lbb/MobileBottomBar";
 import { Breadcrumb } from "@/components/lbb/Breadcrumb";
-import { MerchantNavigationLink } from "@/components/lbb/navigation/MerchantNavigationLink";
+import { LookbookCarousel } from "@/components/lbb/LookbookCarousel";
+import { useStorefrontControl } from "@/lib/storefront-control";
 import { CATEGORIES } from "@/lib/categories";
 import { LOOKBOOK_SCENES, getLookbookSceneView } from "@/lib/editorial-commerce";
 import { heroMain } from "@/lib/product-images";
@@ -24,9 +25,9 @@ import { resolveStorefrontLookbook, type StorefrontLookDto } from "@/lib/storefr
 import { isLiveBackend } from "@/lib/backend-api";
 import { useStorefrontPresentation } from "@/lib/storefront-presentation";
 
-const TITLE = "لوک‌بوک LBB | داستان‌های تصویری و مسیرهای مرتبط";
+const TITLE = "لوک‌بوک NOX | داستان‌های تصویری و مسیرهای مرتبط";
 const DESC =
-  "لوک‌بوک LBB را ببینید؛ داستان‌های تصویری با مسیرهای مرتبط به کالکشن، دسته و در صورت انتشار عمومی، صفحه محصول.";
+  "لوک‌بوک NOX را ببینید؛ داستان‌های تصویری با مسیرهای مرتبط به کالکشن، دسته و در صورت انتشار عمومی، صفحه محصول.";
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 export const Route = createFileRoute("/lookbook")({
@@ -58,6 +59,7 @@ function LookbookPage() {
 
 function LiveLookbookPage({ items }: { items: StorefrontLookDto[] }) {
   const page = useStorefrontPresentation().pages.lookbook;
+  const { brand } = useStorefrontControl();
   return (
     <>
       <ManagedPageHead presentation={page} path="/lookbook" />
@@ -70,52 +72,17 @@ function LiveLookbookPage({ items }: { items: StorefrontLookDto[] }) {
         <Shell className="py-3">
           <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: "لوک‌بوک" }]} />
         </Shell>
-        <Band hairline={false} className="pb-8 pt-8 md:pb-12 md:pt-12">
+        <Band hairline={false} className="!py-4 md:!py-7">
           <ManagedPageIntro presentation={page} maxWidth="max-w-[60ch]" />
         </Band>
-        <Band>
+        <Band className="!py-4 md:!py-7">
           <Shell>
             {items.length === 0 ? (
               <StatePanel title="هنوز تصویری برای لوک‌بوک منتشر نشده است">
                 تصاویر تازهٔ لوک‌بوک به‌زودی در این بخش نمایش داده می‌شوند.
               </StatePanel>
             ) : (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {items.map((item, index) => (
-                  <article
-                    key={`${item.imageUrl}-${index}`}
-                    className="overflow-hidden rounded-2xl border border-hairline bg-carbon"
-                  >
-                    <figure>
-                      <img
-                        src={item.imageUrl}
-                        alt={item.title}
-                        width={900}
-                        height={1125}
-                        loading={index < 2 ? "eager" : "lazy"}
-                        className="aspect-[4/5] w-full object-cover"
-                      />
-                      <figcaption className="p-4">
-                        <TechLabel tone="signal">
-                          LOOK {String(index + 1).padStart(2, "0")}
-                        </TechLabel>
-                        <h2 className="mt-2 text-display-3 text-bone">{item.title}</h2>
-                        {item.caption ? (
-                          <p className="mt-2 text-sm leading-7 text-metal">{item.caption}</p>
-                        ) : null}
-                        {item.linkUrl ? (
-                          <MerchantNavigationLink
-                            item={{ label: "مسیر مرتبط", latin: "RELATED", href: item.linkUrl }}
-                            className={`${CtaClasses("line", "sm")} mt-4`}
-                          >
-                            مسیر مرتبط <ArrowUpLeft size={15} aria-hidden="true" />
-                          </MerchantNavigationLink>
-                        ) : null}
-                      </figcaption>
-                    </figure>
-                  </article>
-                ))}
-              </div>
+              <LookbookCarousel items={items} instagramUrl={brand.instagramUrl} />
             )}
           </Shell>
         </Band>
@@ -211,7 +178,7 @@ function PrototypeLookbookPage() {
 
         <Band hairline={false} className="pb-8 pt-8 md:pb-12 md:pt-12">
           <Shell>
-            <TechLabel tone="signal">LBB / VISUAL STORIES</TechLabel>
+            <TechLabel tone="signal">NOX / VISUAL STORIES</TechLabel>
             <h1 className="mt-5 max-w-[15ch] text-display-1 text-bone">
               لوک‌بوک؛ تصویر را ببین، مسیر مرتبط را پیدا کن
             </h1>

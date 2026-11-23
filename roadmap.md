@@ -1,0 +1,13 @@
+# NOX storefront
+- [x] Match uploaded hero, homepage header and lower ticker using the supplied retouched store photo.
+- [x] Recommend next step after remix: review the uploaded header/hero/ticker on mobile, then complete real product data.
+- [x] Rebuild reference-matched photo-stack entry and framed scroll reveals; verify resource failures, replay and mobile.
+- [x] Recommend next step for the remixed project: validate these motions before supplying real product data and enabling production checkout.
+- [x] Import original frontend, routes, artwork and compressed models.
+- [x] Establish unified monochrome editorial design and automatic entry sequence.
+- [x] Refine homepage and preserve existing shopping pages and controls.
+- [x] Verify desktop/mobile, models, reduced motion, route tests and preview errors.
+- [ ] Product galleries, real size selection and checkout acceptance — blocked on confirmed product data / operational API.
+- [x] Face mask cover — owner-requested generated category artwork; not product photography.
+- [ ] Production verification — blocked on dedicated NOX API and deployment configuration.
+- [x] Dark category stage with statue, mobile category row, red/bone theme

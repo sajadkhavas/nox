@@ -153,6 +153,8 @@ export type MediaDto = {
 };
 
 export type SizeGuideDto = {
+  imageUrl?: string | null;
+  imageAlt?: string | null;
   publicId: string;
   name: string;
   description: string | null;
@@ -170,6 +172,7 @@ export type SizeGuideDto = {
 };
 
 export type ProductDetailDto = ProductSummaryDto & {
+  faqs?: Array<{ question: string; answer: string }>;
   description: string | null;
   publication: "published";
   collections: CollectionDto[];
@@ -289,6 +292,9 @@ export type CheckoutQuoteDto = CartValidationDto & {
 };
 
 export type OrderItemDto = {
+  imageUrl?: string | null;
+  color?: string | null;
+  size?: string | null;
   id?: string;
   productId?: string;
   variantId?: string;
@@ -418,14 +424,14 @@ export class BackendApiError extends Error {
 
 const clean = (value: string | undefined) => value?.trim().replace(/\/$/, "") ?? "";
 export function getBackendMode(): BackendMode {
-  const explicit = clean(import.meta.env.VITE_LBB_BACKEND_MODE);
+  const explicit = clean(import.meta.env.VITE_NOX_BACKEND_MODE ?? import.meta.env.VITE_LBB_BACKEND_MODE);
   if (explicit === "live" || explicit === "prototype") return explicit;
   // A production frontend without an API URL is still a storefront prototype.
   // Entering live mode implicitly used to replace every curated product with a
   // BACKEND PRODUCT ONLY placeholder on deployments where the backend is not
   // connected yet. Supplying the API origin (or the explicit live flag) is the
   // intentional cut-over signal.
-  return clean(import.meta.env.VITE_LBB_API_BASE_URL) ? "live" : "prototype";
+  return clean(import.meta.env.VITE_NOX_API_BASE_URL ?? import.meta.env.VITE_LBB_API_BASE_URL) ? "live" : "prototype";
 }
 
 export function isLiveBackend(): boolean {
@@ -433,7 +439,7 @@ export function isLiveBackend(): boolean {
 }
 
 export function getBackendBaseUrl(): string {
-  const raw = clean(import.meta.env.VITE_LBB_API_BASE_URL);
+  const raw = clean(import.meta.env.VITE_NOX_API_BASE_URL ?? import.meta.env.VITE_LBB_API_BASE_URL);
   if (!raw) {
     throw new BackendApiError("ارتباط فروشگاه تنظیم نشده است.", {
       code: "backend_not_configured",

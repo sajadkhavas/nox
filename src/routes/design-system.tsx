@@ -35,8 +35,8 @@ import { pageMeta } from "@/lib/site";
 export const Route = createFileRoute("/design-system")({
   head: () => ({
     meta: pageMeta({
-      title: "Design System 2.0 | LBB",
-      description: "مرجع داخلی توکن‌ها، حالت‌ها و زبان بصری LBB.",
+      title: "Design System 2.0 | NOX",
+      description: "مرجع داخلی توکن‌ها، حالت‌ها و زبان بصری NOX.",
       path: "/design-system",
       noindex: true,
     }),
@@ -468,7 +468,7 @@ function DesignSystemPage() {
           <Shell className="relative py-16 md:py-24 lg:py-32">
             <div className="lbb-grid items-end">
               <div className="col-span-4 md:col-span-6 lg:col-span-8">
-                <TechLabel tone="signal">LBB / DESIGN SYSTEM / {DESIGN_SYSTEM_VERSION}</TechLabel>
+                <TechLabel tone="signal">NOX / DESIGN SYSTEM / {DESIGN_SYSTEM_VERSION}</TechLabel>
                 <h1 className="text-display-1 mt-5 max-w-[12ch] text-bone">Karaj After Dark</h1>
                 <p className="text-lede mt-6">
                   {EXPERIENCE_NORTH_STAR} یک زبان واحد برای Utility، روایت و خواندن می‌سازد.

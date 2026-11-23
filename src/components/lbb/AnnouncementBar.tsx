@@ -1,111 +1,60 @@
-import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { useState } from "react";
+import { Pause, Play } from "lucide-react";
 import { safePublicHref } from "@/lib/public-href";
-import { useStorefrontControl } from "@/lib/storefront-control";
+import { useStorefrontControl, type AnnouncementItem } from "@/lib/storefront-control";
 
-const STORAGE_KEY = "lbb-announcement-seasonal-v2-dismissed";
-export const ANNOUNCEMENT_HEIGHT = 32;
+export const ANNOUNCEMENT_HEIGHT = 36;
 
-export function AnnouncementBar({
-  onDismiss,
-  onVisibilityChange,
-}: {
-  onDismiss?: () => void;
-  onVisibilityChange?: (visible: boolean) => void;
-}) {
-  const { announcements, brand } = useStorefrontControl();
-  const safeAnnouncements = announcements.flatMap((item) => {
+export function publicAnnouncements(items: AnnouncementItem[]) {
+  return items.flatMap((item) => {
     const href = safePublicHref(item.href);
-    return href ? [{ ...item, href }] : [];
+    return href && item.text.trim() ? [{ ...item, href }] : [];
   });
-  const [visible, setVisible] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  const [index, setIndex] = useState(0);
+}
+
+/** One accessible list plus a non-interactive visual copy for a seamless loop. */
+export function AnnouncementBar() {
+  const { announcements, brand } = useStorefrontControl();
+  const messages = publicAnnouncements(announcements);
   const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    try {
-      if (localStorage.getItem(STORAGE_KEY) === "1") {
-        onVisibilityChange?.(false);
-        onDismiss?.();
-        return;
-      }
-    } catch {
-      // Storage can be unavailable; the announcement remains visible.
-    }
-    setVisible(safeAnnouncements.length > 0);
-    onVisibilityChange?.(safeAnnouncements.length > 0);
-  }, [safeAnnouncements.length, onDismiss, onVisibilityChange]);
-
-  useEffect(() => {
-    if (!visible || paused || safeAnnouncements.length < 2) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const id = window.setInterval(
-      () => setIndex((current) => (current + 1) % safeAnnouncements.length),
-      5200,
-    );
-    return () => window.clearInterval(id);
-  }, [safeAnnouncements.length, paused, visible]);
-
-  useEffect(() => {
-    if (index >= safeAnnouncements.length) setIndex(0);
-  }, [safeAnnouncements.length, index]);
-
-  const dismiss = () => {
-    setVisible(false);
-    onVisibilityChange?.(false);
-    try {
-      localStorage.setItem(STORAGE_KEY, "1");
-    } catch {
-      // Dismissal then lasts only for this render session.
-    }
-    onDismiss?.();
-  };
-
-  if (!mounted || !visible || safeAnnouncements.length === 0) return null;
-  const current = safeAnnouncements[index] ?? safeAnnouncements[0];
-  const external = current.href.startsWith("https://");
+  if (!messages.length) return null;
 
   return (
-    <aside
-      dir="rtl"
-      aria-label={`اطلاعیه‌های ${brand.nameFa}`}
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocusCapture={() => setPaused(true)}
-      onBlurCapture={() => setPaused(false)}
-      className="fixed inset-x-0 top-0 z-[calc(var(--z-nav)+1)] grid grid-cols-[auto_minmax(0,1fr)_auto] items-center bg-signal text-obsidian"
-      style={{ height: ANNOUNCEMENT_HEIGHT }}
-    >
-      <span aria-hidden="true" className="tech ps-3 text-obsidian">
-        {brand.nameFa} / خبر
-      </span>
-      <a
-        href={current.href}
-        target={external ? "_blank" : undefined}
-        rel={external ? "noopener noreferrer" : undefined}
-        className="tech flex min-w-0 items-center justify-center gap-3 truncate px-3 text-center text-obsidian focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-obsidian"
-      >
-        <span aria-live="polite" className="truncate">
-          {current.text}
-        </span>
-        <span aria-hidden="true" className="hidden gap-1 sm:flex">
-          {safeAnnouncements.map((message, messageIndex) => (
-            <span
-              key={`${message.href}-${message.text}`}
-              className={`h-1 w-3 ${messageIndex === index ? "bg-obsidian" : "bg-obsidian/30"}`}
-            />
+    <aside aria-label={`اطلاعیه‌های ${brand.nameFa}`} className="nox-announcements">
+      <div className="nox-announcements__viewport">
+        <div className="nox-announcements__track" data-paused={paused}>
+          {[false, true].map((duplicate) => (
+            <div
+              key={String(duplicate)}
+              className="nox-announcements__group"
+              aria-hidden={duplicate || undefined}
+            >
+              {messages.map((item, index) => (
+                <span className="nox-announcements__item" key={`${index}-${item.text}`}>
+                  {duplicate ? (
+                    <span>{item.text}</span>
+                  ) : (
+                    <a href={item.href} dir="auto">
+                      {item.text}
+                    </a>
+                  )}
+                  <span aria-hidden="true" className="nox-announcements__divider">
+                    ✳
+                  </span>
+                </span>
+              ))}
+            </div>
           ))}
-        </span>
-      </a>
+        </div>
+      </div>
       <button
         type="button"
-        aria-label="بستن نوار اطلاعیه"
-        onClick={dismiss}
-        className="grid h-8 w-10 place-items-center text-obsidian/75 transition-colors hover:text-obsidian"
+        className="nox-announcements__toggle"
+        aria-label={paused ? "ادامه حرکت نوار اطلاعیه" : "توقف حرکت نوار اطلاعیه"}
+        aria-pressed={paused}
+        onClick={() => setPaused((value) => !value)}
       >
-        <X size={14} aria-hidden="true" />
+        {paused ? <Play size={12} aria-hidden="true" /> : <Pause size={12} aria-hidden="true" />}
       </button>
     </aside>
   );

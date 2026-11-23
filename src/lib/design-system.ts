@@ -24,14 +24,14 @@ export const TYPE_TOKENS = [
   { name: "Display 1", className: "text-display-1", sample: "فرم تازه خیابان" },
   { name: "Display 2", className: "text-display-2", sample: "کالکشن شب‌گرد" },
   { name: "Display 3", className: "text-display-3", sample: "جزئیات محصول" },
-  { name: "Title", className: "text-title", sample: "هودی کلاسیک LBB" },
+  { name: "Title", className: "text-title", sample: "هودی کلاسیک NOX" },
   { name: "Lede", className: "text-lede", sample: "روایت کوتاه و تصمیم‌ساز برای معرفی بخش." },
   {
     name: "Body",
     className: "body-copy",
     sample: "متن اصلی فارسی باید خوانا، طبیعی و دارای عرض کنترل‌شده باشد.",
   },
-  { name: "Technical", className: "tech", sample: "LBB / SYSTEM / 02" },
+  { name: "Technical", className: "tech", sample: "NOX / SYSTEM / 02" },
 ] as const;
 
 export const SPACING_TOKENS: DesignToken[] = [

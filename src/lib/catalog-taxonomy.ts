@@ -14,7 +14,7 @@ export type CatalogTaxonomyGroup = CatalogTaxonomyNode & {
 };
 
 /**
- * LBB merchandising taxonomy approved from employer-provided business truth.
+ * NOX merchandising taxonomy approved from employer-provided business truth.
  *
  * Important:
  * This is the target merchandising taxonomy, not proof that every node already

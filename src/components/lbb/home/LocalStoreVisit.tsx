@@ -4,6 +4,7 @@ import { MerchantNavigationLink } from "@/components/lbb/navigation/MerchantNavi
 import { CtaClasses, Shell, TechLabel } from "@/components/lbb/ui/primitives";
 import { BRAND } from "@/lib/brand";
 import { lifestyle2 } from "@/lib/product-images";
+import { ImageReveal } from "@/components/lbb/ImageReveal";
 import { useStorefrontControl } from "@/lib/storefront-control";
 import { useStorefrontPresentation } from "@/lib/storefront-presentation";
 
@@ -23,10 +24,12 @@ export function LocalStoreVisit() {
         aria-labelledby="local-store-title"
         className="border-t border-hairline bg-carbon py-12 md:py-16"
       >
-        <Shell className="grid !px-0 overflow-hidden rounded-3xl border border-hairline bg-obsidian shadow-overlay lg:grid-cols-2">
-          <div className="relative min-h-[400px] overflow-hidden bg-carbon-2 lg:min-h-[clamp(500px,50vw,840px)]">
+        <Shell className="grid !px-0 overflow-hidden lg:grid-cols-2">
+          <div
+            className={`relative min-h-[400px] overflow-hidden lg:min-h-[clamp(500px,50vw,840px)] ${imageUrl ? "bg-carbon-2" : "bg-transparent"}`}
+          >
             {imageUrl ? (
-              <img
+              <ImageReveal className="absolute inset-0"><img
                 src={imageUrl}
                 alt={`فروشگاه حضوری ${brand.nameFa}`}
                 width={1200}
@@ -36,7 +39,7 @@ export function LocalStoreVisit() {
                 sizes="(max-width: 1023px) 100vw, 50vw"
                 className="absolute inset-0 w-full object-cover object-top"
                 style={{ height: "100%" }}
-              />
+              /></ImageReveal>
             ) : (
               <div className="grid min-h-[360px] place-items-center p-8 text-center text-sm leading-7 text-metal">
                 تصویر فروشگاه به‌زودی در این بخش نمایش داده می‌شود.
@@ -119,27 +122,27 @@ export function LocalStoreVisit() {
       aria-labelledby="local-store-title"
       className="border-t border-hairline bg-carbon py-12 md:py-16"
     >
-      <Shell className="grid overflow-hidden rounded-3xl border border-hairline bg-obsidian shadow-overlay lg:grid-cols-2">
+      <Shell className="grid overflow-hidden lg:grid-cols-2">
         <div className="relative self-start overflow-hidden">
-          <img
+          <ImageReveal><img
             src={lifestyle2}
-            alt="استایل پوشاک خیابانی ال‌بی‌بی"
+            alt="استایل پوشاک خیابانی نوکس"
             width={1200}
             height={1500}
             loading="lazy"
             decoding="async"
             sizes="(max-width: 1023px) 100vw, 50vw"
             className="block h-auto w-full"
-          />
+          /></ImageReveal>
         </div>
         <div className="flex flex-col justify-center p-6 md:p-9 lg:p-11">
-          <TechLabel tone="signal">فروشگاه حضوری ال‌بی‌بی</TechLabel>
+          <TechLabel tone="signal">فروشگاه حضوری نوکس</TechLabel>
           <h2 id="local-store-title" className="mt-5 text-display-2 text-bone">
-            آنلاین ببین، در مهستان از نزدیک انتخاب کن.
+            آنلاین ببین، در فردوسی از نزدیک انتخاب کن.
           </h2>
           <p className="mt-5 max-w-[52ch] text-sm leading-8 text-metal">
             مدل‌ها را در سایت مقایسه کن و اگر دوست داشتی برای دیدن رنگ، جنس و تن‌خور از نزدیک به
-            فروشگاه ال‌بی‌بی در پاساژ مهستان کرج سر بزن.
+            فروشگاه نوکس در پاساژ فردوسی تهران سر بزن.
           </p>
           <div className="mt-8 grid gap-3 sm:grid-cols-2">
             <div className="flex items-start gap-3 rounded-2xl border border-hairline bg-carbon p-4">

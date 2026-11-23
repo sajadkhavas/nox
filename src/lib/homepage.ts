@@ -4,12 +4,13 @@ export const HOME_CATEGORY_ORDER: CategorySlug[] = [
   "hoodies",
   "pants",
   "tshirts",
-  "shoes",
-  "socks",
+  "jorts",
+  "jackets",
+  "face-masks",
 ];
 
 /** Categories currently promoted on the storefront; inventory routes remain intact. */
-export const ACTIVE_HOME_CATEGORY_ORDER = HOME_CATEGORY_ORDER.filter((slug) => slug !== "hoodies");
+export const ACTIVE_HOME_CATEGORY_ORDER = HOME_CATEGORY_ORDER;
 
 export const HOME_DECISION_LINKS = [
   {

@@ -3,7 +3,7 @@ import { forwardRef, type ButtonHTMLAttributes, type HTMLAttributes, type ReactN
 import { cn } from "@/lib/utils";
 
 /* =========================================================================
-   LBB Design System 2.0 primitives
+   NOX Design System 2.0 primitives
    Components expose semantic states; pages must not recreate them ad hoc.
    ========================================================================= */
 
@@ -134,7 +134,7 @@ export function SectionHead({
         </div>
       )}
       <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
-        <Heading className="text-display-2 min-w-0 text-bone">{title}</Heading>
+        <Heading className="text-display-2 min-w-0 text-bone nox-text-frame"><span className="nox-text-motion">{title}</span></Heading>
         {action}
       </div>
       {lede && <p className="text-lede">{lede}</p>}

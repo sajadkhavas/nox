@@ -40,7 +40,7 @@ export function CategoryTakeover() {
             >
               <Frame
                 src={categoryImage(c.slug)}
-                alt={`دسته‌بندی ${c.nameFa} LBB`}
+                alt={`دسته‌بندی ${c.nameFa} NOX`}
                 ratio="4/5"
                 width={900}
                 height={1200}

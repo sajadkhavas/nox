@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ProductCard } from "@/components/lbb/ProductCard";
+import { NoxProductCarousel } from "./NoxProductCarousel";
 import { MerchantNavigationLink } from "@/components/lbb/navigation/MerchantNavigationLink";
 import { SectionHead, Shell, StatePanel } from "@/components/lbb/ui/primitives";
 import type { BackendCatalogCard } from "@/lib/backend-storefront";
@@ -42,20 +42,13 @@ export function ProductMoments({ liveProducts }: { liveProducts?: BackendCatalog
             }
           />
 
+          <NoxProductCarousel products={items} />
           {items.length === 0 ? (
             <StatePanel className="mt-8" title="هنوز محصول واقعی برای این بخش منتشر نشده است">
               با اضافه‌شدن محصولات منتخب، تازه‌ترین پیشنهادهای فروشگاه در این بخش نمایش داده
               می‌شوند.
             </StatePanel>
-          ) : (
-            <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
-              {items.map((product, index) => (
-                <div key={product.id} className="min-w-0">
-                  <ProductCard p={product} priority={index === 0} />
-                </div>
-              ))}
-            </div>
-          )}
+          ) : null}
         </Shell>
       </section>
     );
@@ -64,8 +57,10 @@ export function ProductMoments({ liveProducts }: { liveProducts?: BackendCatalog
   const currentSlugs = [
     "lbb-signature-tee",
     "denim-baggy-jean",
-    "urban-runner-sneaker",
-    "lbb-crew-socks",
+    "oversized-black-hoodie",
+    "cargo-street-pants",
+    "lbb-classic-hoodie",
+    "graphic-tee-red",
   ];
   const curated = currentSlugs.flatMap((slug) =>
     products.filter((product) => product.slug === slug),
@@ -80,9 +75,9 @@ export function ProductMoments({ liveProducts }: { liveProducts?: BackendCatalog
       <Shell>
         <SectionHead
           index="02"
-          label="انتخاب‌های ال‌بی‌بی"
-          title={<span id="home-products-title">تازه‌ها و انتخاب‌های این هفته</span>}
-          lede="چند انتخاب آماده برای شروع؛ قیمت، رنگ و سایز موجود همین‌جا مشخص است."
+          label="انتخاب‌های نوکس"
+          title={<span id="home-products-title">فرم، فراتر از قالب.</span>}
+          lede="انتخاب‌های استریت‌ویر · محصولات این پیش‌نمایش آزمایشی هستند."
           action={
             <Link to="/shop" className="tech inline-flex min-h-11 items-center gap-2 text-signal">
               کاتالوگ کامل
@@ -91,13 +86,7 @@ export function ProductMoments({ liveProducts }: { liveProducts?: BackendCatalog
           }
         />
 
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-5">
-          {curated.map((product, index) => (
-            <div key={product.slug} className="min-w-0">
-              <ProductCard p={product} priority={index === 0} />
-            </div>
-          ))}
-        </div>
+        <NoxProductCarousel products={curated} />
       </Shell>
     </section>
   );

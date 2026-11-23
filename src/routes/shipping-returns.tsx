@@ -21,8 +21,8 @@ import { contentParagraphs, resolveOptionalStorefrontPage } from "@/lib/content-
 import { pageMeta, canonical, breadcrumbLd, ROBOTS } from "@/lib/site";
 import { useStorefrontControl, type ReturnsPolicyControl } from "@/lib/storefront-control";
 
-const TITLE = "ارسال، تعویض و مرجوعی | LBB";
-const DESC = "روش‌های ارسال LBB و شرایط تعویض و مرجوعی سفارش‌ها را پیش از خرید بررسی کنید.";
+const TITLE = "ارسال، تعویض و مرجوعی | NOX";
+const DESC = "روش‌های ارسال NOX و شرایط تعویض و مرجوعی سفارش‌ها را پیش از خرید بررسی کنید.";
 
 type LiveDeliveryPolicy = {
   tehran: DeliveryOptionsDto;
@@ -63,7 +63,7 @@ export const Route = createFileRoute("/shipping-returns")({
   },
   head: ({ loaderData }) => {
     const page = loaderData?.page;
-    const title = page?.metaTitle || (page ? `${page.title} | LBB` : TITLE);
+    const title = page?.metaTitle || (page ? `${page.title} | NOX` : TITLE);
     const description = page?.metaDescription || page?.excerpt || DESC;
 
     return {

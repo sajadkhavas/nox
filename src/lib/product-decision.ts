@@ -63,6 +63,8 @@ export type GarmentMeasurementRow = {
 };
 
 export type GarmentMeasurements = {
+  image?: { url: string; alt: string };
+  description?: string | null;
   unit: "cm";
   columns: Array<{ key: string; label: string }>;
   rows: GarmentMeasurementRow[];
@@ -252,6 +254,17 @@ export function mediaForColor(model: ProductDecisionViewModel, colorId: string |
   return chooseColorMediaWithPersistentItems(model.media, model.mediaByColor, colorId, (item) =>
     Boolean(item.mannequin),
   );
+}
+
+export function mediaForSelection(
+  model: ProductDecisionViewModel,
+  colorId: string | null,
+  variant?: DecisionVariant | null,
+) {
+  const colorMedia = mediaForColor(model, colorId);
+  if (!variant?.mediaIds?.length) return colorMedia;
+  const variantMedia = model.media.filter((item) => variant.mediaIds?.includes(item.id));
+  return [...variantMedia, ...colorMedia.filter((item) => !variantMedia.includes(item))];
 }
 
 export function variantForSelection(

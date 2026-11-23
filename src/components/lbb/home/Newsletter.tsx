@@ -25,7 +25,7 @@ export function Newsletter() {
           از دراپ بعدی جا نمونی
         </h2>
         <p className="max-w-lg text-lede">
-          زمان انتشار، پشت‌صحنه طراحی و موجودشدن قطعه‌های جدید ابتدا در صفحه رسمی LBB اعلام می‌شود.
+          زمان انتشار، پشت‌صحنه طراحی و موجودشدن قطعه‌های جدید ابتدا در صفحه رسمی NOX اعلام می‌شود.
         </p>
 
         <div className="mt-2 flex flex-wrap justify-center gap-3">
@@ -38,7 +38,7 @@ export function Newsletter() {
             دنبال کردن @LBBCLO
           </a>
           <Link to="/contact" className={`${CtaClasses("line")} rounded-xl`}>
-            تماس با LBB
+            تماس با NOX
           </Link>
         </div>
       </div>

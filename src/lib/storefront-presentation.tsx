@@ -73,12 +73,12 @@ type BootstrapDto = {
 
 const PAGE_DEFAULTS: StorefrontPresentation["pages"] = {
   shop: {
-    metaTitle: "فروشگاه LBB | خرید پوشاک خیابانی و استریت‌ویر",
+    metaTitle: "فروشگاه NOX | خرید پوشاک خیابانی و استریت‌ویر",
     metaDescription:
-      "محصولات موجود LBB را با فیلترهای دسته، سایز، رنگ، قیمت و موجودی مرور کن و برای جزئیات هر مدل وارد صفحه همان محصول شو.",
-    eyebrow: "فروشگاه / ال‌بی‌بی / مهستان",
+      "محصولات موجود NOX را با فیلترهای دسته، سایز، رنگ، قیمت و موجودی مرور کن و برای جزئیات هر مدل وارد صفحه همان محصول شو.",
+    eyebrow: "فروشگاه / نوکس / فردوسی",
     title: "استایل تو، قانون تو.",
-    lede: "قطعه‌های ال‌بی‌بی را بر اساس دسته، رنگ، سایز و موجودی کشف کن؛ یا مستقیم چیزی را که می‌خواهی جست‌وجو کن.",
+    lede: "قطعه‌های نوکس را بر اساس دسته، رنگ، سایز و موجودی کشف کن؛ یا مستقیم چیزی را که می‌خواهی جست‌وجو کن.",
     sectionLabel: "SHOP BY CATEGORY",
     sectionTitle: "از دسته شروع کن",
     primaryCtaLabel: "",
@@ -88,11 +88,11 @@ const PAGE_DEFAULTS: StorefrontPresentation["pages"] = {
     socialImageUrl: null,
   },
   collections: {
-    metaTitle: "کالکشن‌های LBB | مجموعه‌های منتخب فروشگاه",
-    metaDescription: "کالکشن‌های LBB را مرور کنید و محصولات هر مجموعه را یک‌جا ببینید.",
-    eyebrow: "LBB / COLLECTIONS",
-    title: "کالکشن‌های LBB",
-    lede: "کالکشن‌های LBB را مرور کنید و محصولات هر مجموعه را یک‌جا ببینید.",
+    metaTitle: "کالکشن‌های NOX | مجموعه‌های منتخب فروشگاه",
+    metaDescription: "کالکشن‌های NOX را مرور کنید و محصولات هر مجموعه را یک‌جا ببینید.",
+    eyebrow: "NOX / COLLECTIONS",
+    title: "کالکشن‌های NOX",
+    lede: "کالکشن‌های NOX را مرور کنید و محصولات هر مجموعه را یک‌جا ببینید.",
     sectionLabel: "",
     sectionTitle: "",
     primaryCtaLabel: "مرور فروشگاه",
@@ -102,11 +102,11 @@ const PAGE_DEFAULTS: StorefrontPresentation["pages"] = {
     socialImageUrl: null,
   },
   lookbook: {
-    metaTitle: "لوک‌بوک LBB | داستان‌های تصویری و مسیرهای مرتبط",
+    metaTitle: "لوک‌بوک NOX | داستان‌های تصویری و مسیرهای مرتبط",
     metaDescription:
-      "لوک‌بوک LBB را ببینید؛ داستان‌های تصویری با مسیرهای مرتبط به کالکشن، دسته و در صورت انتشار عمومی، صفحه محصول.",
-    eyebrow: "LBB / VISUAL STORIES",
-    title: "لوک‌بوک؛ داستان‌های تصویری LBB",
+      "لوک‌بوک NOX را ببینید؛ داستان‌های تصویری با مسیرهای مرتبط به کالکشن، دسته و در صورت انتشار عمومی، صفحه محصول.",
+    eyebrow: "NOX / VISUAL STORIES",
+    title: "لوک‌بوک؛ داستان‌های تصویری NOX",
     lede: "تصاویر و مسیرهای این صفحه مستقیماً از محتوای منتشرشده فروشگاه می‌آیند.",
     sectionLabel: "",
     sectionTitle: "",
@@ -117,12 +117,12 @@ const PAGE_DEFAULTS: StorefrontPresentation["pages"] = {
     socialImageUrl: null,
   },
   journal: {
-    metaTitle: "ژورنال LBB | راهنمای استایل، پارچه و نگهداری",
+    metaTitle: "ژورنال NOX | راهنمای استایل، پارچه و نگهداری",
     metaDescription:
-      "ژورنال LBB: راهنماهای کاربردی درباره استایل، ترکیب رنگ، شناخت پارچه و نگهداری، همراه با مسیرهای مرتبط به کالکشن و دسته‌های فروشگاه.",
-    eyebrow: "LBB / EDITORIAL NOTES",
-    title: "ژورنال؛ راهنماها و یادداشت‌های منتشرشده LBB",
-    lede: "مطالب و یادداشت‌های منتشرشده LBB را در این صفحه بخوانید.",
+      "ژورنال NOX: راهنماهای کاربردی درباره استایل، ترکیب رنگ، شناخت پارچه و نگهداری، همراه با مسیرهای مرتبط به کالکشن و دسته‌های فروشگاه.",
+    eyebrow: "NOX / EDITORIAL NOTES",
+    title: "ژورنال؛ راهنماها و یادداشت‌های منتشرشده NOX",
+    lede: "مطالب و یادداشت‌های منتشرشده NOX را در این صفحه بخوانید.",
     sectionLabel: "",
     sectionTitle: "",
     primaryCtaLabel: "",
@@ -132,10 +132,10 @@ const PAGE_DEFAULTS: StorefrontPresentation["pages"] = {
     socialImageUrl: null,
   },
   faq: {
-    metaTitle: "سوالات متداول LBB | سایز، ارسال و انتخاب محصول",
+    metaTitle: "سوالات متداول NOX | سایز، ارسال و انتخاب محصول",
     metaDescription:
-      "پاسخ پرسش‌های متداول LBB درباره محصولات، انتخاب سایز، ثبت سفارش، ارسال و مرجوعی.",
-    eyebrow: "FAQ / LBB",
+      "پاسخ پرسش‌های متداول NOX درباره محصولات، انتخاب سایز، ثبت سفارش، ارسال و مرجوعی.",
+    eyebrow: "FAQ / NOX",
     title: "پاسخ‌های روشن پیش از انتخاب و ثبت سفارش",
     lede: "پرسش‌ها و پاسخ‌های به‌روز فروشگاه در این بخش نمایش داده می‌شوند.",
     sectionLabel: "",

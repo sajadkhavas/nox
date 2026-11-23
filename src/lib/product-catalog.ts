@@ -1,4 +1,4 @@
-export type CategorySlug = "hoodies" | "pants" | "tshirts" | "shoes" | "socks";
+export type CategorySlug = "hoodies" | "pants" | "tshirts" | "shoes" | "socks" | "jorts" | "jackets" | "face-masks";
 
 export type FitKey = "oversized" | "boxy" | "relaxed" | "regular" | "true";
 
@@ -59,12 +59,12 @@ export const fmtToman = (n: number) => n.toLocaleString("fa-IR") + " تومان"
 /** Latin/technical numerals for monospace metadata. */
 export const fmtNum = (n: number) => n.toLocaleString("fa-IR");
 
-export const products: Product[] = [
+const sourceProducts: Product[] = [
   {
     id: "1",
     slug: "lbb-classic-hoodie",
-    name: "هودی کلاسیک LBB",
-    latinName: "LBB Classic Hoodie",
+    name: "هودی کلاسیک NOX",
+    latinName: "NOX Classic Hoodie",
     category: "hoodies",
     price: 1850000,
     originalPrice: 2100000,
@@ -74,14 +74,14 @@ export const products: Product[] = [
     inStock: true,
     isNew: true,
     rank: 1,
-    shortDescription: "هودی اورسایز با فرنچ‌تری ۳۲۰ گرم و گلدوزی LBB روی سینه.",
+    shortDescription: "هودی اورسایز با فرنچ‌تری ۳۲۰ گرم و گلدوزی NOX روی سینه.",
     description:
-      "هودی کلاسیک LBB از فرنچ‌تری ۳۲۰ گرم دوخته شده؛ برش اورسایز، سرشانهٔ افتاده، کاپشن دولایه و کش دوبل در مچ و پایین‌تنه. قطعهٔ پایهٔ دراپ ۰۰۱ که با هر ست استریت کار می‌کند.",
+      "هودی کلاسیک NOX از فرنچ‌تری ۳۲۰ گرم دوخته شده؛ برش اورسایز، سرشانهٔ افتاده، کاپشن دولایه و کش دوبل در مچ و پایین‌تنه. قطعهٔ پایهٔ دراپ ۰۰۱ که با هر ست استریت کار می‌کند.",
     material: "پنبه ۱۰۰٪ — فرنچ‌تری ۳۲۰g",
     care: CARE_KNIT,
     fit: "oversized",
     fitNote: "دو سایز بزرگ‌تر از تن‌خور معمول. برای فیت جمع‌تر یک سایز کوچک‌تر بگیرید.",
-    sku: "LBB-HD-001",
+    sku: "NOX-HD-001",
     drop: "DROP 001",
   },
   {
@@ -97,19 +97,19 @@ export const products: Product[] = [
     rank: 4,
     shortDescription: "کارگو ریپ‌استاپ با شش جیب عملیاتی و مچ کش‌دار.",
     description:
-      "شلوار کارگو LBB با پارچهٔ ریپ‌استاپ سبک، شش جیب کاربردی، کمر کش‌دار با بند و مچ جمع‌شو. ساخته شده برای حرکت روان در شهر.",
+      "شلوار کارگو NOX با پارچهٔ ریپ‌استاپ سبک، شش جیب کاربردی، کمر کش‌دار با بند و مچ جمع‌شو. ساخته شده برای حرکت روان در شهر.",
     material: "پنبه ۹۵٪ + الاستان ۵٪ — ریپ‌استاپ",
     care: CARE_KNIT,
     fit: "relaxed",
     fitNote: "فیت ریلکس با ساق مخروطی؛ اندازهٔ معمول خودتان را بگیرید.",
-    sku: "LBB-PT-001",
+    sku: "NOX-PT-001",
     drop: "DROP 001",
   },
   {
     id: "3",
     slug: "lbb-signature-tee",
-    name: "تیشرت سیگنیچر LBB",
-    latinName: "LBB Signature Tee",
+    name: "تیشرت سیگنیچر NOX",
+    latinName: "NOX Signature Tee",
     category: "tshirts",
     price: 780000,
     colors: ["#F2EFE8", "#0A0A0A", "#E6291E"],
@@ -124,7 +124,7 @@ export const products: Product[] = [
     care: CARE_KNIT,
     fit: "boxy",
     fitNote: "برش باکسی با آستین کوتاه‌تر؛ برای تن‌خور بلندتر یک سایز بالاتر.",
-    sku: "LBB-TS-001",
+    sku: "NOX-TS-001",
     drop: "DROP 001",
   },
   {
@@ -147,14 +147,14 @@ export const products: Product[] = [
     care: CARE_HARD,
     fit: "true",
     fitNote: "اندازهٔ واقعی. برای پای پهن نیم‌سایز بالاتر پیشنهاد می‌شود.",
-    sku: "LBB-SH-001",
+    sku: "NOX-SH-001",
     drop: "DROP 001",
   },
   {
     id: "5",
     slug: "lbb-crew-socks",
-    name: "جوراب ساقدار LBB",
-    latinName: "LBB Crew Socks",
+    name: "جوراب ساقدار NOX",
+    latinName: "NOX Crew Socks",
     category: "socks",
     price: 180000,
     colors: ["#0A0A0A", "#E6291E"],
@@ -163,12 +163,12 @@ export const products: Product[] = [
     rank: 6,
     shortDescription: "جوراب ساقدار پنبه‌ای با دو خط قرمز سیگنیچر روی ساق.",
     description:
-      "جوراب ساقدار LBB از نخ پنبه‌ای فشرده با کشباف ریب، پاشنه و پنجه تقویت‌شده و دو خط قرمز سیگنیچر روی ساق. کش بالای ساق شکل خودش را پس از شست‌وشوهای مکرر حفظ می‌کند.",
+      "جوراب ساقدار NOX از نخ پنبه‌ای فشرده با کشباف ریب، پاشنه و پنجه تقویت‌شده و دو خط قرمز سیگنیچر روی ساق. کش بالای ساق شکل خودش را پس از شست‌وشوهای مکرر حفظ می‌کند.",
     material: "۸۰٪ پنبه، ۱۷٪ پلی‌استر، ۳٪ الاستان",
     care: CARE_HARD,
     fit: "regular",
     fitNote: "فری‌سایز؛ مناسب سایز پای ۳۹ تا ۴۴.",
-    sku: "LBB-SO-001",
+    sku: "NOX-SO-001",
     drop: "DROP 001",
   },
 
@@ -185,12 +185,12 @@ export const products: Product[] = [
     rank: 5,
     shortDescription: "هودی مشکی با پرینت گرافیک بزرگ پشت.",
     description:
-      "هودی اورسایز LBB با پرینت گرافیک تمام‌پشت، برش دراپ‌شولدر و پارچهٔ فلیس ضخیم. یکی از سنگین‌وزن‌های دراپ ۰۰۱.",
+      "هودی اورسایز NOX با پرینت گرافیک تمام‌پشت، برش دراپ‌شولدر و پارچهٔ فلیس ضخیم. یکی از سنگین‌وزن‌های دراپ ۰۰۱.",
     material: "پنبه ۱۰۰٪ — فلیس",
     care: CARE_KNIT,
     fit: "oversized",
     fitNote: "اورسایز واقعی؛ اندازهٔ معمول برای تن‌خور بلوکی.",
-    sku: "LBB-HD-002",
+    sku: "NOX-HD-002",
     drop: "DROP 001",
   },
   {
@@ -207,12 +207,12 @@ export const products: Product[] = [
     rank: 7,
     shortDescription: "دنیم ۱۴ اونس با برش بگی ۹۰s.",
     description:
-      "جین بگی LBB از دنیم ۱۴ اونس با شست‌شوی دستی، برش بگی الهام‌گرفته از دههٔ نود و دوخت زنجیره‌ای در پاچه.",
+      "جین بگی NOX از دنیم ۱۴ اونس با شست‌شوی دستی، برش بگی الهام‌گرفته از دههٔ نود و دوخت زنجیره‌ای در پاچه.",
     material: "دنیم پنبه ۱۰۰٪ — ۱۴oz",
     care: CARE_DENIM,
     fit: "relaxed",
     fitNote: "کمر روی استخوان لگن می‌نشیند؛ پاچهٔ گشاد و بلند.",
-    sku: "LBB-PT-002",
+    sku: "NOX-PT-002",
     drop: "DROP 001",
   },
   {
@@ -233,10 +233,12 @@ export const products: Product[] = [
     care: CARE_KNIT,
     fit: "regular",
     fitNote: "برش رگولار؛ اندازهٔ معمول خودتان را بگیرید.",
-    sku: "LBB-TS-002",
+    sku: "NOX-TS-002",
     drop: "DROP 001",
   },
 ];
+
+export const products: Product[] = sourceProducts.filter((product) => product.category !== "shoes" && product.category !== "socks");
 
 export const PRODUCT_COUNT = products.length;
 

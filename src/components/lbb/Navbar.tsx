@@ -1,8 +1,13 @@
-import { useEffect, useState } from "react";
+import {
+  AnnouncementBar,
+  ANNOUNCEMENT_HEIGHT,
+  publicAnnouncements,
+} from "@/components/lbb/AnnouncementBar";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Heart, Menu, Search, ShoppingBag, UserRound, ChevronDown } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
+import { NoxMotif } from "@/components/lbb/NoxMotif";
 import { Logo } from "@/components/lbb/Logo";
 import { useNavigationOverlay } from "@/lib/navigation-overlay";
 import {
@@ -14,6 +19,7 @@ import { MobileMenuOverlay } from "@/components/lbb/navigation/MobileMenuOverlay
 import { SearchOverlay } from "@/components/lbb/navigation/SearchOverlay";
 import { useStorefrontControl } from "@/lib/storefront-control";
 import { useStorefrontPresentation } from "@/lib/storefront-presentation";
+import { NoxHeroHeader } from "./home/NoxHeroHeader";
 
 function CountBadge({ count }: { count: number }) {
   if (count <= 0) return null;
@@ -25,34 +31,25 @@ function CountBadge({ count }: { count: number }) {
 }
 
 export function Navbar({
-  theme = "dark",
+  theme: _theme = "dark",
   offsetTop = 0,
+  editorialHero = false,
 }: {
   theme?: "dark" | "light";
   offsetTop?: number;
+  editorialHero?: boolean;
 }) {
-  const { navigation, brand } = useStorefrontControl();
+  const { navigation, brand, announcements } = useStorefrontControl();
   const presentation = useStorefrontPresentation();
-  const [scrolled, setScrolled] = useState(false);
+  const headerTop =
+    offsetTop + (publicAnnouncements(announcements).length ? ANNOUNCEMENT_HEIGHT : 0);
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const { active, open, dismissForNavigation } = useNavigationOverlay();
   const { count, openDrawer } = useCart();
   const { count: wishlistCount } = useWishlist();
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 32);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const isLight = theme === "light";
   const ink = "text-bone";
-  const barSkin = scrolled
-    ? "border-b border-hairline bg-[var(--lbb-surface-glass)] shadow-raised backdrop-blur-xl"
-    : isLight
-      ? "border-b border-transparent bg-gradient-to-b from-obsidian/85 via-obsidian/55 to-transparent"
-      : "border-b border-transparent bg-gradient-to-b from-obsidian/75 to-transparent";
+  const barSkin = "nox-navbar border-b border-hairline bg-obsidian";
   const iconClass = `relative grid tap-target place-items-center border border-transparent transition-colors ${ink} hover:border-hairline hover:text-signal`;
   const shopActive = navigation.shop.some((item) => isMerchantNavigationItemActive(pathname, item));
 
@@ -61,13 +58,16 @@ export function Navbar({
     openDrawer();
   };
 
+  if (editorialHero) return <NoxHeroHeader />;
+
   return (
     <>
+      <AnnouncementBar />
       <nav
         dir="rtl"
         aria-label="ناوبری اصلی"
         className={`fixed inset-x-0 z-[var(--z-nav)] transition-[background-color,border-color,box-shadow] duration-[var(--dur-state)] ${barSkin}`}
-        style={{ top: offsetTop }}
+        style={{ top: headerTop }}
       >
         <div
           className="lbb-shell flex items-center justify-between gap-3 lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto]"
@@ -79,6 +79,7 @@ export function Navbar({
             className="flex min-w-0 shrink-0 items-center gap-2"
           >
             <Logo size={52} square />
+            <span className="nox-nav-wordmark" dir="ltr">NOX<span>COLLECTION</span></span>
           </Link>
 
           <div className="hidden min-w-0 items-center justify-center lg:flex">
@@ -181,11 +182,12 @@ export function Navbar({
             </button>
           </div>
         </div>
+        <div className="nox-nav-divider"><NoxMotif /></div>
       </nav>
 
       {active === "mega" ? (
         <div id="lbb-mega-menu">
-          <MegaMenuOverlay offsetTop={offsetTop} />
+          <MegaMenuOverlay offsetTop={headerTop} />
         </div>
       ) : null}
       {active === "menu" ? <MobileMenuOverlay /> : null}
