@@ -17,12 +17,12 @@ export function HeroNarrative(_props: {
       <img className="nox-hero__image" src={heroPhoto.url} alt="ویترین فروشگاه NOX با کاپشن‌های چرم، ماسک‌ها و پوشاک استریت‌ویر" width={1174} height={1339} fetchPriority="high" loading="eager" decoding="async" />
       <div className="nox-hero__image-mask" aria-hidden="true" />
       <div className="nox-hero__content">
-        <div className="nox-hero__eyebrow">New Collection 2024</div>
-        <h1 id="home-hero-title" className="nox-hero__title"><span className="nox-text-motion">Where<br /><span className="nox-hero__accent">Darkness</span>Wears</span></h1>
-        <p className="nox-hero__tagline">Streetwear forged in shadow. Every piece a ritual. Every cut a mark.</p>
+        <div className="nox-hero__eyebrow">New Collection 2026</div>
+        <h1 id="home-hero-title" className="nox-hero__title"><span className="nox-text-motion">Wear the<br /><span className="nox-hero__accent">Darkness</span></span></h1>
+        <p className="nox-hero__tagline" dir="rtl"><strong>پوشاک استریت‌ویر ناکس</strong><br />تیشرت‌های گرافیکی، شلوار بگ، هودی و کت؛ برای استایلی با امضای خودت.</p>
         <div className="nox-hero__actions">
-          <Button variant="hero" asChild className="nox-hero__button"><Link to="/shop">Shop the Drop</Link></Button>
-          <Button variant="heroOutline" asChild className="nox-hero__button"><Link to="/lookbook">Lookbook</Link></Button>
+          <Button variant="hero" asChild className="nox-hero__button"><Link to="/shop">مشاهده محصولات</Link></Button>
+          <Button variant="heroOutline" asChild className="nox-hero__button"><Link to="/lookbook">دیدن استایل‌ها</Link></Button>
         </div>
       </div>
       <div className="nox-hero__scroll" aria-hidden="true"><span>Scroll</span><i /></div>

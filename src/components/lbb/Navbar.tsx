@@ -19,7 +19,7 @@ import { MobileMenuOverlay } from "@/components/lbb/navigation/MobileMenuOverlay
 import { SearchOverlay } from "@/components/lbb/navigation/SearchOverlay";
 import { useStorefrontControl } from "@/lib/storefront-control";
 import { useStorefrontPresentation } from "@/lib/storefront-presentation";
-import { NoxHeroHeader } from "./home/NoxHeroHeader";
+
 
 function CountBadge({ count }: { count: number }) {
   if (count <= 0) return null;
@@ -58,16 +58,16 @@ export function Navbar({
     openDrawer();
   };
 
-  if (editorialHero) return <NoxHeroHeader />;
+
 
   return (
     <>
-      <AnnouncementBar />
+      {!editorialHero && <AnnouncementBar />}
       <nav
-        dir="rtl"
+        dir={editorialHero ? "ltr" : "rtl"}
         aria-label="ناوبری اصلی"
-        className={`fixed inset-x-0 z-[var(--z-nav)] transition-[background-color,border-color,box-shadow] duration-[var(--dur-state)] ${barSkin}`}
-        style={{ top: headerTop }}
+        className={`fixed inset-x-0 z-[var(--z-nav)] transition-[background-color,border-color,box-shadow] duration-[var(--dur-state)] ${barSkin} ${editorialHero ? "nox-navbar--editorial" : ""}`}
+        style={{ top: editorialHero ? 0 : headerTop }}
       >
         <div
           className="lbb-shell flex items-center justify-between gap-3 lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto]"
@@ -78,11 +78,10 @@ export function Navbar({
             aria-label={`${brand.nameFa} — خانه`}
             className="flex min-w-0 shrink-0 items-center gap-2"
           >
-            <Logo size={52} square />
-            <span className="nox-nav-wordmark" dir="ltr">NOX<span>COLLECTION</span></span>
+            {editorialHero ? <span className="nox-editorial-wordmark" dir="ltr">Nox</span> : <><Logo size={52} square /><span className="nox-nav-wordmark" dir="ltr">NOX<span>COLLECTION</span></span></>}
           </Link>
 
-          <div className="hidden min-w-0 items-center justify-center lg:flex">
+          <div dir="rtl" className="hidden min-w-0 items-center justify-center lg:flex">
             <ul className="flex items-center gap-1">
               <li>
                 <button
@@ -103,7 +102,7 @@ export function Navbar({
                       : `${ink} opacity-75 hover:opacity-100`
                   }`}
                 >
-                  {presentation.shell.shopMenuLabel}
+                  {editorialHero ? "دسته‌بندی محصولات" : presentation.shell.shopMenuLabel}
                   <ChevronDown
                     size={13}
                     aria-hidden="true"
@@ -116,7 +115,7 @@ export function Navbar({
                 return (
                   <li key={`${item.href}-${item.label}`}>
                     <MerchantNavigationLink
-                      item={item}
+                      item={editorialHero ? { ...item, label: ({ "/shop": "تازه‌ها", "/collections": "کالکشن‌ها", "/lookbook": "استایل‌ها", "/about": "درباره ناکس", "/contact": "تماس با ما", "/journal": "ژورنال" } as Record<string, string>)[item.href] ?? item.label } : item}
                       onNavigate={dismissForNavigation}
                       className={`tech flex min-h-11 items-center px-4 transition-colors ${
                         current ? "text-signal" : `${ink} opacity-75 hover:opacity-100`

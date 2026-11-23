@@ -1074,3 +1074,20 @@ html[data-nox-intro="waiting"] :is(.nox-hero__topline,.nox-hero__editorial p,.no
 .product-card h3 {color:var(--lbb-paper); font-weight:900;}
 .product-card [data-price],.product-card .tabular-nums {color:var(--lbb-signal);}
 @media (prefers-reduced-motion: reduce) {.product-card,.product-card img {transition:none!important; transform:none!important;}}
+
+/* NOX bilingual hero and full storefront navigation */
+.nox-navbar--editorial {background:linear-gradient(180deg,rgba(0,0,0,.92),rgba(0,0,0,.66)); border-color:rgba(242,237,228,.12); backdrop-filter:blur(12px);}
+.nox-editorial-wordmark {font:900 32px/1 var(--nox-hero-font); color:var(--nox-hero-paper);}
+.nox-navbar--editorial .tech {font-family:inherit; text-transform:none; letter-spacing:0;}
+.nox-hero__tagline {font-family:inherit; font-size:15px; line-height:1.95; text-align:right; text-transform:none; color:#d5cdc1; max-width:43ch; margin-top:24px; margin-bottom:28px;}
+.nox-hero__tagline strong {font-size:18px; font-weight:600; color:#f2ede4;}
+.nox-hero__actions {flex-wrap:wrap;}
+.nox-hero__button {font-family:inherit; font-size:14px; letter-spacing:0; text-transform:none;}
+.nox-hero__button:first-child {background:#851c20; color:#f2ede4; border:1px solid #851c20;}
+.nox-hero__button:first-child:hover {background:#a3272c; border-color:#a3272c;}
+.nox-hero__button:nth-child(2) {background:transparent; color:#f2ede4; border:1px solid #b5aaa0;}
+.nox-hero__button:nth-child(2):hover {background:#f2ede4; color:#000;}
+.nox-cat-section {padding-top:32px;}
+@media(max-width:768px) {.nox-cat-section {padding-top:24px;} .nox-hero__tagline {font-size:14px; max-width:34ch;} .nox-editorial-wordmark {font-size:27px;}}
+
+.nox-storefront:has(.nox-navbar--editorial) {--nox-announcement-h:0px!important;}
