@@ -1,0 +1,7 @@
+{
+  "folders": [{"name":"frontend","path":"."},{"name":"backend","path":"../backend"}],
+  "tasks": {"version":"2.0.0","tasks":[
+    {"label":"NOX: First local setup","type":"shell","command":"powershell.exe","args":["-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder:frontend}/scripts/NOX-Start-Local.ps1","-Setup","-TestSms"],"problemMatcher":[]},
+    {"label":"NOX: Start local","type":"shell","command":"powershell.exe","args":["-NoProfile","-ExecutionPolicy","Bypass","-File","${workspaceFolder:frontend}/scripts/NOX-Start-Local.ps1"],"problemMatcher":[]}
+  ]}
+}

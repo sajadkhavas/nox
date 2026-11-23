@@ -1,3 +1,4 @@
+import { localOtpTestCode } from "@/lib/local-otp";
 import { updateCustomerProfile } from "@/lib/account-api";
 import { hasFullName } from "@/lib/customer-fields";
 import { useState, type FormEvent } from "react";
@@ -26,6 +27,7 @@ export function CustomerOtpAuth({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [testCode, setTestCode] = useState<string | null>(null);
 
   const requestCode = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -36,9 +38,11 @@ export function CustomerOtpAuth({
       await ensureBackendCsrf();
       const response = await requestOtp(mobile.trim());
       setChallengeId(response.data.challengeId);
+      setTestCode(localOtpTestCode(response.data.testCode));
       setSent(true);
     } catch (cause) {
       setChallengeId(null);
+      setTestCode(null);
       setSent(false);
       setError(backendErrorMessage(cause));
     } finally {
@@ -160,8 +164,9 @@ export function CustomerOtpAuth({
         <form onSubmit={verifyCode} className="mt-6 grid gap-3">
           <div className="flex items-center gap-2 text-xs text-metal">
             <CheckCircle2 size={15} className="text-signal" aria-hidden="true" />
-            کد ورود برای شماره واردشده ارسال شد.
+            {testCode ? "ورود آزمایشی محلی؛ پیامکی ارسال نشده است." : "کد ورود برای شماره واردشده ارسال شد."}
           </div>
+          {testCode && <p className="text-sm text-bone">کد آزمایشی: <strong dir="ltr">{testCode}</strong></p>}
           <label htmlFor="customer-otp" className="text-xs font-semibold text-metal">
             کد یک‌بارمصرف
           </label>
@@ -187,6 +192,7 @@ export function CustomerOtpAuth({
             disabled={busy}
             onClick={() => {
               setChallengeId(null);
+              setTestCode(null);
               setCode("");
               setSent(false);
               setError(null);
