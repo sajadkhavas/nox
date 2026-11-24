@@ -271,7 +271,7 @@ function PrototypeLookbookPage() {
                       ) : null}
                       {category ? (
                         <Link
-                          to="/$category"
+                          to="/shop/$category"
                           params={{ category: category.slug }}
                           className={CtaClasses("line", "sm")}
                         >
@@ -384,7 +384,7 @@ function PrototypeLookbookPage() {
                 ) : null}
                 {activeScene.categorySlug ? (
                   <Link
-                    to="/$category"
+                    to="/shop/$category"
                     params={{ category: activeScene.categorySlug }}
                     className={CtaClasses("line", "sm")}
                     onClick={() => setActiveIndex(null)}

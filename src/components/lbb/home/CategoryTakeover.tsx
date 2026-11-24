@@ -32,7 +32,7 @@ export function CategoryTakeover() {
         {cats.map((c, i) => (
           <li key={c.slug}>
             <Link
-              to="/$category"
+              to="/shop/$category"
               params={{ category: c.slug }}
               onMouseEnter={() => setActive(i)}
               onFocus={() => setActive(i)}

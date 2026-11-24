@@ -85,20 +85,22 @@ export function LegacyCategoryGateway({
                 return (
                   <Link
                     key={category.publicId}
-                    to="/$category"
+                    to="/shop/$category"
                     params={{ category: category.slug }}
                     aria-label={`مشاهده ${category.name}${typeof category.productCount === "number" ? ` — ${fmtNum(category.productCount)} محصول` : ""}`}
                     className="group flex min-w-0 flex-col overflow-hidden border border-hairline bg-carbon text-bone transition-colors hover:border-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
                   >
                     <div className="flex aspect-square items-center justify-center overflow-hidden">
                       {cover ? (
-                        <ImageReveal className="size-full" order={index}><img
-                          src={cover}
-                          alt=""
-                          loading="lazy"
-                          decoding="async"
-                          className="size-full object-cover"
-                        /></ImageReveal>
+                        <ImageReveal className="size-full" order={index}>
+                          <img
+                            src={cover}
+                            alt=""
+                            loading="lazy"
+                            decoding="async"
+                            className="size-full object-cover"
+                          />
+                        </ImageReveal>
                       ) : category.icon ? (
                         <img
                           src={category.icon}
@@ -127,51 +129,93 @@ export function LegacyCategoryGateway({
   return <NoxCategoryStage />;
 }
 
-
 // Use the approved statue layout in both preview and live commerce mode.
-export function CategoryGateway({ liveCategories }: { liveCategories?: StorefrontCategoryDto[] | null }) {
+export function CategoryGateway({
+  liveCategories,
+}: {
+  liveCategories?: StorefrontCategoryDto[] | null;
+}) {
   return <NoxCategoryStage liveCategories={liveCategories} />;
 }
 
 const NOX_CATEGORY_CARDS = [
   { slug: "tshirts", image: catTshirts.url, name: "تیشرت", latin: "T-SHIRTS" },
-  { slug: "hoodies", image: catHoodies.url, name: "هودی و دورس", latin: "HOODIES" },
+  { slug: "hoodies", image: catHoodies.url, name: "هودی", latin: "HOODIES" },
   { slug: "pants", image: catPants.url, name: "شلوار", latin: "BAGGY / DENIM" },
   { slug: "jorts", image: catJorts.url, name: "جورتس", latin: "JORTS" },
-  { slug: "jackets", image: catJackets.url, name: "کت", latin: "JACKETS" },
+  { slug: "jackets", image: catJackets.url, name: "جکت", latin: "JACKETS" },
   { slug: "face-masks", image: catMasks.url, name: "فیس ماسک", latin: "FACE MASKS" },
 ] as const;
 
 type CategoryStageCard = { slug: string; image: string; name: string; latin: string };
 
-function NoxCategoryCard({ card, index, side }: { card: CategoryStageCard; index: number; side: "start" | "end" }) {
+function NoxCategoryCard({
+  card,
+  index,
+  side,
+}: {
+  card: CategoryStageCard;
+  index: number;
+  side: "start" | "end";
+}) {
   return (
-    <Link to="/$category" params={{ category: card.slug }} className="nox-cat-card" data-side={side} aria-label={`مشاهده ${card.name}`}>
-      <span className="nox-cat-card__corner" data-corner="tl" /><span className="nox-cat-card__corner" data-corner="tr" />
-      <span className="nox-cat-card__corner" data-corner="bl" /><span className="nox-cat-card__corner" data-corner="br" />
-      <span className="nox-cat-card__img"><img src={card.image} alt={card.name} width={960} height={1280} loading="lazy" decoding="async" /></span>
+    <Link
+      to="/shop/$category"
+      params={{ category: card.slug }}
+      className="nox-cat-card"
+      data-side={side}
+      aria-label={`مشاهده ${card.name}`}
+    >
+      <span className="nox-cat-card__corner" data-corner="tl" />
+      <span className="nox-cat-card__corner" data-corner="tr" />
+      <span className="nox-cat-card__corner" data-corner="bl" />
+      <span className="nox-cat-card__corner" data-corner="br" />
+      <span className="nox-cat-card__img">
+        <img
+          src={card.image}
+          alt={card.name}
+          width={960}
+          height={1280}
+          loading="lazy"
+          decoding="async"
+        />
+      </span>
       <span className="nox-cat-card__info">
-        <span className="nox-cat-card__num" dir="ltr">0{index + 1}</span>
+        <span className="nox-cat-card__num" dir="ltr">
+          0{index + 1}
+        </span>
         <span className="nox-cat-card__name">{card.name}</span>
-        <span className="nox-cat-card__sub" dir="ltr">{card.latin}</span>
-        <span className="nox-cat-card__arrow">مشاهده همه <ArrowUpLeft size={13} aria-hidden="true" /></span>
+        <span className="nox-cat-card__sub" dir="ltr">
+          {card.latin}
+        </span>
+        <span className="nox-cat-card__arrow">
+          مشاهده همه <ArrowUpLeft size={13} aria-hidden="true" />
+        </span>
       </span>
     </Link>
   );
 }
 
-function NoxCategoryStage({ liveCategories }: { liveCategories?: StorefrontCategoryDto[] | null } = {}) {
+function NoxCategoryStage({
+  liveCategories,
+}: { liveCategories?: StorefrontCategoryDto[] | null } = {}) {
   const visuals = useNoxVisuals();
   const cards: CategoryStageCard[] = NOX_CATEGORY_CARDS.map((card) => {
     const aliases = card.slug === "hoodies" ? ["sweatshirts", "hoodies"] : [card.slug];
     const live = liveCategories?.find((category) => aliases.includes(category.slug));
-    return live ? { ...card, slug: live.slug, name: live.name, image: live.image || visuals.categories?.[live.slug] || card.image } : { ...card, image: visuals.categories?.[card.slug === "hoodies" ? "sweatshirts" : card.slug] || card.image };
+    return live
+      ? {
+          ...card,
+          slug: live.slug,
+          name: live.name,
+          image: live.image || visuals.categories?.[live.slug] || card.image,
+        }
+      : {
+          ...card,
+          image:
+            visuals.categories?.[card.slug === "hoodies" ? "sweatshirts" : card.slug] || card.image,
+        };
   });
-  for (const category of liveCategories ?? []) {
-    if (category.showOnHome && !category.parentPublicId && !cards.some((card) => card.slug === category.slug)) {
-      cards.push({ slug: category.slug, name: category.name, image: category.image || noxCategoryCover(category.slug) || catPants.url, latin: category.slug });
-    }
-  }
   const split = Math.ceil(cards.length / 2);
   const rail = useRef<HTMLDivElement>(null);
   const scroll = (direction: 1 | -1) => {
@@ -180,49 +224,118 @@ function NoxCategoryStage({ liveCategories }: { liveCategories?: StorefrontCateg
     node.scrollBy({ left: direction * node.clientWidth * 0.7, behavior: "smooth" });
   };
   return (
-    <><section id="home-categories" dir="rtl" aria-labelledby="home-categories-title" className="nox-cat-section">
-      <NoxSideLine side="start" />
-      <NoxSideLine side="end" />
-      <div className="nox-cat-head">
-        <p className="nox-cat-head__label" dir="ltr">01 / NOX Category <span dir="rtl">دسته‌بندی‌های ناکس</span></p>
-        <h2 id="home-categories-title" className="nox-cat-head__title">استایل تو، از اینجا شروع می‌شود</h2>
-        <Link to="/shop" className="nox-cat-head__all">همه محصولات <ArrowUpLeft size={14} aria-hidden="true" /></Link>
-      </div>
-      <p className="nox-cat-intro">در ناکس، تیشرت گرافیکی، شلوار بگ، جورتس، هودی و کت را برای کنار هم ساختن استایل تو جمع کرده‌ایم.</p>
-      <div className="nox-cat-layout">
-        <div className="nox-cat-column" data-column="start">
-          {cards.slice(0, split).map((card, index) => <NoxCategoryCard key={card.slug} card={card} index={index} side="start" />)}
+    <>
+      <section
+        id="home-categories"
+        dir="rtl"
+        aria-labelledby="home-categories-title"
+        className="nox-cat-section"
+      >
+        <NoxSideLine side="start" />
+        <NoxSideLine side="end" />
+        <div className="nox-cat-head">
+          <p className="nox-cat-head__label" dir="ltr">
+            01 / NOX Category <span dir="rtl">دسته‌بندی‌های ناکس</span>
+          </p>
+          <h2 id="home-categories-title" className="nox-cat-head__title">
+            استایل تو، از اینجا شروع می‌شود
+          </h2>
+          <Link to="/shop" className="nox-cat-head__all">
+            همه محصولات <ArrowUpLeft size={14} aria-hidden="true" />
+          </Link>
         </div>
-        <div className="nox-cat-statue">
-          <div className="nox-cat-statue__wrap">
-            <span className="nox-cat-statue__aura" aria-hidden="true" />
-            <NoxAutoModel modelUrl={statueLite.url} detailUrl={STATUE_FULL_URL} name="مجسمه نوکس" interactive />
-          </div>
-          <img className="nox-cat-painting" src={visuals.painting ?? wallArt.url} alt="نقاشی دست‌ساز ناکس با نقش‌های رنگی و حلقهٔ فیروزه‌ای" width={600} height={600} loading="lazy" decoding="async" />
-        </div>
-        <div className="nox-cat-column" data-column="end">
-          {cards.slice(split).map((card, index) => <NoxCategoryCard key={card.slug} card={card} index={index + split} side="end" />)}
-        </div>
-        <div className="nox-cat-rail-wrap">
-          <div ref={rail} className="nox-cat-rail">
-            {cards.map((card, index) => (
-              <Link key={card.slug} to="/$category" params={{ category: card.slug }} className="nox-cat-chip" aria-label={`مشاهده ${card.name}`}>
-                <span className="nox-cat-chip__img"><img src={card.image} alt="" width={960} height={1280} loading="lazy" decoding="async" /></span>
-                <span className="nox-cat-chip__num" dir="ltr">0{index + 1}</span>
-                <span className="nox-cat-chip__name">{card.name}</span>
-              </Link>
+        <p className="nox-cat-intro">
+          در ناکس، تیشرت گرافیکی، شلوار بگ، جورتس، هودی و کت را برای کنار هم ساختن استایل تو جمع
+          کرده‌ایم.
+        </p>
+        <div className="nox-cat-layout">
+          <div className="nox-cat-column" data-column="start">
+            {cards.slice(0, split).map((card, index) => (
+              <NoxCategoryCard key={card.slug} card={card} index={index} side="start" />
             ))}
           </div>
-          <div className="nox-cat-rail__controls">
-            <button type="button" className="nox-cat-arrow" aria-label="دسته‌های قبلی" onClick={() => scroll(1)}>→</button>
-            <button type="button" className="nox-cat-arrow" aria-label="دسته‌های بعدی" onClick={() => scroll(-1)}>←</button>
+          <div className="nox-cat-statue">
+            <div className="nox-cat-statue__wrap">
+              <span className="nox-cat-statue__aura" aria-hidden="true" />
+              <NoxAutoModel
+                modelUrl={statueLite.url}
+                detailUrl={STATUE_FULL_URL}
+                name="مجسمه نوکس"
+                interactive
+              />
+            </div>
+            <img
+              className="nox-cat-painting"
+              src={visuals.painting ?? wallArt.url}
+              alt="نقاشی دست‌ساز ناکس با نقش‌های رنگی و حلقهٔ فیروزه‌ای"
+              width={600}
+              height={600}
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div className="nox-cat-column" data-column="end">
+            {cards.slice(split).map((card, index) => (
+              <NoxCategoryCard key={card.slug} card={card} index={index + split} side="end" />
+            ))}
+          </div>
+          <div className="nox-cat-rail-wrap">
+            <div ref={rail} className="nox-cat-rail">
+              {cards.map((card, index) => (
+                <Link
+                  key={card.slug}
+                  to="/shop/$category"
+                  params={{ category: card.slug }}
+                  className="nox-cat-chip"
+                  aria-label={`مشاهده ${card.name}`}
+                >
+                  <span className="nox-cat-chip__img">
+                    <img
+                      src={card.image}
+                      alt=""
+                      width={960}
+                      height={1280}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </span>
+                  <span className="nox-cat-chip__num" dir="ltr">
+                    0{index + 1}
+                  </span>
+                  <span className="nox-cat-chip__name">{card.name}</span>
+                </Link>
+              ))}
+            </div>
+            <div className="nox-cat-rail__controls">
+              <button
+                type="button"
+                className="nox-cat-arrow"
+                aria-label="دسته‌های قبلی"
+                onClick={() => scroll(1)}
+              >
+                →
+              </button>
+              <button
+                type="button"
+                className="nox-cat-arrow"
+                aria-label="دسته‌های بعدی"
+                onClick={() => scroll(-1)}
+              >
+                ←
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </section><NoxPortraitGallery /></>
+      </section>
+      <NoxPortraitGallery />
+    </>
   );
 }
 
 function NoxSideLine({ side }: { side: "start" | "end" }) {
- return <div className="nox-cat-sideline" data-side={side}><NoxMotif dense /></div>;
+  return (
+    <div className="nox-cat-sideline" data-side={side}>
+      <NoxMotif dense />
+    </div>
+  );
 }

@@ -14,4 +14,10 @@ describe("App routing", () => {
 
     expect(matches.at(-1)?.routeId).not.toBe(rootRouteId);
   });
+  it("matches category pages as standalone shop routes", () => {
+    const router = createRouter({ routeTree, context: { queryClient: new QueryClient() } });
+    const matches=router.matchRoutes("/shop/pants");
+    expect(matches.at(-1)?.routeId).toBe("/shop_/$category");
+    expect(matches.some(match=>match.routeId==="/shop")).toBe(false);
+  });
 });

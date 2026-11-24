@@ -64,7 +64,7 @@ function NotFoundComponent() {
               فروشگاه
             </Link>
             <Link
-              to="/$category"
+              to="/shop/$category"
               params={{ category: "hoodies" }}
               className="inline-flex min-h-11 items-center rounded-xl border border-hairline px-4 py-2 text-xs transition-colors hover:border-signal hover:text-signal"
             >
@@ -162,9 +162,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         { rel: "stylesheet", href: appCss },
         { rel: "preconnect", href: "https://fonts.googleapis.com" },
         { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-        { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" },
+        {
+          rel: "stylesheet",
+          href: "https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap",
+        },
         { rel: "icon", href: "/favicon.jpg", type: "image/jpeg" },
-        { rel: "apple-touch-icon", href: "/__l5e/assets-v1/fe19b9fb-8e5a-485f-b38f-dc11c0ebee6e/nox-logo.jpg" },
+        {
+          rel: "apple-touch-icon",
+          href: "/__l5e/assets-v1/fe19b9fb-8e5a-485f-b38f-dc11c0ebee6e/nox-logo.jpg",
+        },
         { rel: "manifest", href: "/manifest.webmanifest" },
       ],
       scripts: [

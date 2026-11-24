@@ -144,7 +144,7 @@ export function SearchOverlay() {
       return;
     }
     await navigate({
-      to: "/$category",
+      to: "/shop/$category",
       params: { category: suggestion.slug },
       replace: true,
     });

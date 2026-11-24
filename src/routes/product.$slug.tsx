@@ -310,7 +310,7 @@ function LiveProductPage({ loader }: { loader: LiveLoader }) {
             { label: "فروشگاه", to: "/shop" },
             {
               label: product.category.name,
-              to: "/$category",
+              to: "/shop/$category",
               params: { category: product.category.slug },
             },
             { label: product.name },
@@ -435,7 +435,7 @@ function PrototypeProductPage({ loader }: { loader: PrototypeLoader }) {
             items={[
               { label: "خانه", to: "/" },
               { label: "فروشگاه", to: "/shop" },
-              { label: cat.nameFa, to: "/$category", params: { category: cat.slug } },
+              { label: cat.nameFa, to: "/shop/$category", params: { category: cat.slug } },
               { label: breadcrumbName },
             ]}
           />

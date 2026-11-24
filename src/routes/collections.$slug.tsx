@@ -372,7 +372,7 @@ function LiveCollectionDetail({ loader }: { loader: LiveLoader }) {
                   {categories.map((category) => (
                     <Link
                       key={category.slug}
-                      to="/$category"
+                      to="/shop/$category"
                       params={{ category: category.slug }}
                       className={CtaClasses("line")}
                     >

@@ -20,12 +20,23 @@ export type CategoryMeta = {
 };
 
 function emptyCategory(slug: CategorySlug, name: string): CategoryMeta {
-  return { slug, nameFa: name, nameFaPlural: name, h1: `خرید ${name} از NOX`, metaTitle: `${name} | NOX COLLECTION`, metaDesc: `مدل‌های ${name} نوکس؛ مشخصات هر محصول از کاتالوگ فروشگاه دریافت می‌شود.`, seoText: `مدل‌های منتشرشده ${name} در این دسته نمایش داده می‌شوند. برای انتخاب، اطلاعات همان محصول را بررسی کنید.`, heroTagline: "فرم آزاد، هویت مستقل.", bullets: [], faqs: [] };
+  return {
+    slug,
+    nameFa: name,
+    nameFaPlural: name,
+    h1: `خرید ${name} از NOX`,
+    metaTitle: `${name} | NOX COLLECTION`,
+    metaDesc: `مدل‌های ${name} نوکس؛ مشخصات هر محصول از کاتالوگ فروشگاه دریافت می‌شود.`,
+    seoText: `مدل‌های منتشرشده ${name} در این دسته نمایش داده می‌شوند. برای انتخاب، اطلاعات همان محصول را بررسی کنید.`,
+    heroTagline: "فرم آزاد، هویت مستقل.",
+    bullets: [],
+    faqs: [],
+  };
 }
 
 export const CATEGORIES: Record<CategorySlug, CategoryMeta> = {
   jorts: emptyCategory("jorts", "جورتس"),
-  jackets: emptyCategory("jackets", "کت"),
+  jackets: emptyCategory("jackets", "جکت"),
   "face-masks": emptyCategory("face-masks", "فیس ماسک"),
   hoodies: {
     slug: "hoodies",
@@ -208,6 +219,13 @@ export const CATEGORIES: Record<CategorySlug, CategoryMeta> = {
   },
 };
 
-export const CATEGORY_SLUGS: CategorySlug[] = ["pants", "jorts", "tshirts", "hoodies", "jackets", "face-masks"];
+export const CATEGORY_SLUGS: CategorySlug[] = [
+  "pants",
+  "jorts",
+  "tshirts",
+  "hoodies",
+  "jackets",
+  "face-masks",
+];
 
 export const isValidCategory = (s: string): s is CategorySlug => s in CATEGORIES;

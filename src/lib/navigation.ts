@@ -1,3 +1,4 @@
+import { noxCategoryPath } from "./nox-category-paths";
 import type { LinkProps } from "@tanstack/react-router";
 
 export type NavigationItem = {
@@ -19,26 +20,31 @@ export const SHOP_NAVIGATION: NavigationItem[] = [
     label: "تیشرت",
     latin: "T-SHIRTS",
     description: "اورسایز، باکس، یقه‌دار، آستین‌بلند و حلقه‌ای",
-    to: "/$category",
+    to: "/shop/$category",
     params: { category: "tshirts" },
   },
   {
-    label: "هودی و دورس",
+    label: "هودی",
     latin: "SWEATSHIRTS",
     description: "در موجودی فعلی، هودی فعال است",
-    to: "/$category",
+    to: "/shop/$category",
     params: { category: "hoodies" },
   },
   {
     label: "شلوار",
     latin: "PANTS",
     description: "جین، بگ و کتان",
-    to: "/$category",
+    to: "/shop/$category",
     params: { category: "pants" },
   },
-  { label: "جورتس", latin: "JORTS", to: "/$category", params: { category: "jorts" } },
-  { label: "کت", latin: "JACKETS", to: "/$category", params: { category: "jackets" } },
-  { label: "فیس ماسک", latin: "FACE MASKS", to: "/$category", params: { category: "face-masks" } },
+  { label: "جورتس", latin: "JORTS", to: "/shop/$category", params: { category: "jorts" } },
+  { label: "جکت", latin: "JACKETS", to: "/shop/$category", params: { category: "jackets" } },
+  {
+    label: "فیس ماسک",
+    latin: "FACE MASKS",
+    to: "/shop/$category",
+    params: { category: "face-masks" },
+  },
 ];
 
 export const EDITORIAL_NAVIGATION: NavigationItem[] = [
@@ -73,9 +79,9 @@ export const PERSONAL_NAVIGATION: NavigationItem[] = [
 ];
 
 export function navigationHref(item: NavigationItem): string {
-  if (item.to === "/$category") {
+  if (item.to === "/shop/$category") {
     const params = item.params as { category?: string } | undefined;
-    return params?.category ? `/${params.category}` : "/shop";
+    return params?.category ? noxCategoryPath(params.category) : "/shop";
   }
   return String(item.to);
 }

@@ -1,8 +1,9 @@
+import { normalizeNoxCategoryHref } from "./nox-category-paths";
 export function safePublicHref(value: string | null | undefined): string | null {
   const href = value?.trim();
   if (!href) return null;
 
-  if (href.startsWith("/") && !href.startsWith("//")) return href;
+  if (href.startsWith("/") && !href.startsWith("//")) return normalizeNoxCategoryHref(href);
 
   try {
     const url = new URL(href);

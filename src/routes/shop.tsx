@@ -1,3 +1,5 @@
+import { resolveNoxVisuals, NoxVisualsProvider } from "@/lib/nox-visuals";
+import { NOX_CATEGORY_SLUGS, canonicalNoxCategorySlug } from "@/lib/nox-category-paths";
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import {
@@ -112,6 +114,7 @@ type PrototypeLoader = { mode: "prototype" };
 type ShopLoader = LiveLoader | PrototypeLoader;
 
 export const Route = createFileRoute("/shop")({
+  beforeLoad: async () => ({ noxVisuals: await resolveNoxVisuals() }),
   validateSearch: (search: Record<string, unknown>) =>
     isLiveBackend() ? parseBackendFilterSearch(search) : parseFilterSearch(search),
   loaderDeps: ({ search }) => ({ search }),
@@ -613,6 +616,15 @@ function ShopChrome({
   const navigate = useNavigate();
   const presentation = useStorefrontPresentation();
   const page = presentation.pages.shop;
+  const visuals = Route.useRouteContext().noxVisuals;
+  const shopImage =
+    visuals.shop || (!isLiveBackend() ? "/brand/editorial/shop-front.webp" : undefined);
+  const shopCategories = NOX_CATEGORY_SLUGS.flatMap((slug) => {
+    const category = categories.find((item) => canonicalNoxCategorySlug(item.slug) === slug);
+    return category
+      ? [{ ...category, slug, label: visuals.catalog?.categories?.[slug]?.name || category.label }]
+      : [];
+  });
   const [query, setQuery] = useState("");
   const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -631,48 +643,89 @@ function ShopChrome({
         <Shell className="py-4">
           <Breadcrumb items={[{ label: "خانه", to: "/" }, { label: "فروشگاه" }]} />
         </Shell>
-        <header className="nox-shop-heading">
-          <Shell className="nox-shop-titlebar">
-            <div>
-              <p dir="ltr" className="nox-shop-latin">
-                The shop
-              </p>
-              <h1>فروشگاه پوشاک ناکس</h1>
-              <p className="nox-shop-summary">{status}</p>
+        <header className="nox-shop-editorial">
+          <Shell>
+            <div className="nox-shop-hero-grid">
+              <div className="nox-shop-photo">
+                {shopImage && (
+                  <img
+                    src={shopImage}
+                    alt="نمای ورودی فروشگاه پوشاک ناکس با تابلو و مانکن‌های استریت‌ویر"
+                    width={1086}
+                    height={1448}
+                    fetchPriority="high"
+                    decoding="async"
+                  />
+                )}
+              </div>
+              <div className="nox-shop-intro">
+                <span className="nox-shop-latin" dir="ltr">
+                  The shop
+                </span>
+                <h1>{visuals.catalog?.shopTitle || "فروشگاه پوشاک استریت‌ویر ناکس"}</h1>
+                <p>
+                  {visuals.catalog?.shopIntro ||
+                    "دستهٔ دلخواهت را انتخاب کن و محصولات منتشرشدهٔ ناکس را ببین."}
+                </p>
+                <form onSubmit={submitSearch} role="search" className="nox-shop-search">
+                  <label htmlFor="shop-search" className="sr-only">
+                    جست‌وجو در فروشگاه
+                  </label>
+                  <input
+                    id="shop-search"
+                    type="search"
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="جست‌وجوی پوشاک…"
+                  />
+                  <button type="submit" disabled={!query.trim()} aria-label="جست‌وجو">
+                    <Search size={18} />
+                  </button>
+                </form>
+                <a href="#shop-results" className="nox-editorial-link">
+                  دیدن محصولات <ArrowUpLeft size={17} />
+                </a>
+                <p className="nox-shop-summary">{status}</p>
+              </div>
             </div>
-            <form onSubmit={submitSearch} role="search" className="nox-shop-search">
-              <label htmlFor="shop-search" className="sr-only">
-                جست‌وجو در فروشگاه
-              </label>
-              <input
-                id="shop-search"
-                type="search"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="جست‌وجوی پوشاک…"
-              />
-              <button type="submit" disabled={!query.trim()} aria-label="جست‌وجو">
-                <Search size={18} />
-              </button>
-            </form>
           </Shell>
-          <Shell className="flex snap-x gap-1 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <Link
-              to="/shop"
-              className="tech min-h-11 shrink-0 snap-start whitespace-nowrap border-b-2 border-signal px-4 py-3 text-signal"
-            >
-              همه قطعه‌ها
-            </Link>
-            {categories.map((category) => (
-              <Link
-                key={category.slug}
-                to="/$category"
-                params={{ category: category.slug }}
-                className="tech min-h-11 shrink-0 snap-start whitespace-nowrap border-b-2 border-transparent px-4 py-3 text-metal transition-colors hover:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
-              >
-                {category.label}
-              </Link>
-            ))}
+          <Shell className="nox-shop-categories">
+            <div className="nox-shop-category-heading">
+              <h2>از دنیای ناکس انتخاب کن</h2>
+              <span dir="ltr">NOX Category</span>
+            </div>
+            <div className="nox-shop-category-rail">
+              {shopCategories.map((category) => {
+                const slug = canonicalNoxCategorySlug(category.slug);
+                const cover =
+                  visuals.categories?.[slug] ||
+                  visuals.categories?.[slug === "hoodies" ? "sweatshirts" : slug] ||
+                  category.image ||
+                  (!isLiveBackend() ? noxCategoryCover(slug) : undefined);
+                return (
+                  <Link
+                    key={slug}
+                    to="/shop/$category"
+                    params={{ category: slug }}
+                    className="nox-shop-category-card"
+                  >
+                    {cover && (
+                      <img
+                        src={cover}
+                        alt={`پوشاک ${category.label} ناکس`}
+                        width={400}
+                        height={500}
+                        loading="lazy"
+                      />
+                    )}
+                    <span>
+                      {category.label}
+                      <ArrowUpLeft size={18} />
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
           </Shell>
         </header>
         <Band id="shop-results" hairline={false} className="scroll-mt-24 !py-0">

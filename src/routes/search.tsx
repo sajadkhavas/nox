@@ -521,7 +521,7 @@ function LiveSearch({ loader }: { loader: LiveLoader }) {
             {facets.categories.map((category) => (
               <Link
                 key={category.publicId}
-                to="/$category"
+                to="/shop/$category"
                 params={{ category: category.slug }}
                 className="tap-target rounded-full border border-hairline px-4 py-2 text-xs text-bone hover:border-signal hover:text-signal"
               >
@@ -824,7 +824,7 @@ function PrototypeSearch() {
                 {CATEGORY_SLUGS.map((category) => (
                   <Link
                     key={category}
-                    to="/$category"
+                    to="/shop/$category"
                     params={{ category }}
                     className="tap-target rounded-full border border-hairline px-4 py-2 text-xs text-bone hover:border-signal hover:text-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
                   >
@@ -899,7 +899,7 @@ function PrototypeSearch() {
                           {(["hoodies", "pants", "shoes"] as const).map((category) => (
                             <Link
                               key={category}
-                              to="/$category"
+                              to="/shop/$category"
                               params={{ category }}
                               className="tap-target rounded-full border border-hairline px-4 py-2 text-xs text-bone hover:border-signal hover:text-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
                             >

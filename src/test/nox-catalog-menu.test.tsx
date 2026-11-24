@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => ({ live: false, close: vi.fn(), dismiss: vi.fn(), list: vi.fn() }));
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ to, params, children, ...props }: any) => (
-    <a href={to === "/$category" ? `/${params.category}` : to} {...props}>
+    <a href={to === "/shop/$category" ? `/shop/${params.category}` : to} {...props}>
       {children}
     </a>
   ),
@@ -32,10 +32,10 @@ describe("NOX catalog menu", () => {
   });
   it("filters categories without losing category destinations and closes when requested", () => {
     render(<NoxCatalogOverlay />);
-    expect(screen.getByRole("link", { name: /شلوار جین و بگ/ })).toHaveAttribute("href", "/pants");
+    expect(screen.getByRole("link", { name: /شلوار/ })).toHaveAttribute("href", "/shop/pants");
     fireEvent.click(screen.getByRole("button", { name: "پایین‌تنه" }));
-    expect(screen.queryByRole("link", { name: /تیشرت باکسی/ })).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /جورتس/ })).toHaveAttribute("href", "/jorts");
+    expect(screen.queryByRole("link", { name: /تیشرت/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /جورتس/ })).toHaveAttribute("href", "/shop/jorts");
     fireEvent.click(screen.getByRole("button", { name: "بستن منو" }));
     expect(state.close).toHaveBeenCalledOnce();
   });
@@ -49,7 +49,7 @@ describe("NOX catalog menu", () => {
     await waitFor(() =>
       expect(screen.getByRole("link", { name: /کت سفارشی/ })).toHaveAttribute(
         "href",
-        "/owner-jackets",
+        "/shop/owner-jackets",
       ),
     );
     expect(screen.queryByText("پنهان")).not.toBeInTheDocument();

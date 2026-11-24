@@ -181,7 +181,7 @@ function LiveTaxonomy({
           >
             <div className="flex items-start justify-between gap-3">
               <Link
-                to="/$category"
+                to="/shop/$category"
                 params={{ category: root.slug }}
                 onClick={onNavigate}
                 aria-current={active ? "page" : undefined}
@@ -217,7 +217,7 @@ function LiveTaxonomy({
                 {root.children.map((child) => (
                   <li key={child.publicId}>
                     <Link
-                      to="/$category"
+                      to="/shop/$category"
                       params={{ category: child.slug }}
                       onClick={onNavigate}
                       className={`flex min-h-10 items-center justify-between gap-3 rounded-lg px-2 text-xs font-bold transition-colors hover:bg-carbon-2 hover:text-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal ${
@@ -236,7 +236,7 @@ function LiveTaxonomy({
                         {child.children.map((grandchild) => (
                           <Link
                             key={grandchild.publicId}
-                            to="/$category"
+                            to="/shop/$category"
                             params={{ category: grandchild.slug }}
                             onClick={onNavigate}
                             className={`rounded-full border px-2.5 py-1 text-[10px] transition-colors hover:border-signal hover:text-signal ${
@@ -261,14 +261,40 @@ function LiveTaxonomy({
   );
 }
 
-function PrototypeTaxonomy({ pathname, onNavigate, compact }: { pathname: string; onNavigate?: () => void; compact: boolean }) {
-  return <div className={compact ? "nox-taxonomy nox-taxonomy--compact" : "nox-taxonomy"}>
-    {SHOP_NAVIGATION.filter((item) => item.to === "/$category").map((item, index) => {
-      const slug = (item.params as { category: string }).category;
-      return <Link key={slug} to="/$category" params={{ category: slug }} onClick={onNavigate} aria-current={pathname === `/${slug}` ? "page" : undefined} className="nox-taxonomy__link">
-        <span className="nox-taxonomy__number">0{index+1}</span><span><strong>{item.label}</strong><small dir="ltr">{item.latin}</small></span><ArrowUpLeft size={19} aria-hidden="true" />
-      </Link>;
-    })}
-    <div className="nox-taxonomy__motif"><NoxMotif dense /></div>
-  </div>;
+function PrototypeTaxonomy({
+  pathname,
+  onNavigate,
+  compact,
+}: {
+  pathname: string;
+  onNavigate?: () => void;
+  compact: boolean;
+}) {
+  return (
+    <div className={compact ? "nox-taxonomy nox-taxonomy--compact" : "nox-taxonomy"}>
+      {SHOP_NAVIGATION.filter((item) => item.to === "/shop/$category").map((item, index) => {
+        const slug = (item.params as { category: string }).category;
+        return (
+          <Link
+            key={slug}
+            to="/shop/$category"
+            params={{ category: slug }}
+            onClick={onNavigate}
+            aria-current={pathname === `/${slug}` ? "page" : undefined}
+            className="nox-taxonomy__link"
+          >
+            <span className="nox-taxonomy__number">0{index + 1}</span>
+            <span>
+              <strong>{item.label}</strong>
+              <small dir="ltr">{item.latin}</small>
+            </span>
+            <ArrowUpLeft size={19} aria-hidden="true" />
+          </Link>
+        );
+      })}
+      <div className="nox-taxonomy__motif">
+        <NoxMotif dense />
+      </div>
+    </div>
+  );
 }

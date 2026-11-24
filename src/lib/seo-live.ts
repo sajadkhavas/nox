@@ -1,3 +1,4 @@
+import { normalizeNoxCategoryHref } from "./nox-category-paths";
 import type { SeoDto } from "@/lib/backend-api";
 
 function normalizeFallback(path: string) {
@@ -19,7 +20,7 @@ export function backendCanonicalPath(
     const url = new URL(candidate, "https://lbb.invalid");
     if (url.origin !== "https://lbb.invalid" || url.search || url.hash) return safeFallback;
     const normalized = url.pathname === "/" ? "/" : url.pathname.replace(/\/+$/, "");
-    return normalized || safeFallback;
+    return normalizeNoxCategoryHref(normalized || safeFallback);
   } catch {
     return safeFallback;
   }

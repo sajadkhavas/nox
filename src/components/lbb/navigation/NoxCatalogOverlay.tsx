@@ -13,12 +13,12 @@ import { Logo } from "@/components/lbb/Logo";
 
 type MenuCategory = { slug: string; name: string };
 const preview: MenuCategory[] = [
-  { slug: "tshirts", name: "تیشرت باکسی" },
-  { slug: "hoodies", name: "هودی و دورس" },
-  { slug: "pants", name: "شلوار جین و بگ" },
+  { slug: "tshirts", name: "تیشرت" },
+  { slug: "hoodies", name: "هودی" },
+  { slug: "pants", name: "شلوار" },
   { slug: "jorts", name: "جورتس" },
-  { slug: "jackets", name: "وست و کت" },
-  { slug: "face-masks", name: "ماسک و اکسسوری" },
+  { slug: "jackets", name: "جکت" },
+  { slug: "face-masks", name: "فیس ماسک" },
 ];
 const groups = ["همه", "بالاتنه", "پایین‌تنه", "اکسسوری"];
 const groupOf = (slug: string) =>
@@ -144,7 +144,7 @@ export function NoxCatalogOverlay() {
             ) : (
               shown.map((item) => (
                 <Link
-                  to="/$category"
+                  to="/shop/$category"
                   params={{ category: item.slug }}
                   key={item.slug}
                   onClick={dismissForNavigation}

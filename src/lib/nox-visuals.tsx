@@ -1,7 +1,23 @@
 /* eslint-disable react-refresh/only-export-components -- shared media context, resolver and hooks. */
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { getBackendBaseUrl } from "@/lib/backend-api";
+export type NoxCategoryGuide = {
+  slug: string;
+  name: string;
+  intro: string;
+  title: string;
+  image?: string;
+  alt?: string;
+  sections: Array<{ heading: string; text: string }>;
+};
+export type NoxCatalog = {
+  shopTitle?: string;
+  shopIntro?: string;
+  categories?: Record<string, NoxCategoryGuide>;
+};
 export type NoxVisuals = {
+  shop?: string;
+  catalog?: NoxCatalog;
   hero?: string;
   painting?: string;
   store?: string;
@@ -30,7 +46,10 @@ export async function resolveNoxVisuals(): Promise<NoxVisuals> {
     });
     if (!response.ok) return {};
     const payload = await response.json();
-    return payload.data?.settings?.home?.["home.nox_visuals"] ?? {};
+    return {
+      ...(payload.data?.settings?.home?.["home.nox_visuals"] ?? {}),
+      catalog: payload.data?.settings?.home?.["home.nox_catalog"] ?? {},
+    };
   } catch {
     return {};
   }
