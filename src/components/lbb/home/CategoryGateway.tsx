@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { Link } from "@tanstack/react-router";
 import wallArt from "@/assets/imported/public/brand/nox-wall-art.webp.asset.json";
 import { NoxMotif } from "@/components/lbb/NoxMotif";
+import { NoxPortraitGallery } from "./NoxPortraitGallery";
 import { NoxAutoModel } from "./NoxAutoModel";
 import statueLite from "@/assets/imported/nox-statue-lite.glb.asset.json";
 import catTshirts from "@/assets/imported/nox-cat-tshirts.webp.asset.json";
@@ -179,7 +180,7 @@ function NoxCategoryStage({ liveCategories }: { liveCategories?: StorefrontCateg
     node.scrollBy({ left: direction * node.clientWidth * 0.7, behavior: "smooth" });
   };
   return (
-    <section id="home-categories" dir="rtl" aria-labelledby="home-categories-title" className="nox-cat-section">
+    <><section id="home-categories" dir="rtl" aria-labelledby="home-categories-title" className="nox-cat-section">
       <NoxSideLine side="start" />
       <NoxSideLine side="end" />
       <div className="nox-cat-head">
@@ -218,7 +219,7 @@ function NoxCategoryStage({ liveCategories }: { liveCategories?: StorefrontCateg
           </div>
         </div>
       </div>
-    </section>
+    </section><NoxPortraitGallery /></>
   );
 }
 

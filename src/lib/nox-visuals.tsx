@@ -1,6 +1,6 @@
 import { createContext, useContext, type ReactNode } from "react";
 import { getBackendBaseUrl } from "@/lib/backend-api";
-export type NoxVisuals = { hero?: string; painting?: string; store?: string; gallery?: string[]; categories?: Record<string,string> };
+export type NoxVisuals = { hero?: string; painting?: string; store?: string; gallery?: string[]; portraits?: string[]; categories?: Record<string,string> };
 const Context = createContext<NoxVisuals>({});
 export const useNoxVisuals = () => useContext(Context);
 export function NoxVisualsProvider({value,children}:{value:NoxVisuals;children:ReactNode}) {return <Context.Provider value={value}>{children}</Context.Provider>;}
