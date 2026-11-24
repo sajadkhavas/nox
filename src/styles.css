@@ -1297,3 +1297,37 @@ h1,h2,h3,h4,.text-display-2,.text-display-3,.nox-cat-head__title {font-family:va
 @media(max-width:900px){.nox-shop-category-rail{display:flex;overflow:auto;scroll-snap-type:x mandatory;padding-bottom:5px}.nox-shop-category-card{flex:0 0 165px;scroll-snap-align:start}.nox-shop-hero-grid{min-height:480px}.nox-shop-photo{min-height:480px}.nox-shop-intro{padding:30px 24px}.nox-category-guide-grid{grid-template-columns:1fr .7fr;gap:28px}}
 @media(max-width:640px){.nox-shop-hero-grid{grid-template-columns:1fr}.nox-shop-photo{min-height:0;height:auto;aspect-ratio:4/5}.nox-shop-photo img{object-fit:cover;object-position:center 27%}.nox-shop-intro{padding:26px 20px;border-left:0}.nox-shop-intro .nox-shop-latin{font-size:30px;margin-bottom:12px}.nox-shop-intro>p{font-size:13px}.nox-shop-categories{padding-block:25px}.nox-shop-category-heading h2{font-size:18px}.nox-shop-category-heading>span{font-size:11px}.nox-shop-category-card{flex-basis:145px}.nox-category-guide{padding-block:30px}.nox-category-guide-grid{grid-template-columns:1fr}.nox-category-guide-photo{position:relative;top:auto;width:min(100%,380px);margin-inline:auto}.nox-category-guide-copy section p{font-size:13px}.nox-category-guide-photo img{aspect-ratio:4/3;object-position:center 35%}}
 @media(prefers-reduced-motion:reduce){.nox-shop-category-card img{transition:none}.nox-shop-category-card:hover img{transform:none}}
+
+/* Mobile refinement: full category photography and steady layers. */
+.nox-category-hero-frame{overflow:hidden;border:1px solid #302827;background:transparent;align-self:start}
+.nox-category-hero-photo{display:block;width:100%;height:auto;max-height:none;object-fit:contain;aspect-ratio:auto}
+.nox-related-category-card{position:relative;display:block;flex:0 0 clamp(150px,19vw,235px);aspect-ratio:3/4;overflow:hidden;border:1px solid #39302f;background:#111;border-radius:0}
+.nox-related-category-photo{display:block;width:100%;height:100%;object-fit:cover;object-position:center 35%}
+.nox-related-category-card::after{content:"";position:absolute;inset:55% 0 0;background:linear-gradient(transparent,#000d);pointer-events:none}
+.nox-related-category-name{position:absolute;inset:auto 0 0;z-index:1;padding:18px 12px;color:#f0ede8;font-size:17px;font-weight:750;text-align:center}
+.nox-related-category-card:focus-visible{outline:2px solid #c58585;outline-offset:3px}
+/* Use a stable large viewport, unaffected by mobile browser toolbar expansion. */
+.nox-brand-watermark{inset:auto;top:0;left:0;width:100%;height:100vh;height:100lvh;contain:layout paint;transform:translateZ(0)}
+.nox-brand-watermark img{flex:none;max-height:none;transform:none;animation:none;transition:none}
+html:has(.nox-entry){overflow:hidden;overscroll-behavior:none}
+body:has(.nox-entry){overflow:hidden;overscroll-behavior:none}
+.nox-entry{height:100%;min-height:100lvh;overscroll-behavior:none;touch-action:none}
+.nox-entry__bootmark{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:20px;font:900 38px "Cinzel Decorative",serif;color:#f0ede8}
+.nox-entry__bootmark>span{width:38px;height:2px;background:#851c20;transform-origin:center;animation:nox-boot-pulse .8s ease-in-out infinite alternate}
+.nox-entry:not([data-phase="boot"]):not([data-phase="preparing"]) .nox-entry__bootmark{display:none}
+@keyframes nox-boot-pulse{from{transform:scaleX(.35);opacity:.5}to{transform:scaleX(1);opacity:1}}
+@media(max-width:860px), (max-width:1100px) and (pointer:coarse){
+ .nox-cat-layout{display:flex;flex-direction:column;align-items:center;gap:0;padding:0;min-height:0}
+ .nox-cat-column{display:none}
+ .nox-cat-rail-wrap{display:flex;flex-direction:column;order:1;width:100%;margin-bottom:0}
+ .nox-cat-rail__controls{order:-1;display:flex;direction:ltr;justify-content:flex-start;width:100%;padding:0 20px 10px}
+ .nox-cat-statue{order:2;align-self:center;width:100%;margin:4px auto 0;align-items:center}
+ .nox-cat-statue__wrap{width:min(350px,94vw);height:370px;margin-inline:auto}
+ .nox-cat-painting{margin-top:-60px}
+ .nox-entry__composition{width:clamp(165px,43vw,230px)}
+ .nox-entry__counter-mask{left:calc(100% + 14px)}
+ .nox-entry__count{font-size:17px}
+ .nox-entry__bootmark{font-size:44px}
+ .nox-related-category-card{flex-basis:155px}
+}
+@media(prefers-reduced-motion:reduce){.nox-entry__bootmark>span{animation:none}}

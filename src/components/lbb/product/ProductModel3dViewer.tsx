@@ -12,10 +12,12 @@ export function ProductModel3dViewer({
   presentation = "product",
   interactive = false,
   detailUrl,
+  mobileDetailUrl,
   onReady,
 }: {
   interactive?: boolean;
   detailUrl?: string;
+  mobileDetailUrl?: string;
   onReady?: () => void;
   modelUrl: string;
   productName: string;
@@ -57,9 +59,7 @@ export function ProductModel3dViewer({
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
-    renderer.setPixelRatio(
-      Math.min(window.devicePixelRatio || 1, presentation === "showcase" ? 1 : 1.5),
-    );
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.domElement.className =
       presentation === "showcase" && !interactive
         ? "h-full w-full pointer-events-none"
@@ -186,27 +186,49 @@ export function ProductModel3dViewer({
         setInitialView();
         setReady(true);
         onReady?.();
-        if (detailUrl && detailUrl !== modelUrl) {
+        const detailSource =
+          mobileDetailUrl &&
+          window.matchMedia("(max-width: 860px), (max-width: 1100px) and (pointer: coarse)").matches
+            ? mobileDetailUrl
+            : detailUrl;
+        if (detailSource && detailSource !== modelUrl) {
           const upgrade = () => {
             if (disposed) return;
-            new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).load(detailUrl, (detail) => {
-              if (disposed) { disposeRoot(detail.scene); return; }
-              const detailBox = new THREE.Box3().setFromObject(detail.scene);
-              detail.scene.position.sub(detailBox.getCenter(new THREE.Vector3()));
-              const previous = root;
-              pivot.remove(previous);
-              disposeRoot(previous);
-              pivot.add(detail.scene);
-              render();
-            }, undefined, () => undefined);
+            new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).load(
+              detailSource,
+              (detail) => {
+                if (disposed) {
+                  disposeRoot(detail.scene);
+                  return;
+                }
+                const detailBox = new THREE.Box3().setFromObject(detail.scene);
+                detail.scene.position.sub(detailBox.getCenter(new THREE.Vector3()));
+                const previous = root;
+                pivot.remove(previous);
+                disposeRoot(previous);
+                pivot.add(detail.scene);
+                render();
+              },
+              undefined,
+              () => undefined,
+            );
           };
-          const idle = (window as Window & { requestIdleCallback?: (cb: () => void) => number }).requestIdleCallback;
-          if (idle) idle(upgrade); else window.setTimeout(upgrade, 600);
+          const idle = (
+            window as Window & {
+              requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
+            }
+          ).requestIdleCallback;
+          if (idle) idle.call(window, upgrade, { timeout: 1500 });
+          else window.setTimeout(upgrade, 600);
         }
         if (presentation === "showcase") {
           let dragging = false;
-          controls.addEventListener("start", () => { dragging = true; });
-          controls.addEventListener("end", () => { dragging = false; });
+          controls.addEventListener("start", () => {
+            dragging = true;
+          });
+          controls.addEventListener("end", () => {
+            dragging = false;
+          });
           const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
           let timer: number | undefined;
           let inView = false;
@@ -217,7 +239,8 @@ export function ProductModel3dViewer({
             let last = performance.now();
             timer = window.setInterval(() => {
               const now = performance.now();
-              if (!dragging) pivot.rotation.y += Math.min(now - last, 100) * ((Math.PI * 2) / 45000);
+              if (!dragging)
+                pivot.rotation.y += Math.min(now - last, 100) * ((Math.PI * 2) / 45000);
               last = now;
               render();
             }, 1000 / 30);
@@ -259,14 +282,21 @@ export function ProductModel3dViewer({
       renderer.forceContextLoss();
       renderer.domElement.remove();
     };
-  }, [modelUrl, detailUrl, interactive, onError, onReady, presentation, productName]);
+  }, [
+    modelUrl,
+    detailUrl,
+    mobileDetailUrl,
+    interactive,
+    onError,
+    onReady,
+    presentation,
+    productName,
+  ]);
 
   return (
     <div
       className={
-        presentation === "showcase"
-          ? "relative h-full w-full"
-          : "relative h-full w-full bg-paper"
+        presentation === "showcase" ? "relative h-full w-full" : "relative h-full w-full bg-paper"
       }
       dir="rtl"
     >

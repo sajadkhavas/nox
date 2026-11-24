@@ -9,7 +9,19 @@ const Viewer = lazy(() =>
   })),
 );
 
-export function NoxAutoModel({ modelUrl, detailUrl, name, interactive = false }: { modelUrl: string; detailUrl?: string; name: string; interactive?: boolean }) {
+export function NoxAutoModel({
+  modelUrl,
+  detailUrl,
+  mobileDetailUrl,
+  name,
+  interactive = false,
+}: {
+  modelUrl: string;
+  detailUrl?: string;
+  mobileDetailUrl?: string;
+  name: string;
+  interactive?: boolean;
+}) {
   const host = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -41,11 +53,36 @@ export function NoxAutoModel({ modelUrl, detailUrl, name, interactive = false }:
 
   return (
     <div ref={host} className="relative h-full w-full" data-model-failed={failed}>
-      {!ready && !failed && <div className="nox-model-loader" role="status" aria-label="بارگذاری مجسمه ناکس"><span className="nox-model-loader__orbit"/><span className="nox-model-loader__mark">N</span><span className="sr-only">مجسمه در حال بارگذاری است</span></div>}
-      {failed && <img src={fallback} alt={name} width={480} height={480} loading="eager" decoding="async" className="nox-model-fallback" />}
+      {!ready && !failed && (
+        <div className="nox-model-loader" role="status" aria-label="بارگذاری مجسمه ناکس">
+          <span className="nox-model-loader__orbit" />
+          <span className="nox-model-loader__mark">N</span>
+          <span className="sr-only">مجسمه در حال بارگذاری است</span>
+        </div>
+      )}
+      {failed && (
+        <img
+          src={fallback}
+          alt={name}
+          width={480}
+          height={480}
+          loading="eager"
+          decoding="async"
+          className="nox-model-fallback"
+        />
+      )}
       {mounted && !failed ? (
         <Suspense fallback={null}>
-          <Viewer modelUrl={modelUrl} productName={name} onError={fail} presentation="showcase" interactive={interactive} detailUrl={detailUrl} onReady={markReady} />
+          <Viewer
+            modelUrl={modelUrl}
+            productName={name}
+            onError={fail}
+            presentation="showcase"
+            interactive={interactive}
+            detailUrl={detailUrl}
+            mobileDetailUrl={mobileDetailUrl}
+            onReady={markReady}
+          />
         </Suspense>
       ) : null}
     </div>

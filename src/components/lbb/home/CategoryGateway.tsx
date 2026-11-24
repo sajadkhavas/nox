@@ -260,6 +260,7 @@ function NoxCategoryStage({
               <NoxAutoModel
                 modelUrl={statueLite.url}
                 detailUrl={STATUE_FULL_URL}
+                mobileDetailUrl="/brand/models/nox-statue-mobile-hq.glb"
                 name="مجسمه نوکس"
                 interactive
               />

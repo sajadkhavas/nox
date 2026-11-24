@@ -601,7 +601,7 @@ function CategoryChrome({
             className={`grid grid-cols-1 gap-7 py-8 ${categoryCover ? "md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]" : ""} md:items-center md:py-12`}
           >
             {categoryCover ? (
-              <div className="overflow-hidden rounded-2xl border border-hairline bg-carbon">
+              <div className="nox-category-hero-frame">
                 <img
                   src={categoryCover}
                   alt={categoryName}
@@ -609,7 +609,7 @@ function CategoryChrome({
                   height={540}
                   loading="eager"
                   fetchPriority="high"
-                  className="aspect-[4/3] h-full w-full object-cover"
+                  className="nox-category-hero-photo"
                 />
               </div>
             ) : null}
@@ -638,19 +638,22 @@ function CategoryChrome({
                     key={category.publicId}
                     to="/shop/$category"
                     params={{ category: category.slug }}
-                    className="flex min-h-32 w-36 shrink-0 snap-start flex-col items-center justify-center gap-3 rounded-2xl border border-hairline bg-carbon p-4 text-sm font-bold text-bone transition md:min-h-36 md:w-[calc((100%_-_3.75rem)/6)] hover:border-signal hover:text-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
+                    className="nox-related-category-card"
                   >
                     {category.image ? (
                       <img
-                        src={category.image}
-                        alt=""
+                        src={
+                          noxVisuals.categories?.[canonicalNoxCategorySlug(category.slug)] ||
+                          category.image
+                        }
+                        alt={`دسته ${category.name} ناکس`}
                         loading="lazy"
-                        width={56}
-                        height={56}
-                        className="size-12 object-contain md:size-14"
+                        width={400}
+                        height={540}
+                        className="nox-related-category-photo"
                       />
                     ) : null}
-                    <span className="px-3 text-center">{category.name}</span>
+                    <span className="nox-related-category-name">{category.name}</span>
                   </Link>
                 ))}
               </div>
@@ -730,7 +733,7 @@ function PrototypeCategory({ loader }: { loader: PrototypeLoader }) {
 
         <section className="border-b border-hairline">
           <Shell className="grid grid-cols-1 gap-7 py-8 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:items-center md:py-12">
-            <div className="overflow-hidden rounded-2xl border border-hairline bg-carbon">
+            <div className="nox-category-hero-frame">
               <img
                 src={
                   noxVisuals.categories?.[noxVisualCategoryKey(cat.slug)] || categoryImage(cat.slug)
@@ -740,7 +743,7 @@ function PrototypeCategory({ loader }: { loader: PrototypeLoader }) {
                 height={540}
                 loading="eager"
                 fetchPriority="high"
-                className="aspect-[4/3] h-full w-full object-cover"
+                className="nox-category-hero-photo"
               />
             </div>
             <div>
