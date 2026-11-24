@@ -1,3 +1,5 @@
+import { isAllowedBackendOrigin } from "./backend-origin";
+
 export const LBB_CONTRACT_VERSION = "2026-09-06-p3-storefront-v1" as const;
 
 export type BackendMode = "live" | "prototype";
@@ -455,8 +457,7 @@ export function getBackendBaseUrl(): string {
     throw new BackendApiError("نشانی فروشگاه معتبر نیست.", { code: "backend_url_invalid" });
   }
 
-  const local = parsed.hostname === "localhost" || parsed.hostname === "127.0.0.1";
-  if (parsed.protocol !== "https:" && !local) {
+  if (!isAllowedBackendOrigin(parsed, import.meta.env.DEV)) {
     throw new BackendApiError("اتصال امن فروشگاه در دسترس نیست.", {
       code: "backend_https_required",
     });
