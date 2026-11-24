@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+import { ProductFacts } from "./ProductFacts";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Heart, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
@@ -234,6 +236,34 @@ export function ProductPurchasePanel({
           >
             {statusLabel}
           </p>
+        </div>
+        <div className="nox-pdp-accordions">
+          <details>
+            <summary>
+              جزئیات، جنس و راهنمای سایز<span aria-hidden="true">+</span>
+            </summary>
+            <div className="nox-pdp-facts">
+              <ProductFacts model={model} />
+            </div>
+          </details>
+          <details>
+            <summary>
+              ارسال و مرجوعی<span aria-hidden="true">+</span>
+            </summary>
+            <div>
+              <p>شرایط ارسال و مرجوعی سفارش را پیش از خرید بررسی کن.</p>
+              <Link to="/shipping-returns">مشاهده شرایط ارسال و مرجوعی</Link>
+            </div>
+          </details>
+          <details>
+            <summary>
+              برای انتخابت همراهت هستیم<span aria-hidden="true">+</span>
+            </summary>
+            <div>
+              <p>برای راهنمایی درباره اندازه و استایل این محصول با ناکس در ارتباط باش.</p>
+              <Link to="/contact">ارتباط با ناکس</Link>
+            </div>
+          </details>
         </div>
       </div>
 

@@ -360,7 +360,7 @@ function LiveShop({ loader }: { loader: LiveLoader }) {
           : "قیمت، موجودی و گزینه‌های قابل انتخاب هر محصول به‌روز نمایش داده می‌شوند."
       }
     >
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[250px_1fr]">
+      <div className="nox-shop-layout grid grid-cols-1 gap-10 lg:grid-cols-[250px_1fr]">
         <aside className="hidden lg:block" aria-label="فیلتر محصولات">
           <div className="sticky top-[calc(var(--lbb-nav-h)+24px)] max-h-[calc(100dvh-var(--lbb-nav-h)-40px)] overflow-y-auto overscroll-contain pe-3">
             {facets ? renderFilters(filters, setFilters) : null}
@@ -523,7 +523,7 @@ function PrototypeShop() {
       }))}
       status={`${inventory.label} پرداخت و ارسال واقعی در این نسخه فعال نیست.`}
     >
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[250px_1fr]">
+      <div className="nox-shop-layout grid grid-cols-1 gap-10 lg:grid-cols-[250px_1fr]">
         <aside className="hidden lg:block" aria-label="فیلتر محصولات">
           <div className="sticky top-[calc(var(--lbb-nav-h)+24px)]">{desktopFilters}</div>
         </aside>
@@ -614,40 +614,6 @@ function ShopChrome({
   const presentation = useStorefrontPresentation();
   const page = presentation.pages.shop;
   const [query, setQuery] = useState("");
-  const categoryTrack = useRef<HTMLDivElement>(null);
-  const [categoryScroll, setCategoryScroll] = useState({ previous: false, next: false });
-
-  useEffect(() => {
-    const track = categoryTrack.current;
-    if (!track) return;
-    const update = () => {
-      const position = Math.abs(track.scrollLeft);
-      setCategoryScroll({
-        previous: position > 1,
-        next: position + track.clientWidth < track.scrollWidth - 1,
-      });
-    };
-    const observer = new ResizeObserver(update);
-    observer.observe(track);
-    track.addEventListener("scroll", update, { passive: true });
-    update();
-    return () => {
-      observer.disconnect();
-      track.removeEventListener("scroll", update);
-    };
-  }, [categories.length]);
-
-  const scrollCategories = (direction: number) => {
-    const track = categoryTrack.current;
-    const card = track?.firstElementChild;
-    if (!track || !card) return;
-    const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-    track.scrollBy({
-      left: direction * (card.getBoundingClientRect().width + gap),
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
-    });
-  };
-
   const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const q = query.trim();
@@ -660,143 +626,36 @@ function ShopChrome({
       <Navbar theme="dark" />
       <main
         dir="rtl"
-        className="min-h-screen bg-obsidian pb-bottombar pt-[var(--lbb-nav-h)] md:pb-0"
+        className="nox-shop-page min-h-screen bg-obsidian pb-bottombar pt-[var(--lbb-nav-h)] md:pb-0"
       >
         <Shell className="py-4">
           <Breadcrumb items={[{ label: "خانه", to: "/" }, { label: "فروشگاه" }]} />
         </Shell>
-        <header className="border-y border-hairline">
-          <Shell className="py-3 md:py-5">
-            <div className="grid overflow-hidden rounded-3xl border border-hairline bg-carbon md:grid-cols-2">
-              <div className="relative h-[340px] min-h-0 overflow-hidden bg-obsidian md:col-start-2 md:row-start-1 md:h-[480px]">
-                <img
-                  src="/__l5e/assets-v1/fe19b9fb-8e5a-485f-b38f-dc11c0ebee6e/nox-logo.jpg"
-                  alt="ویترین فروشگاه پوشاک NOX"
-                  fetchPriority="high"
-                  className="absolute inset-0 h-full w-full object-cover object-center"
-                  style={{ height: "100%" }}
-                />
-              </div>
-              <div className="flex flex-col justify-center bg-carbon p-6 md:col-start-1 md:row-start-1 md:p-8 lg:p-10">
-                <TechLabel tone="signal">{page.eyebrow}</TechLabel>
-                <h1 className="mt-4 max-w-xl text-[clamp(2.5rem,5vw,5rem)] font-black leading-[.92] tracking-[-.06em] text-bone">
-                  {page.title}
-                </h1>
-                <p className="mt-5 max-w-lg text-sm leading-7 text-bone/78 md:text-base md:leading-8">
-                  {page.lede}
-                </p>
-
-                <form
-                  onSubmit={submitSearch}
-                  role="search"
-                  className="mt-7 flex min-h-14 w-full max-w-xl items-center gap-2 rounded-full border border-white/20 bg-obsidian/75 p-1.5 ps-5 shadow-overlay backdrop-blur-xl focus-within:border-signal"
-                >
-                  <Search size={19} className="shrink-0 text-signal" aria-hidden="true" />
-                  <label htmlFor="shop-search" className="sr-only">
-                    جست‌وجو در فروشگاه
-                  </label>
-                  <input
-                    id="shop-search"
-                    type="search"
-                    value={query}
-                    onChange={(event) => setQuery(event.target.value)}
-                    placeholder="چی می‌خوای؟ تیشرت، بگی، کتونی…"
-                    autoComplete="off"
-                    className="min-w-0 flex-1 bg-transparent text-sm text-bone outline-none placeholder:text-metal"
-                  />
-                  <button
-                    type="submit"
-                    disabled={!query.trim()}
-                    className="grid size-11 shrink-0 place-items-center rounded-full bg-signal text-bone transition-transform hover:scale-105 disabled:opacity-45"
-                    aria-label="نمایش نتایج جست‌وجو"
-                  >
-                    <ArrowUpLeft size={18} aria-hidden="true" />
-                  </button>
-                </form>
-                <a
-                  href="#shop-results"
-                  className="mt-4 inline-flex min-h-11 items-center gap-2 self-start text-xs font-bold text-bone underline-offset-4 hover:text-signal hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
-                >
-                  رفتن به فهرست محصولات
-                  <ArrowUpLeft size={16} aria-hidden="true" />
-                </a>
-                <p className="tech mt-4 text-bone/55">{status}</p>
-              </div>
+        <header className="nox-shop-heading">
+          <Shell className="nox-shop-titlebar">
+            <div>
+              <p dir="ltr" className="nox-shop-latin">
+                The shop
+              </p>
+              <h1>فروشگاه پوشاک ناکس</h1>
+              <p className="nox-shop-summary">{status}</p>
             </div>
+            <form onSubmit={submitSearch} role="search" className="nox-shop-search">
+              <label htmlFor="shop-search" className="sr-only">
+                جست‌وجو در فروشگاه
+              </label>
+              <input
+                id="shop-search"
+                type="search"
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                placeholder="جست‌وجوی پوشاک…"
+              />
+              <button type="submit" disabled={!query.trim()} aria-label="جست‌وجو">
+                <Search size={18} />
+              </button>
+            </form>
           </Shell>
-
-          <Shell className="py-8 md:py-12">
-            <div className="mb-5 flex items-end justify-between gap-4">
-              <div>
-                <TechLabel tone="signal">{page.sectionLabel}</TechLabel>
-                <h2 className="mt-2 text-2xl font-black text-bone md:text-4xl">
-                  {page.sectionTitle}
-                </h2>
-              </div>
-              {(categoryScroll.previous || categoryScroll.next) && (
-                <div className="flex shrink-0 gap-2">
-                  <button
-                    type="button"
-                    aria-label="دسته قبلی"
-                    aria-controls="shop-category-track"
-                    disabled={!categoryScroll.previous}
-                    onClick={() => scrollCategories(1)}
-                    className="grid size-11 place-items-center rounded-full border border-white/25 text-bone hover:border-signal focus-visible:ring-2 focus-visible:ring-signal disabled:opacity-35"
-                  >
-                    <ArrowRight size={18} aria-hidden="true" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="دسته بعدی"
-                    aria-controls="shop-category-track"
-                    disabled={!categoryScroll.next}
-                    onClick={() => scrollCategories(-1)}
-                    className="grid size-11 place-items-center rounded-full border border-white/25 text-bone hover:border-signal focus-visible:ring-2 focus-visible:ring-signal disabled:opacity-35"
-                  >
-                    <ArrowLeft size={18} aria-hidden="true" />
-                  </button>
-                </div>
-              )}
-            </div>
-            <div
-              id="shop-category-track"
-              ref={categoryTrack}
-              className="flex snap-x snap-mandatory gap-3 overflow-x-auto p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            >
-              {categories.map((category, index) => (
-                <Link
-                  key={category.slug}
-                  to="/$category"
-                  params={{ category: category.slug }}
-                  className="group flex min-h-32 w-36 shrink-0 snap-start flex-col items-center justify-center gap-3 rounded-2xl border border-hairline bg-carbon p-4 text-center text-bone transition-colors hover:border-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal md:min-h-36 md:w-[calc((100%_-_3.75rem)/6)]"
-                >
-                  <img
-                    src={
-                      category.image ||
-                      noxCategoryCover(category.slug) ||
-                      homeCategoryImage(category.slug as keyof typeof CATEGORIES)
-                    }
-                    alt=""
-                    width={640}
-                    height={800}
-                    loading={index < 2 ? "eager" : "lazy"}
-                    className="absolute inset-0 h-full w-full object-contain p-5 transition-transform duration-700 group-hover:scale-[1.05]"
-                  />
-                  <span className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
-                  <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
-                    <span>
-                      <span className="block text-xl font-black text-bone">{category.label}</span>
-                      <span className="tech mt-1 block text-bone/60">0{index + 1}</span>
-                    </span>
-                    <span className="grid size-10 place-items-center rounded-full border border-white/25 bg-obsidian/45 text-bone backdrop-blur transition-colors group-hover:border-signal group-hover:bg-signal">
-                      <ArrowUpLeft size={16} aria-hidden="true" />
-                    </span>
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </Shell>
-
           <Shell className="flex snap-x gap-1 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <Link
               to="/shop"
@@ -816,7 +675,7 @@ function ShopChrome({
             ))}
           </Shell>
         </header>
-        <Band id="shop-results" hairline={false} className="scroll-mt-24 !py-10 md:!py-14">
+        <Band id="shop-results" hairline={false} className="scroll-mt-24 !py-0">
           <Shell>{children}</Shell>
         </Band>
       </main>

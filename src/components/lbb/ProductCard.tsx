@@ -103,7 +103,9 @@ export function ProductCard({
 
   const addWithSize = (_size: string) => {
     if (backend) return;
-    toast.info("خرید در پیش‌نمایش فعال نیست", { description: "قیمت، موجودی و سایز باید برای همین محصول تأیید شوند." });
+    toast.info("خرید در پیش‌نمایش فعال نیست", {
+      description: "قیمت، موجودی و سایز باید برای همین محصول تأیید شوند.",
+    });
   };
 
   const selectPreviewFromPointer = (event: PointerEvent<HTMLDivElement>) => {
@@ -197,7 +199,9 @@ export function ProductCard({
         }}
       >
         <div className="product-card__media relative aspect-[4/5] overflow-hidden bg-carbon">
-          <ImageReveal className="absolute inset-0" order={revealOrder}><DecodedCardImage src={primaryImage} alt={name} priority={priority} /></ImageReveal>
+          <ImageReveal className="absolute inset-0" order={revealOrder}>
+            <DecodedCardImage src={primaryImage} alt={name} priority={priority} />
+          </ImageReveal>
           {overlay}
         </div>
         {!autoplay && backend && previewImages.length > 1 && previewIndex === 0 ? (
@@ -222,7 +226,8 @@ export function ProductCard({
                 onClick={(event) => {
                   event.preventDefault();
                   event.stopPropagation();
-                  const next = (previewIndex + direction + previewImages.length) % previewImages.length;
+                  const next =
+                    (previewIndex + direction + previewImages.length) % previewImages.length;
                   if (onCarouselImageChange) onCarouselImageChange(next);
                   else setPreviewIndex(next);
                 }}
@@ -486,7 +491,7 @@ function CardOverlay({
                   if (sizeAvailable) onAddWithSize(size);
                 }}
                 aria-label={sizeAvailable ? `افزودن سایز ${size} به سبد` : `سایز ${size} ناموجود`}
-                className={`pointer-events-auto grid min-h-9 min-w-10 place-items-center rounded-xl border px-2 text-[11px] font-black transition ${sizeAvailable ? "border-signal bg-signal text-obsidian hover:bg-bone" : "size-chip-disabled border-white/10 bg-white/5 text-mute"}`}
+                className={`nox-product-size-chip pointer-events-auto grid min-h-9 min-w-10 place-items-center rounded-xl border px-2 text-[11px] font-black transition ${sizeAvailable ? "border-signal bg-signal text-bone hover:bg-bone hover:text-obsidian" : "size-chip-disabled border-white/10 bg-white/5 text-mute"}`}
               >
                 {size}
               </button>

@@ -28,10 +28,12 @@ export function useIdleAutoplay<T extends HTMLElement = HTMLDivElement>(
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let timer: ReturnType<typeof setTimeout>;
     let held = false;
+    let hovering = interaction.matches(":hover");
+    let focused = interaction.contains(document.activeElement);
     const clear = () => clearTimeout(timer);
     const schedule = (wait: number) => {
       clear();
-      if (held || document.hidden || motion.matches) return;
+      if (held || hovering || focused || document.hidden || motion.matches) return;
       timer = setTimeout(() => {
         callback.current();
         schedule(delay);
@@ -47,10 +49,31 @@ export function useIdleAutoplay<T extends HTMLElement = HTMLDivElement>(
       held = false;
       activity();
     };
+    const enter = () => {
+      hovering = true;
+      clear();
+    };
+    const leave = () => {
+      hovering = false;
+      schedule(delay);
+    };
+    const focus = () => {
+      focused = true;
+      clear();
+    };
+    const blur = (event: Event) => {
+      if (!interaction.contains((event as FocusEvent).relatedTarget as Node | null)) {
+        focused = false;
+        schedule(delay);
+      }
+    };
     const visibility = () => schedule(delay);
     interaction.addEventListener("pointerdown", down);
     interaction.addEventListener("pointermove", activity);
-    interaction.addEventListener("focusin", activity);
+    interaction.addEventListener("pointerenter", enter);
+    interaction.addEventListener("pointerleave", leave);
+    interaction.addEventListener("focusin", focus);
+    interaction.addEventListener("focusout", blur);
     interaction.addEventListener("keydown", activity);
     interaction.addEventListener("wheel", activity, { passive: true });
     window.addEventListener("pointerup", up);
@@ -62,7 +85,10 @@ export function useIdleAutoplay<T extends HTMLElement = HTMLDivElement>(
       clear();
       interaction.removeEventListener("pointerdown", down);
       interaction.removeEventListener("pointermove", activity);
-      interaction.removeEventListener("focusin", activity);
+      interaction.removeEventListener("pointerenter", enter);
+      interaction.removeEventListener("pointerleave", leave);
+      interaction.removeEventListener("focusin", focus);
+      interaction.removeEventListener("focusout", blur);
       interaction.removeEventListener("keydown", activity);
       interaction.removeEventListener("wheel", activity);
       window.removeEventListener("pointerup", up);

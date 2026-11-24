@@ -1,3 +1,4 @@
+import { useResolvedNoxVisuals, noxVisualCategoryKey } from "@/lib/nox-visuals";
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { createFileRoute, Link, notFound, redirect, useNavigate } from "@tanstack/react-router";
 import { PackageSearch, RefreshCcw } from "lucide-react";
@@ -560,6 +561,11 @@ function CategoryChrome({
   siblingCategories?: readonly CategoryDto[];
   children: React.ReactNode;
 }) {
+  const noxVisuals = useResolvedNoxVisuals();
+  const categoryCover =
+    noxVisuals.categories?.[noxVisualCategoryKey(categorySlug)] ||
+    image ||
+    noxCategoryCover(categorySlug);
   return (
     <>
       <Navbar theme="dark" />
@@ -578,12 +584,12 @@ function CategoryChrome({
         </Shell>
         <section className="border-b border-hairline">
           <Shell
-            className={`grid grid-cols-1 gap-7 py-8 ${image ? "md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]" : ""} md:items-center md:py-12`}
+            className={`grid grid-cols-1 gap-7 py-8 ${categoryCover ? "md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]" : ""} md:items-center md:py-12`}
           >
-            {image ? (
+            {categoryCover ? (
               <div className="overflow-hidden rounded-2xl border border-hairline bg-carbon">
                 <img
-                  src={image}
+                  src={categoryCover}
                   alt={categoryName}
                   width={720}
                   height={540}
@@ -642,6 +648,7 @@ function CategoryChrome({
 
 function PrototypeCategory({ loader }: { loader: PrototypeLoader }) {
   const { cat, items } = loader;
+  const noxVisuals = useResolvedNoxVisuals();
   const routeFilters = Route.useSearch();
   const navigate = useNavigate({ from: "/$category" });
   const [visible, setVisible] = useState(PAGE_SIZE);
@@ -707,7 +714,9 @@ function PrototypeCategory({ loader }: { loader: PrototypeLoader }) {
           <Shell className="grid grid-cols-1 gap-7 py-8 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] md:items-center md:py-12">
             <div className="overflow-hidden rounded-2xl border border-hairline bg-carbon">
               <img
-                src={categoryImage(cat.slug)}
+                src={
+                  noxVisuals.categories?.[noxVisualCategoryKey(cat.slug)] || categoryImage(cat.slug)
+                }
                 alt={`نمای دسته ${cat.nameFaPlural} نوکس`}
                 width={720}
                 height={540}

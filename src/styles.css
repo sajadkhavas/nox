@@ -1179,3 +1179,108 @@ h1,h2,h3,h4,.text-display-2,.text-display-3,.nox-cat-head__title {font-family:va
 @media(max-width:860px){.nox-cat-statue {margin-top:-30px;}.nox-identity__composition{grid-template-columns:1fr;gap:14px;}.nox-identity__story {max-width:65ch;}.nox-identity__art-stage {height:420px;max-width:520px;width:100%;margin:auto;}.nox-orbit-frame {width:clamp(115px,30vw,150px);}.nox-identity__doll {inset:60px 23%;height:300px;}.nox-portrait-pair {gap:24px;padding-inline:24px;}.nox-portrait-frame {width:clamp(130px,35vw,230px);}.nox-store-design {gap:22px;}}
 @media(max-width:480px){.nox-visit dl.nox-store-design__cards {grid-template-columns:1fr;}.nox-store-design__actions {width:100%;flex-direction:column;}.nox-portrait-pair {gap:22px;}.nox-picture-frame {border-width:4px;padding:3px;}.nox-portrait-frame {width:calc((100vw - 78px)/2);}}
 @media(prefers-reduced-motion:reduce){.nox-picture-frame {animation:none;}}
+
+/* NOX editorial refinement: framed art, identity and signature. */
+.nox-portrait-section{position:relative;margin-top:-70px;padding:0 0 18px;z-index:2;pointer-events:none}
+.nox-portrait-pair{max-width:1100px;align-items:flex-start}
+.nox-portrait-frame{width:clamp(155px,19vw,225px)}
+.nox-identity__story{position:relative;padding:38px 32px;border-block:1px solid #292626}
+.nox-identity__story::before{content:"";display:block;width:45px;height:3px;background:#851c20;margin-bottom:26px}
+.nox-identity__story h2{font-size:clamp(2.2rem,4.2vw,4.2rem);line-height:1.45;font-weight:850;letter-spacing:-.035em}
+.nox-identity__story p{max-width:43ch;line-height:2.15;color:#aaa5a2}
+.nox-identity__story a{border-bottom:1px solid #851c20;padding-block:12px}
+.nox-footer-art{position:relative;isolation:isolate;overflow:hidden;min-height:230px;display:flex;align-items:center;justify-content:center;border-block:1px solid #302124;background:radial-gradient(ellipse at 50% 100%,#851c202c,transparent 65%)}
+.nox-footer-art>svg{position:absolute;inset:0;width:100%;height:100%;opacity:.16}
+.nox-footer-art>span{position:relative;font-family:"Cinzel Decorative",serif;font-weight:900;font-size:clamp(3rem,10.5vw,10rem);line-height:1.2;letter-spacing:-.05em;color:#f0ede8;text-shadow:0 8px 40px #000}
+.nox-product-carousel__arrows .rounded-full{border-radius:50%;width:44px;height:44px;background:#090909d9;color:#f0ede8;border:1px solid #555}
+.nox-product-size-chip:not(:disabled):hover{color:#090909;background:#f0ede8}
+@media(max-width:860px){.nox-portrait-section{margin-top:-18px;padding-bottom:18px}.nox-portrait-frame{width:clamp(135px,25vw,180px)}.nox-identity__story{padding:24px 12px}.nox-footer-art{min-height:145px}}
+@media(max-width:480px){.nox-portrait-pair{gap:18px}.nox-portrait-frame{width:calc((100vw - 90px)/2)}}
+
+/* Full-screen catalog, based on the owner's menu reference. */
+.nox-catalog-overlay{position:fixed;inset:0;z-index:var(--z-modal);display:grid;grid-template-rows:auto minmax(0,1fr) auto;background:#080808;color:#f0ede8;overflow:hidden}
+.nox-catalog-overlay button,.nox-catalog-overlay a{outline-offset:5px}
+.nox-catalog-top{display:flex;align-items:center;gap:24px;padding:24px 48px;border-bottom:1px solid #252525}
+.nox-catalog-brand{display:flex;align-items:center;gap:12px;font-family:"Cinzel Decorative",serif;font-weight:900;font-size:19px}
+.nox-catalog-meta{margin-inline:auto;color:#777;font-size:10px;letter-spacing:.16em}
+.nox-catalog-close{display:grid;place-items:center;width:44px;height:44px;border:1px solid #303030;transition:background .2s}
+.nox-catalog-close:hover{background:#851c20}
+.nox-catalog-body{display:grid;grid-template-columns:280px minmax(0,1fr);overflow:auto}
+.nox-catalog-aside{padding:38px 36px;border-inline-end:1px solid #252525;display:flex;flex-direction:column;gap:35px}
+.nox-catalog-aside h2{font-size:11px;color:#999;margin-bottom:18px}
+.nox-catalog-editorial{display:block;padding-block:10px}
+.nox-catalog-editorial strong{font-size:16px;font-weight:600}
+.nox-catalog-editorial small{display:block;font-size:10px;color:#888;margin-top:5px;line-height:1.8}
+.nox-catalog-personal{display:block;font-size:12px;padding-block:8px;color:#aaa}
+.nox-catalog-aside a:hover{color:#f0ede8}
+.nox-catalog-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding:40px 64px 32px}
+.nox-catalog-heading p{font-size:12px;color:#aaa;margin-bottom:14px}
+.nox-catalog-heading h2{font-size:clamp(32px,4vw,58px);font-weight:800;line-height:1.5;letter-spacing:-.035em}
+.nox-catalog-heading>a{display:flex;align-items:center;gap:10px;min-height:44px;font-size:12px;color:#bbb}
+.nox-catalog-tabs{display:flex;border-block:1px solid #252525;padding-inline:64px;gap:30px;overflow:auto}
+.nox-catalog-tabs button{white-space:nowrap;padding:17px 2px;border-bottom:2px solid transparent;color:#888;font-size:12px}
+.nox-catalog-tabs button[aria-pressed=true]{color:#f0ede8;border-color:#851c20}
+.nox-catalog-row{display:grid;grid-template-columns:56px minmax(0,1fr) auto;align-items:center;min-height:80px;padding:16px 64px;border-bottom:1px solid #202020;position:relative}
+.nox-catalog-row::before{content:"";position:absolute;inset-block:0;inset-inline-start:0;width:2px;background:#851c20;transform:scaleY(0);transition:transform .2s}
+.nox-catalog-row:hover::before,.nox-catalog-row:focus-visible::before{transform:scaleY(1)}
+.nox-catalog-row:hover{background:#101010}
+.nox-catalog-number{font-size:11px;color:#666;font-family:"Space Mono",monospace}
+.nox-catalog-row strong{display:block;font-size:25px;font-weight:650;line-height:1.5}
+.nox-catalog-row small{font-size:10px;color:#777;display:block;letter-spacing:.08em}
+.nox-catalog-row>svg{color:#bba9a9}
+.nox-catalog-notice{padding:30px 64px;color:#aaa;font-size:13px}
+.nox-catalog-bottom{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 48px;border-top:1px solid #252525;font-size:10px;color:#888}
+@media(max-width:800px){.nox-catalog-top{padding:14px 22px}.nox-catalog-meta{display:none}.nox-catalog-close{margin-inline-start:auto}.nox-catalog-body{display:flex;flex-direction:column}.nox-catalog-main{order:-1}.nox-catalog-heading{padding:25px 24px}.nox-catalog-heading h2{font-size:34px}.nox-catalog-heading>a{font-size:11px}.nox-catalog-tabs{padding-inline:24px;gap:24px}.nox-catalog-row{padding:14px 24px;min-height:70px;grid-template-columns:38px 1fr auto}.nox-catalog-row strong{font-size:21px}.nox-catalog-aside{display:grid;grid-template-columns:1fr 1fr;padding:28px 24px;border-top:1px solid #252525;gap:24px}.nox-catalog-bottom{padding:16px 22px;flex-wrap:wrap;font-size:9px}.nox-catalog-bottom>span{order:3;flex-basis:100%;text-align:center}}
+
+/* Collections reference: photographic drop hero and alternating editorial rows. */
+.nox-collections-page{padding-top:var(--lbb-nav-h);background:#050505;color:#f0ede8;padding-bottom:var(--lbb-bottom-h,64px)}
+.nox-drop-hero{display:grid;grid-template-columns:1fr 1fr;direction:ltr;min-height:min(850px,calc(100svh - var(--lbb-nav-h)));overflow:hidden}
+.nox-drop-visual{position:relative;overflow:hidden;min-height:600px;background:#100a0a}
+.nox-drop-visual>img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover;object-position:center 35%}
+.nox-drop-visual::after{content:"";position:absolute;inset:60% 0 0;background:linear-gradient(transparent,#050505aa);pointer-events:none}
+.nox-drop-pill{position:absolute;top:28px;left:28px;background:#080808cc;padding:10px 16px;border:1px solid #443334;font-size:11px;direction:rtl}
+.nox-drop-year{position:absolute;bottom:-20px;left:10px;font:900 clamp(100px,18vw,260px)/1 "Cinzel Decorative",serif;color:#f0ede820;z-index:1;pointer-events:none}
+.nox-drop-info{position:relative;direction:rtl;padding:64px clamp(28px,4vw,65px);display:flex;flex-direction:column;justify-content:center;border-left:1px solid #252020}
+.nox-drop-season{position:absolute;right:10px;top:50%;writing-mode:vertical-rl;color:#777;font:10px "Space Mono",monospace;letter-spacing:.25em}
+.nox-drop-eyebrow{display:flex;align-items:center;gap:12px;color:#bd777b;font-size:12px;margin-bottom:22px}
+.nox-drop-eyebrow::before{content:"";width:28px;height:1px;background:#851c20}
+.nox-drop-info h1{font-size:clamp(35px,4vw,64px);font-weight:850;line-height:1.5;letter-spacing:-.035em}
+.nox-collection-latin{font-family:"Cinzel Decorative",serif;color:#aaa;font-size:14px;margin-top:10px;text-align:right}
+.nox-drop-description{font-size:14px;line-height:2.1;color:#a5a09e;max-width:46ch;margin-top:20px;margin-bottom:28px}
+.nox-drop-stats{display:flex;border:1px solid #252525;margin-bottom:28px}
+.nox-drop-stats>div{padding:18px 22px;flex:1;display:flex;flex-direction:column;gap:8px;border-inline-end:1px solid #252525}
+.nox-drop-stats strong{font-size:25px;font-weight:700}.nox-drop-stats span{font-size:10px;color:#999}
+.nox-drop-pieces{display:flex;gap:2px;height:110px;margin-bottom:28px}.nox-drop-pieces>a{flex:1;overflow:hidden;background:#151515}.nox-drop-pieces img{width:100%;height:100%;object-fit:cover;object-position:center 40%}
+.nox-drop-ctas{display:flex;gap:12px}.nox-drop-ctas a{display:flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:12px 22px;font-size:12px;border:1px solid #333}.nox-drop-ctas a:first-child{background:#f0ede8;color:#050505;flex:1}.nox-drop-ctas a:hover{background:#851c20;color:#fff;border-color:#851c20}
+.nox-collection-index{padding:65px 40px;border-top:1px solid #252525}
+.nox-collection-index>header{display:flex;justify-content:space-between;align-items:end;gap:24px;padding-bottom:25px;border-bottom:1px solid #252525;margin-bottom:28px}
+.nox-collection-index>header h2{font-size:clamp(26px,3vw,42px);font-weight:800;margin-top:10px}.nox-collection-index>header p{font:14px "Cinzel Decorative",serif;color:#999}.nox-collection-index>header>span{font-size:11px;color:#999}
+.nox-collection-filter{display:flex;border:1px solid #252525;margin-bottom:35px;overflow:auto}.nox-collection-filter button{white-space:nowrap;font-size:11px;color:#999;border-inline-end:1px solid #252525;padding:16px 23px;border-bottom:2px solid transparent}.nox-collection-filter button[aria-pressed=true]{border-bottom-color:#851c20;color:#f0ede8}
+.nox-collection-row{display:grid;grid-template-columns:1fr 1fr;direction:ltr;min-height:420px;border:1px solid #252525;border-bottom:0}.nox-collection-row:last-child{border-bottom:1px solid #252525}.nox-collection-row:nth-child(even){direction:rtl}
+.nox-collection-photo{position:relative;min-height:420px;overflow:hidden}.nox-collection-photo img{width:100%;height:100%;position:absolute;inset:0;object-fit:cover;object-position:center 35%}
+.nox-collection-copy{direction:rtl;padding:50px 45px;display:flex;flex-direction:column;justify-content:center;border-inline-start:1px solid #252525}.nox-collection-copy h2{font-size:clamp(27px,3vw,43px);font-weight:800;line-height:1.5}.nox-collection-copy ul{display:flex;gap:8px;flex-wrap:wrap}.nox-collection-copy li{font-size:10px;color:#aaa;border:1px solid #303030;padding:7px 11px}.nox-collection-count{margin-top:20px;color:#aaa;font-size:12px}.nox-collection-open{display:flex;align-items:center;gap:12px;align-self:flex-start;border-bottom:1px solid #851c20;padding:14px 0;margin-top:18px;font-size:12px}
+@media(max-width:760px){.nox-drop-hero{grid-template-columns:1fr}.nox-drop-visual{min-height:440px}.nox-drop-info{padding:34px 26px}.nox-drop-season{display:none}.nox-drop-stats>div{padding:14px}.nox-collection-index{padding:38px 20px}.nox-collection-index>header{align-items:start}.nox-collection-row{grid-template-columns:1fr}.nox-collection-photo{min-height:390px}.nox-collection-copy{padding:30px 24px}.nox-collection-index>header>span{max-width:10ch;line-height:1.9}}
+
+/* Compact shop layout from the supplied NOX Shop reference; live filters remain intact. */
+.nox-shop-titlebar{display:flex;justify-content:space-between;align-items:end;gap:30px;padding-block:42px 28px}
+.nox-shop-latin{font:900 clamp(28px,3vw,48px)/1.2 "Cinzel Decorative",serif;margin-bottom:10px;color:#f0ede8}
+.nox-shop-titlebar h1{font-size:20px;font-weight:650}.nox-shop-summary{font-size:11px;color:#999;margin-top:12px}
+.nox-shop-search{display:flex;align-items:center;border:1px solid #303030;min-width:230px;padding-inline:14px;height:44px;background:#111}
+.nox-shop-search input{background:transparent;min-width:0;outline:none;color:#f0ede8;font-size:12px;width:100%}.nox-shop-search button{display:grid;place-items:center;min-width:36px;height:42px}
+.nox-shop-heading{border-block:1px solid #252525}.nox-shop-heading>.lbb-shell:last-child{gap:0;padding-bottom:0}.nox-shop-heading>.lbb-shell:last-child>a{border-inline-end:1px solid #252525;padding:18px 25px;font-size:12px;color:#aaa;min-height:54px}.nox-shop-heading>.lbb-shell:last-child>a:first-child{color:#f0ede8}
+.nox-shop-layout{gap:0!important}.nox-shop-layout>aside{border-inline-end:1px solid #252525;padding-block:25px;padding-inline-end:25px}.nox-shop-layout>section{padding:25px 28px 50px}
+.nox-shop-page .product-card{border-radius:0;box-shadow:none}.nox-shop-page .product-card__media{border-radius:0;border-color:#222}
+.nox-pdp-layout{max-width:none!important;width:100%!important;padding-inline:0!important;gap:0!important;direction:ltr;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.nox-pdp-layout>*{direction:rtl}.nox-pdp-gallery{top:var(--lbb-nav-h)!important;gap:1px!important;background:#252525;align-self:start}
+.nox-pdp-gallery>[role=tablist]{width:72px!important;gap:1px!important;background:#111;max-height:calc(100svh - var(--lbb-nav-h));overflow:auto}
+.nox-pdp-gallery>[role=tablist]>button{border-radius:0!important;border-width:0 0 0 2px;flex-shrink:0}
+.nox-pdp-gallery>div:nth-child(2)>div{border-radius:0!important;border:0;box-shadow:none!important}
+.nox-pdp-layout [data-testid=pdp-purchase-panel]{position:static!important;border:0!important;border-left:1px solid #252525!important;border-radius:0!important;box-shadow:none!important;backdrop-filter:none!important;background:#050505!important;padding:48px!important;gap:25px}
+.nox-pdp-layout #pdp-product-title{max-width:100%;font-size:clamp(28px,3.1vw,48px);line-height:1.5}
+.nox-pdp-layout [data-testid=pdp-purchase-panel] button{border-radius:0}
+@media(max-width:800px){.nox-shop-titlebar{padding-block:26px;align-items:start;flex-direction:column;gap:20px}.nox-shop-search{width:100%}.nox-shop-layout>section{padding:22px 0 35px}.nox-pdp-layout{grid-template-columns:1fr}.nox-pdp-layout [data-testid=pdp-purchase-panel]{padding:28px 22px!important;border-left:0!important}.nox-pdp-gallery{position:relative!important;top:0!important}.nox-pdp-gallery>[role=tablist]{display:none}}
+
+.nox-pdp-accordions{border-top:1px solid #292929;margin-top:8px}.nox-pdp-accordions>details{border-bottom:1px solid #292929}.nox-pdp-accordions summary{display:flex;justify-content:space-between;align-items:center;gap:15px;min-height:58px;cursor:pointer;list-style:none;font-size:12px;color:#d2cdca}.nox-pdp-accordions summary::-webkit-details-marker{display:none}.nox-pdp-accordions summary>span{font-size:22px;color:#999;transition:transform .2s}.nox-pdp-accordions details[open] summary>span{transform:rotate(45deg)}.nox-pdp-accordions details>div{padding-bottom:25px;font-size:12px;color:#aaa;line-height:2}.nox-pdp-accordions details a{display:inline-block;margin-top:10px;border-bottom:1px solid #851c20}.nox-pdp-facts>[data-testid=pdp-product-facts]{display:flex;flex-direction:column;gap:14px}.nox-pdp-facts [data-testid=pdp-product-facts]>section{border-radius:0;background:transparent;padding:18px;border-color:#252525}.nox-pdp-facts table{font-size:11px}
+.nox-footer-art{height:auto}.nox-footer-art>span{inset:auto;font-style:normal;text-align:center}
+.nox-product-carousel__arrows{z-index:5;top:38%;bottom:auto;transform:translateY(-50%)}
+@media(prefers-reduced-motion:reduce){.nox-catalog-close,.nox-catalog-row::before,.nox-pdp-accordions summary>span{transition:none}}

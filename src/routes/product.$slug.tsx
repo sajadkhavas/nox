@@ -6,7 +6,6 @@ import { Footer } from "@/components/lbb/Footer";
 import { MobileBottomBar } from "@/components/lbb/MobileBottomBar";
 import { Breadcrumb } from "@/components/lbb/Breadcrumb";
 import { Gallery } from "@/components/lbb/product/Gallery";
-import { ProductFacts } from "@/components/lbb/product/ProductFacts";
 import { ProductPurchasePanel } from "@/components/lbb/product/ProductPurchasePanel";
 import { CompleteTheLook, RelatedProducts } from "@/components/lbb/product/ProductDiscovery";
 import { RecentlyViewed } from "@/components/lbb/product/RecentlyViewed";
@@ -321,7 +320,7 @@ function LiveProductPage({ loader }: { loader: LiveLoader }) {
       <Shell
         as="section"
         aria-label="تصمیم‌گیری محصول"
-        className="grid grid-cols-1 gap-8 pb-12 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-10"
+        className="nox-pdp-layout grid grid-cols-1 pb-12"
       >
         <Gallery media={galleryMedia} name={product.name} productSlug={product.slug} enable3d />
         <ProductPurchasePanel
@@ -339,7 +338,7 @@ function LiveProductPage({ loader }: { loader: LiveLoader }) {
               قیمت، موجودی، رنگ، سایز و مشخصات مربوط به همین محصول را اینجا ببینید.
             </p>
           </div>
-          <ProductFacts model={model} />
+
           {product.faqs?.length ? (
             <section aria-labelledby="pdp-faq-heading" className="mt-8">
               <h2 id="pdp-faq-heading" className="text-xl font-bold">
@@ -445,7 +444,7 @@ function PrototypeProductPage({ loader }: { loader: PrototypeLoader }) {
         <Shell
           as="section"
           aria-label="تصمیم‌گیری محصول"
-          className="grid grid-cols-1 gap-8 pb-12 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-10"
+          className="nox-pdp-layout grid grid-cols-1 pb-12"
         >
           <Gallery media={galleryMedia} name={model.identity.name ?? "محصول"} />
           <ProductPurchasePanel model={model} onMediaChange={updateGallery} />
@@ -461,7 +460,6 @@ function PrototypeProductPage({ loader }: { loader: PrototypeLoader }) {
                 تأییدشده داشته باشد.
               </p>
             </div>
-            <ProductFacts model={model} />
 
             {!model.readyForCommerce ? (
               <div className="mt-8">
