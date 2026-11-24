@@ -16,6 +16,8 @@ const buttonVariants = cva(
         secondary: "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
+        hero: "bg-[var(--nox-hero-paper)] text-[var(--nox-hero-void)] hover:bg-[var(--nox-hero-gold)] rounded-none",
+        heroOutline: "border border-[var(--nox-hero-border)] text-[var(--nox-hero-muted)] bg-transparent hover:border-[var(--nox-hero-gold)] hover:text-[var(--nox-hero-gold)] rounded-none",
       },
       size: {
         default: "h-9 px-4 py-2",

@@ -183,7 +183,7 @@ export function Gallery({
   return (
     <div
       dir="rtl"
-      className="flex min-w-0 flex-col-reverse gap-3 md:sticky md:top-20 md:flex-row md:self-start lg:top-24 lg:gap-4"
+      className="nox-pdp-gallery flex min-w-0 flex-col-reverse gap-3 md:sticky md:top-20 md:flex-row md:self-start lg:top-24 lg:gap-4"
     >
       <div
         role="tablist"

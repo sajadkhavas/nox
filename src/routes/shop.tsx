@@ -1,6 +1,15 @@
+import { resolveNoxVisuals, NoxVisualsProvider } from "@/lib/nox-visuals";
+import { NOX_CATEGORY_SLUGS, canonicalNoxCategorySlug } from "@/lib/nox-category-paths";
 import { useCallback, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowUpLeft, PackageSearch, RefreshCcw, Search } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  ArrowUpLeft,
+  PackageSearch,
+  RefreshCcw,
+  Search,
+} from "lucide-react";
 import { Navbar } from "@/components/lbb/Navbar";
 import { Footer } from "@/components/lbb/Footer";
 import { ManagedPageHead } from "@/components/lbb/ManagedPageIntro";
@@ -20,6 +29,7 @@ import {
 import { products } from "@/lib/product-catalog";
 import { evaluateProductEvidence } from "@/lib/product-evidence";
 import { CATEGORIES } from "@/lib/categories";
+import { noxCategoryCover } from "@/lib/nox-category-covers";
 import { homeCategoryImage } from "@/lib/home-category-images";
 import { ACTIVE_HOME_CATEGORY_ORDER } from "@/lib/homepage";
 import {
@@ -49,7 +59,9 @@ import {
   backendErrorMessage,
   getCatalogFacets,
   isLiveBackend,
+  listCategories,
   listProducts,
+  type CategoryDto,
   type FacetsDto,
 } from "@/lib/backend-api";
 import {
@@ -62,12 +74,12 @@ import {
 } from "@/lib/backend-storefront";
 import { useStorefrontPresentation } from "@/lib/storefront-presentation";
 
-const TITLE = "فروشگاه LBB | خرید پوشاک خیابانی و استریت‌ویر";
+const TITLE = "فروشگاه NOX | خرید پوشاک خیابانی و استریت‌ویر";
 const DESC =
-  "محصولات موجود LBB را با فیلترهای دسته، سایز، رنگ، قیمت و موجودی مرور کن و برای جزئیات هر مدل وارد صفحه همان محصول شو.";
+  "محصولات موجود NOX را با فیلترهای دسته، سایز، رنگ، قیمت و موجودی مرور کن و برای جزئیات هر مدل وارد صفحه همان محصول شو.";
 const PAGE_SIZE = 12;
 const BACKEND_PAGE_SIZE = 48;
-const seasonalProducts = products.filter((product) => product.category !== "hoodies");
+const seasonalProducts = products;
 
 function createItemListLd() {
   const publishedProducts = seasonalProducts.filter(
@@ -76,7 +88,7 @@ function createItemListLd() {
   return {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "محصولات فروشگاه LBB",
+    name: "محصولات فروشگاه NOX",
     numberOfItems: publishedProducts.length,
     itemListElement: publishedProducts.slice(0, 20).map((product, index) => ({
       "@type": "ListItem",
@@ -91,6 +103,7 @@ type LiveLoader = {
   mode: "live";
   products: BackendCatalogCard[];
   facets: FacetsDto | null;
+  categories?: CategoryDto[];
   total: number;
   totalPages: number;
   filters: Filters;
@@ -101,6 +114,7 @@ type PrototypeLoader = { mode: "prototype" };
 type ShopLoader = LiveLoader | PrototypeLoader;
 
 export const Route = createFileRoute("/shop")({
+  beforeLoad: async () => ({ noxVisuals: await resolveNoxVisuals() }),
   validateSearch: (search: Record<string, unknown>) =>
     isLiveBackend() ? parseBackendFilterSearch(search) : parseFilterSearch(search),
   loaderDeps: ({ search }) => ({ search }),
@@ -108,7 +122,10 @@ export const Route = createFileRoute("/shop")({
     if (!isLiveBackend()) return { mode: "prototype" };
 
     try {
-      const facetsResponse = await getCatalogFacets();
+      const [facetsResponse, categoryResponse] = await Promise.all([
+        getCatalogFacets(),
+        listCategories().catch(() => null),
+      ]);
       const facets = facetsResponse.data;
       const visuals = backendFacetVisuals(facets);
       const scope: FilterScope = {
@@ -132,6 +149,7 @@ export const Route = createFileRoute("/shop")({
           mode: "live",
           products: response.data.map(backendCard),
           facets,
+          categories: categoryResponse?.data,
           total: response.meta.pagination?.total ?? response.data.length,
           totalPages: response.meta.pagination?.totalPages ?? 1,
           filters,
@@ -142,6 +160,7 @@ export const Route = createFileRoute("/shop")({
           mode: "live",
           products: [],
           facets,
+          categories: categoryResponse?.data,
           total: 0,
           totalPages: 0,
           filters,
@@ -175,9 +194,7 @@ export const Route = createFileRoute("/shop")({
         ),
       },
     ];
-    if (!isLiveBackend()) {
-      scripts.push({ type: "application/ld+json", children: JSON.stringify(createItemListLd()) });
-    }
+
     return {
       meta: isLiveBackend()
         ? hasSearchModifiers(filters)
@@ -335,14 +352,18 @@ function LiveShop({ loader }: { loader: LiveLoader }) {
 
   return (
     <ShopChrome
-      categories={categoryOptions ?? []}
+      categories={
+        loader.categories?.map(({ slug, name, image }) => ({ slug, label: name, image })) ??
+        categoryOptions ??
+        []
+      }
       status={
         loader.error
           ? "در حال حاضر دریافت اطلاعات فروشگاه امکان‌پذیر نیست. لطفاً کمی بعد دوباره تلاش کنید."
           : "قیمت، موجودی و گزینه‌های قابل انتخاب هر محصول به‌روز نمایش داده می‌شوند."
       }
     >
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[250px_1fr]">
+      <div className="nox-shop-layout grid grid-cols-1 gap-10 lg:grid-cols-[250px_1fr]">
         <aside className="hidden lg:block" aria-label="فیلتر محصولات">
           <div className="sticky top-[calc(var(--lbb-nav-h)+24px)] max-h-[calc(100dvh-var(--lbb-nav-h)-40px)] overflow-y-auto overscroll-contain pe-3">
             {facets ? renderFilters(filters, setFilters) : null}
@@ -351,7 +372,7 @@ function LiveShop({ loader }: { loader: LiveLoader }) {
 
         <section aria-labelledby="shop-grid-title">
           <h2 id="shop-grid-title" className="sr-only">
-            نتایج کاتالوگ LBB
+            نتایج کاتالوگ NOX
           </h2>
           {facets ? (
             <ProductGridControls
@@ -505,14 +526,14 @@ function PrototypeShop() {
       }))}
       status={`${inventory.label} پرداخت و ارسال واقعی در این نسخه فعال نیست.`}
     >
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-[250px_1fr]">
+      <div className="nox-shop-layout grid grid-cols-1 gap-10 lg:grid-cols-[250px_1fr]">
         <aside className="hidden lg:block" aria-label="فیلتر محصولات">
           <div className="sticky top-[calc(var(--lbb-nav-h)+24px)]">{desktopFilters}</div>
         </aside>
 
         <section aria-labelledby="shop-grid-title">
           <h2 id="shop-grid-title" className="sr-only">
-            نتایج کاتالوگ LBB
+            نتایج کاتالوگ NOX
           </h2>
           <ProductGridControls
             filters={filters}
@@ -595,8 +616,16 @@ function ShopChrome({
   const navigate = useNavigate();
   const presentation = useStorefrontPresentation();
   const page = presentation.pages.shop;
+  const visuals = Route.useRouteContext().noxVisuals;
+  const shopImage =
+    visuals.shop || (!isLiveBackend() ? "/brand/editorial/shop-front.webp" : undefined);
+  const shopCategories = NOX_CATEGORY_SLUGS.flatMap((slug) => {
+    const category = categories.find((item) => canonicalNoxCategorySlug(item.slug) === slug);
+    return category
+      ? [{ ...category, slug, label: visuals.catalog?.categories?.[slug]?.name || category.label }]
+      : [];
+  });
   const [query, setQuery] = useState("");
-
   const submitSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const q = query.trim();
@@ -609,42 +638,36 @@ function ShopChrome({
       <Navbar theme="dark" />
       <main
         dir="rtl"
-        className="min-h-screen bg-obsidian pb-bottombar pt-[var(--lbb-nav-h)] md:pb-0"
+        className="nox-shop-page min-h-screen bg-obsidian pb-bottombar pt-[var(--lbb-nav-h)] md:pb-0"
       >
         <Shell className="py-4">
           <Breadcrumb items={[{ label: "خانه", to: "/" }, { label: "فروشگاه" }]} />
         </Shell>
-        <header className="border-y border-hairline">
-          <Shell className="py-3 md:py-5">
-            <div className="relative isolate min-h-[520px] overflow-hidden rounded-[24px] bg-carbon md:min-h-[590px] md:rounded-[32px]">
-              <img
-                src={page.socialImageUrl ?? homeCategoryImage("tshirts")}
-                alt={
-                  presentation.source === "live"
-                    ? page.title
-                    : "تیشرت ال‌بی‌بی برای شروع مرور فروشگاه"
-                }
-                width={1600}
-                height={2000}
-                fetchPriority="high"
-                className="absolute inset-0 h-full w-full bg-white object-contain p-8 md:p-14"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(9,9,11,.12)_0%,rgba(9,9,11,.38)_42%,rgba(9,9,11,.94)_100%)] md:bg-[linear-gradient(90deg,rgba(9,9,11,.94)_0%,rgba(9,9,11,.68)_42%,rgba(9,9,11,.08)_78%)]" />
-              <div className="relative flex min-h-[520px] flex-col justify-end p-5 md:min-h-[590px] md:max-w-[680px] md:justify-center md:p-12 lg:p-16">
-                <TechLabel tone="signal">{page.eyebrow}</TechLabel>
-                <h1 className="mt-4 max-w-xl text-[clamp(2.75rem,7vw,6.5rem)] font-black leading-[.92] tracking-[-.06em] text-bone">
-                  {page.title}
-                </h1>
-                <p className="mt-5 max-w-lg text-sm leading-7 text-bone/78 md:text-base md:leading-8">
-                  {page.lede}
+        <header className="nox-shop-editorial">
+          <Shell>
+            <div className="nox-shop-hero-grid">
+              <div className="nox-shop-photo">
+                {shopImage && (
+                  <img
+                    src={shopImage}
+                    alt="نمای ورودی فروشگاه پوشاک ناکس با تابلو و مانکن‌های استریت‌ویر"
+                    width={1086}
+                    height={1448}
+                    fetchPriority="high"
+                    decoding="async"
+                  />
+                )}
+              </div>
+              <div className="nox-shop-intro">
+                <span className="nox-shop-latin" dir="ltr">
+                  The shop
+                </span>
+                <h1>{visuals.catalog?.shopTitle || "فروشگاه پوشاک استریت‌ویر ناکس"}</h1>
+                <p>
+                  {visuals.catalog?.shopIntro ||
+                    "دستهٔ دلخواهت را انتخاب کن و محصولات منتشرشدهٔ ناکس را ببین."}
                 </p>
-
-                <form
-                  onSubmit={submitSearch}
-                  role="search"
-                  className="mt-7 flex min-h-14 w-full max-w-xl items-center gap-2 rounded-full border border-white/20 bg-obsidian/75 p-1.5 ps-5 shadow-overlay backdrop-blur-xl focus-within:border-signal"
-                >
-                  <Search size={19} className="shrink-0 text-signal" aria-hidden="true" />
+                <form onSubmit={submitSearch} role="search" className="nox-shop-search">
                   <label htmlFor="shop-search" className="sr-only">
                     جست‌وجو در فروشگاه
                   </label>
@@ -653,94 +676,59 @@ function ShopChrome({
                     type="search"
                     value={query}
                     onChange={(event) => setQuery(event.target.value)}
-                    placeholder="چی می‌خوای؟ تیشرت، بگی، کتونی…"
-                    autoComplete="off"
-                    className="min-w-0 flex-1 bg-transparent text-sm text-bone outline-none placeholder:text-metal"
+                    placeholder="جست‌وجوی پوشاک…"
                   />
-                  <button
-                    type="submit"
-                    disabled={!query.trim()}
-                    className="grid size-11 shrink-0 place-items-center rounded-full bg-signal text-bone transition-transform hover:scale-105 disabled:opacity-45"
-                    aria-label="نمایش نتایج جست‌وجو"
-                  >
-                    <ArrowUpLeft size={18} aria-hidden="true" />
+                  <button type="submit" disabled={!query.trim()} aria-label="جست‌وجو">
+                    <Search size={18} />
                   </button>
                 </form>
-                <a
-                  href="#shop-results"
-                  className="mt-4 inline-flex min-h-11 items-center gap-2 self-start text-xs font-bold text-bone underline-offset-4 hover:text-signal hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
-                >
-                  رفتن به فهرست محصولات
-                  <ArrowUpLeft size={16} aria-hidden="true" />
+                <a href="#shop-results" className="nox-editorial-link">
+                  دیدن محصولات <ArrowUpLeft size={17} />
                 </a>
-                <p className="tech mt-4 text-bone/55">{status}</p>
+                <p className="nox-shop-summary">{status}</p>
               </div>
             </div>
           </Shell>
-
-          <Shell className="py-8 md:py-12">
-            <div className="mb-5 flex items-end justify-between gap-4">
-              <div>
-                <TechLabel tone="signal">{page.sectionLabel}</TechLabel>
-                <h2 className="mt-2 text-2xl font-black text-bone md:text-4xl">
-                  {page.sectionTitle}
-                </h2>
-              </div>
-              <span className="tech hidden text-mute md:block">SWIPE / EXPLORE</span>
+          <Shell className="nox-shop-categories">
+            <div className="nox-shop-category-heading">
+              <h2>از دنیای ناکس انتخاب کن</h2>
+              <span dir="ltr">NOX Category</span>
             </div>
-            <div className="mx-[calc(0px_-_var(--lbb-gutter))] flex snap-x snap-mandatory gap-3 overflow-x-auto px-[var(--lbb-gutter)] pb-2 [scrollbar-width:none] md:mx-0 md:grid md:grid-cols-5 md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
-              {categories.map((category, index) => (
-                <Link
-                  key={category.slug}
-                  to="/$category"
-                  params={{ category: category.slug }}
-                  className="group relative aspect-[4/5] w-[72vw] max-w-[290px] shrink-0 snap-start overflow-hidden rounded-[20px] border border-white/10 bg-white shadow-raised transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-1 hover:border-signal/60 hover:shadow-overlay focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal md:w-auto md:max-w-none"
-                >
-                  <img
-                    src={
-                      category.image || homeCategoryImage(category.slug as keyof typeof CATEGORIES)
-                    }
-                    alt=""
-                    width={640}
-                    height={800}
-                    loading={index < 2 ? "eager" : "lazy"}
-                    className="absolute inset-0 h-full w-full object-contain p-5 transition-transform duration-700 group-hover:scale-[1.05]"
-                  />
-                  <span className="absolute inset-0 bg-gradient-to-t from-obsidian via-transparent to-transparent" />
-                  <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4">
+            <div className="nox-shop-category-rail">
+              {shopCategories.map((category) => {
+                const slug = canonicalNoxCategorySlug(category.slug);
+                const cover =
+                  visuals.categories?.[slug] ||
+                  visuals.categories?.[slug === "hoodies" ? "sweatshirts" : slug] ||
+                  category.image ||
+                  (!isLiveBackend() ? noxCategoryCover(slug) : undefined);
+                return (
+                  <Link
+                    key={slug}
+                    to="/shop/$category"
+                    params={{ category: slug }}
+                    className="nox-shop-category-card"
+                  >
+                    {cover && (
+                      <img
+                        src={cover}
+                        alt={`پوشاک ${category.label} ناکس`}
+                        width={400}
+                        height={500}
+                        loading="lazy"
+                      />
+                    )}
                     <span>
-                      <span className="block text-xl font-black text-bone">{category.label}</span>
-                      <span className="tech mt-1 block text-bone/60">0{index + 1}</span>
+                      {category.label}
+                      <ArrowUpLeft size={18} />
                     </span>
-                    <span className="grid size-10 place-items-center rounded-full border border-white/25 bg-obsidian/45 text-bone backdrop-blur transition-colors group-hover:border-signal group-hover:bg-signal">
-                      <ArrowUpLeft size={16} aria-hidden="true" />
-                    </span>
-                  </span>
-                </Link>
-              ))}
+                  </Link>
+                );
+              })}
             </div>
-          </Shell>
-
-          <Shell className="flex snap-x gap-1 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <Link
-              to="/shop"
-              className="tech min-h-11 shrink-0 snap-start whitespace-nowrap border-b-2 border-signal px-4 py-3 text-signal"
-            >
-              همه قطعه‌ها
-            </Link>
-            {categories.map((category) => (
-              <Link
-                key={category.slug}
-                to="/$category"
-                params={{ category: category.slug }}
-                className="tech min-h-11 shrink-0 snap-start whitespace-nowrap border-b-2 border-transparent px-4 py-3 text-metal transition-colors hover:text-bone focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
-              >
-                {category.label}
-              </Link>
-            ))}
           </Shell>
         </header>
-        <Band id="shop-results" hairline={false} className="scroll-mt-24 !py-10 md:!py-14">
+        <Band id="shop-results" hairline={false} className="scroll-mt-24 !py-0">
           <Shell>{children}</Shell>
         </Band>
       </main>

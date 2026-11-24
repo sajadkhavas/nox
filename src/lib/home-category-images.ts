@@ -1,14 +1,23 @@
-import hoodies from "@/assets/categories/catalog/hoodies-white-v3.webp";
-import pants from "@/assets/categories/client/pants-client.webp";
-import tshirts from "@/assets/categories/client/tshirt-client.webp";
-import shoes from "@/assets/categories/client/shoes-client.webp";
-import socks from "@/assets/categories/client/socks-client.webp";
+import hoodiesAsset from "@/assets/imported/src/assets/categories/catalog/hoodies-white-v3.webp.asset.json";
+const hoodies = hoodiesAsset.url;
+import pantsAsset from "@/assets/imported/src/assets/categories/client/pants-client.webp.asset.json";
+const pants = pantsAsset.url;
+import tshirtsAsset from "@/assets/imported/src/assets/categories/client/tshirt-client.webp.asset.json";
+const tshirts = tshirtsAsset.url;
+import shoesAsset from "@/assets/imported/src/assets/categories/client/shoes-client.webp.asset.json";
+const shoes = shoesAsset.url;
+import socksAsset from "@/assets/imported/src/assets/categories/client/socks-client.webp.asset.json";
+const socks = socksAsset.url;
+import { noxCategoryCover } from "./nox-category-covers";
 import type { CategorySlug } from "./products";
 
 const HOME_CATEGORY_IMAGES: Record<CategorySlug, string> = {
-  hoodies,
-  pants,
-  tshirts,
+  jorts: noxCategoryCover("jorts") ?? "",
+  jackets: noxCategoryCover("jackets") ?? "",
+  "face-masks": noxCategoryCover("face-masks") ?? "",
+  hoodies: noxCategoryCover("sweatshirts") ?? hoodies,
+  pants: noxCategoryCover("denim") ?? pants,
+  tshirts: noxCategoryCover("tshirts") ?? tshirts,
   shoes,
   socks,
 };

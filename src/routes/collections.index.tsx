@@ -1,22 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { ArrowUpLeft, RefreshCcw } from "lucide-react";
 import { Navbar } from "@/components/lbb/Navbar";
 import { Footer } from "@/components/lbb/Footer";
-import { ManagedPageHead, ManagedPageIntro } from "@/components/lbb/ManagedPageIntro";
+import { ManagedPageHead } from "@/components/lbb/ManagedPageIntro";
 import { MobileBottomBar } from "@/components/lbb/MobileBottomBar";
-import { Breadcrumb } from "@/components/lbb/Breadcrumb";
+import { EmptyState, CtaClasses, Shell } from "@/components/lbb/ui/primitives";
 import { COLLECTIONS } from "@/lib/collections";
 import { getCollectionEditorialView } from "@/lib/editorial-commerce";
-import {
-  Band,
-  CtaClasses,
-  EmptyState,
-  Frame,
-  SectionHead,
-  Shell,
-  StatusTag,
-  TechLabel,
-} from "@/components/lbb/ui/primitives";
 import { pageMeta, canonical, breadcrumbLd } from "@/lib/site";
 import {
   backendErrorMessage,
@@ -25,29 +16,55 @@ import {
   type CollectionDto,
 } from "@/lib/backend-api";
 import { useStorefrontPresentation } from "@/lib/storefront-presentation";
+import { resolveNoxVisuals, type NoxVisuals } from "@/lib/nox-visuals";
+import { noxCategoryCover } from "@/lib/nox-category-covers";
 
-const TITLE = "کالکشن‌های LBB | روایت‌های ادیتوریال و مسیرهای کشف";
-const DESC = "کالکشن‌های منتشرشده LBB و مسیرهای کشف محصول.";
-const COLLECTION_VIEWS = COLLECTIONS.map(getCollectionEditorialView);
-type ManagedCollection = CollectionDto & { coverImage?: string | null };
-
-type LoaderData =
-  { mode: "live"; collections: CollectionDto[]; error: string | null } | { mode: "prototype" };
-
+type Editorial = {
+  slug: string;
+  name: string;
+  latin?: string;
+  summary: string;
+  cover: string;
+  tags: string[];
+  count?: number;
+};
+type LoaderData = {
+  mode: "live" | "prototype";
+  collections: CollectionDto[];
+  error: string | null;
+  visuals: NoxVisuals;
+};
 export const Route = createFileRoute("/collections/")({
   loader: async (): Promise<LoaderData> => {
-    if (!isLiveBackend()) return { mode: "prototype" };
+    const visualsPromise = resolveNoxVisuals();
+    if (!isLiveBackend())
+      return { mode: "prototype", collections: [], error: null, visuals: await visualsPromise };
     try {
       const response = await listCollections();
-      return { mode: "live", collections: response.data, error: null };
+      return {
+        mode: "live",
+        collections: response.data,
+        error: null,
+        visuals: await visualsPromise,
+      };
     } catch (error) {
-      return { mode: "live", collections: [], error: backendErrorMessage(error) };
+      return {
+        mode: "live",
+        collections: [],
+        error: backendErrorMessage(error),
+        visuals: await visualsPromise,
+      };
     }
   },
   head: () => ({
     meta: isLiveBackend()
       ? []
-      : pageMeta({ title: TITLE, description: DESC, path: "/collections" }),
+      : pageMeta({
+          title: "کالکشن‌های پوشاک ناکس | NOX Collection",
+          description:
+            "کالکشن‌های استریت‌ویر ناکس؛ پوشاک گرافیکی، برش‌های آزاد و انتخاب‌های ما برای استایل شما.",
+          path: "/collections",
+        }),
     links: canonical("/collections"),
     scripts: [
       {
@@ -63,241 +80,222 @@ export const Route = createFileRoute("/collections/")({
   }),
   component: CollectionsIndexPage,
 });
-
 function CollectionsIndexPage() {
   const loader = Route.useLoaderData();
-  return loader.mode === "live" ? (
-    <LiveCollections collections={loader.collections} error={loader.error} />
-  ) : (
-    <PrototypeCollections />
-  );
-}
-
-function Chrome({ children }: { children: React.ReactNode }) {
+  const presentation = useStorefrontPresentation().pages.collections;
+  const [filter, setFilter] = useState("all");
+  const covers = [
+    loader.visuals.categories?.sweatshirts || noxCategoryCover("sweatshirts")!,
+    loader.visuals.categories?.tshirts || noxCategoryCover("tshirts")!,
+    loader.visuals.categories?.pants || noxCategoryCover("denim")!,
+  ];
+  const entries: Editorial[] =
+    loader.mode === "live"
+      ? loader.collections.map((item, index) => ({
+          slug: item.slug,
+          name: item.name,
+          summary:
+            item.seo.metaDescription ||
+            item.description ||
+            "انتخاب‌های ناکس برای استایلی با امضای خودت.",
+          cover:
+            (item as CollectionDto & { coverImage?: string }).coverImage ||
+            item.seo.primaryImage ||
+            covers[index % covers.length],
+          tags: [],
+          count: item.productCount,
+        }))
+      : COLLECTIONS.map((item, index) => {
+          const view = getCollectionEditorialView(item);
+          return {
+            slug: item.slug,
+            name: item.nameFa,
+            latin: item.latinName,
+            summary: item.tagline,
+            cover: covers[index % covers.length],
+            tags: item.storyPoints,
+            count: view.publicProducts.length || undefined,
+          };
+        });
+  const lead = entries[0];
+  const shown = filter === "all" ? entries : entries.filter((item) => item.slug === filter);
   return (
     <>
-      <Navbar theme="light" />
-      <main className="min-h-screen bg-obsidian pb-bottombar pt-16" data-f17-route="collections">
-        <Shell className="py-3">
-          <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: "کالکشن‌ها" }]} />
-        </Shell>
-        {children}
-      </main>
-      <Footer theme="light" />
-      <MobileBottomBar />
-    </>
-  );
-}
-
-function LiveCollections({
-  collections,
-  error,
-}: {
-  collections: CollectionDto[];
-  error: string | null;
-}) {
-  const page = useStorefrontPresentation().pages.collections;
-  return (
-    <Chrome>
-      <ManagedPageHead presentation={page} path="/collections" />
-      <Band hairline={false} className="pb-8 pt-8 md:pb-12 md:pt-12">
-        <ManagedPageIntro presentation={page} />
-      </Band>
-      <Band>
-        <Shell>
-          {error ? (
+      <Navbar theme="dark" />
+      <main className="nox-collections-page" dir="rtl" data-f17-route="collections">
+        {loader.mode === "live" && (
+          <ManagedPageHead presentation={presentation} path="/collections" />
+        )}
+        {loader.error ? (
+          <Shell className="py-20">
             <EmptyState
-              icon={<RefreshCcw size={40} aria-hidden="true" />}
-              title="کالکشن‌ها قابل دریافت نیستند"
-              body={error}
+              icon={<RefreshCcw size={32} />}
+              title="کالکشن‌ها دریافت نشدند"
+              body={loader.error}
               action={
-                <button
-                  type="button"
-                  onClick={() => window.location.reload()}
-                  className={CtaClasses("signal")}
-                >
+                <button className={CtaClasses("signal")} onClick={() => window.location.reload()}>
                   تلاش دوباره
                 </button>
               }
             />
-          ) : collections.length === 0 ? (
+          </Shell>
+        ) : !lead ? (
+          <Shell className="py-20">
             <EmptyState
-              title="کالکشن منتشرشده‌ای وجود ندارد"
-              body="کالکشن‌های تازه LBB به‌زودی در این بخش قرار می‌گیرند."
-            />
-          ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {collections.map((collection) => {
-                const managed = collection as ManagedCollection;
-                return (
-                  <Link
-                    key={collection.publicId}
-                    to="/collections/$slug"
-                    params={{ slug: collection.slug }}
-                    className="group flex min-h-64 flex-col overflow-hidden rounded-2xl border border-hairline bg-carbon transition hover:-translate-y-1 hover:border-signal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
-                  >
-                    {managed.coverImage ? (
-                      <img
-                        src={managed.coverImage}
-                        alt={`تصویر کالکشن ${collection.name}`}
-                        width={900}
-                        height={600}
-                        loading="lazy"
-                        className="aspect-[3/2] w-full object-cover"
-                      />
-                    ) : null}
-                    <div className="flex flex-1 flex-col justify-between p-6">
-                      <div>
-                        <TechLabel tone="signal">
-                          {collection.isFeatured ? "FEATURED COLLECTION" : "COLLECTION"}
-                        </TechLabel>
-                        <h2 className="mt-4 text-display-3 text-bone">{collection.name}</h2>
-                        <p className="mt-3 text-sm leading-7 text-metal">
-                          {collection.description || "توضیح عمومی برای این کالکشن منتشر نشده است."}
-                        </p>
-                        {typeof collection.productCount === "number" ? (
-                          <StatusTag tone="neutral" className="mt-5">
-                            {collection.productCount.toLocaleString("fa-IR")} محصول منتشرشده
-                          </StatusTag>
-                        ) : null}
-                      </div>
-                      <span className="tech mt-8 inline-flex items-center gap-2 text-bone group-hover:text-signal">
-                        مشاهده کالکشن <ArrowUpLeft size={15} aria-hidden="true" />
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </Shell>
-      </Band>
-    </Chrome>
-  );
-}
-
-function PrototypeCollections() {
-  return (
-    <>
-      <Navbar theme="light" />
-      <main className="min-h-screen bg-obsidian pb-bottombar pt-16" data-f17-route="collections">
-        <Shell className="py-3">
-          <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: "کالکشن‌ها" }]} />
-        </Shell>
-
-        <Band hairline={false} className="pb-8 pt-8 md:pb-12 md:pt-12">
-          <Shell>
-            <TechLabel tone="signal">LBB / EDITORIAL COLLECTIONS</TechLabel>
-            <h1 className="mt-5 max-w-[15ch] text-display-1 text-bone">
-              کالکشن‌ها؛ داستان‌هایی برای پیدا کردن مسیر بعدی
-            </h1>
-            <p className="text-lede mt-5 max-w-[62ch]">
-              هر کالکشن یک گروه‌بندی ادیتوریال است، نه تکرار دسته‌بندی فروشگاه. از روایت شروع کنید و
-              فقط وقتی داده محصول برای انتشار آماده باشد، به صفحه همان محصول بروید.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/lookbook" className={CtaClasses("signal")}>
-                دیدن لوک‌بوک
-              </Link>
-              <Link to="/shop" search={{}} className={CtaClasses("line")}>
-                مرور فروشگاه
-              </Link>
-            </div>
-          </Shell>
-        </Band>
-
-        <Band>
-          <Shell>
-            <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-              {COLLECTION_VIEWS.map((view, index) => (
-                <article
-                  key={view.collection.slug}
-                  className={index === 0 ? "lg:col-span-2" : undefined}
-                >
-                  <Link
-                    to="/collections/$slug"
-                    params={{ slug: view.collection.slug }}
-                    className="group flex h-full flex-col overflow-hidden rounded-2xl border border-hairline bg-carbon transition-transform duration-300 ease-[var(--ease-lbb)] hover:-translate-y-1 focus-visible:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
-                    data-f17-collection-link={view.collection.slug}
-                  >
-                    <Frame
-                      src={view.media}
-                      alt={`فضای تصویری ${view.collection.nameFa}`}
-                      ratio={index === 0 ? "16/9" : "4/5"}
-                      priority={index === 0}
-                      sizes={
-                        index === 0
-                          ? "(max-width: 1024px) 100vw, 66vw"
-                          : "(max-width: 1024px) 100vw, 33vw"
-                      }
-                      className="rounded-t-2xl"
-                      imgClassName="transition-transform duration-700 group-hover:scale-[1.04]"
-                    >
-                      <div className="absolute inset-0 bg-gradient-to-t from-obsidian/75 via-transparent to-transparent" />
-                      <div className="absolute inset-inline-end-4 top-4 flex flex-wrap justify-end gap-2">
-                        <StatusTag
-                          tone={view.kind === "drop" ? "signal" : "neutral"}
-                          className="rounded-lg backdrop-blur"
-                        >
-                          {view.kind === "drop" ? "DROP STORY" : "EDITORIAL COLLECTION"}
-                        </StatusTag>
-                        <StatusTag tone="neutral" className="rounded-lg backdrop-blur">
-                          {view.publicProducts.length > 0
-                            ? `${view.publicProducts.length.toLocaleString("fa-IR")} محصول قابل مشاهده`
-                            : "بدون لینک مستقیم محصول"}
-                        </StatusTag>
-                      </div>
-                    </Frame>
-
-                    <div className="flex flex-1 flex-col p-5 md:p-6">
-                      <TechLabel tone="signal">{view.collection.latinName}</TechLabel>
-                      <h2 className="mt-3 text-display-3 text-bone">{view.collection.nameFa}</h2>
-                      <p className="mt-3 text-sm leading-7 text-metal">{view.collection.tagline}</p>
-                      <ul
-                        className="mt-5 flex flex-wrap gap-2"
-                        aria-label={`ویژگی‌های ${view.collection.nameFa}`}
-                      >
-                        {view.collection.storyPoints.map((point) => (
-                          <li
-                            key={point}
-                            className="rounded-full border border-hairline px-3 py-1.5 text-[11px] text-metal"
-                          >
-                            {point}
-                          </li>
-                        ))}
-                      </ul>
-                      <span className="tech mt-7 inline-flex items-center gap-2 text-bone transition-colors group-hover:text-signal">
-                        ورود به روایت
-                        <ArrowUpLeft aria-hidden="true" size={15} />
-                      </span>
-                    </div>
-                  </Link>
-                </article>
-              ))}
-            </div>
-          </Shell>
-        </Band>
-
-        <Band>
-          <Shell>
-            <SectionHead
-              index="INTENT"
-              label="COLLECTION ≠ CATEGORY"
-              title="روایت را با دسته‌بندی محصول قاطی نمی‌کنیم"
-              lede="کالکشن برای کشف و داستان‌گویی است؛ دسته‌ها برای مرور نوع محصول. اگر قصد مقایسه مستقیم دارید، از فروشگاه یا دسته مربوط ادامه دهید."
+              title="کالکشن تازه در راه است"
+              body="انتخاب‌های منتشرشدهٔ ما را در فروشگاه ببینید."
               action={
-                <Link
-                  to="/journal"
-                  className="tech min-h-11 text-bone transition-colors hover:text-signal"
-                >
-                  راهنماهای ژورنال ←
+                <Link to="/shop" className={CtaClasses("signal")}>
+                  دیدن فروشگاه
                 </Link>
               }
             />
           </Shell>
-        </Band>
+        ) : (
+          <>
+            <section className="nox-drop-hero" aria-labelledby="collection-hero-title">
+              <div className="nox-drop-visual">
+                <img
+                  src={lead.cover}
+                  alt={`پوشاک کالکشن ${lead.name}`}
+                  fetchPriority="high"
+                  width={1000}
+                  height={1250}
+                />
+                <span className="nox-drop-pill">از انتخاب‌های ناکس</span>
+                <span className="nox-drop-year" aria-hidden="true">
+                  NOX
+                </span>
+              </div>
+              <div className="nox-drop-info">
+                <span className="nox-drop-season" dir="ltr">
+                  NOX COLLECTION
+                </span>
+                <p className="nox-drop-eyebrow">پوشاک ما، بخشی از دنیای ماست.</p>
+                <h1 id="collection-hero-title">{lead.name}</h1>
+                {lead.latin && (
+                  <span className="nox-collection-latin" dir="ltr">
+                    {lead.latin}
+                  </span>
+                )}
+                <p className="nox-drop-description">{lead.summary}</p>
+                <div className="nox-drop-stats">
+                  {typeof lead.count === "number" && (
+                    <div>
+                      <strong>{lead.count.toLocaleString("fa-IR")}</strong>
+                      <span>محصول در کالکشن</span>
+                    </div>
+                  )}
+                  <div>
+                    <strong>ناکس</strong>
+                    <span>استریت‌ویر با امضای خودت</span>
+                  </div>
+                </div>
+                <div className="nox-drop-pieces">
+                  {covers.map((cover, i) => (
+                    <Link
+                      key={cover}
+                      to="/shop"
+                      aria-label={["هودی و دورس", "تیشرت باکسی", "شلوار جین و بگ"][i]}
+                    >
+                      <img
+                        src={cover}
+                        alt={["هودی و دورس ناکس", "تیشرت باکسی ناکس", "شلوار جین و بگ ناکس"][i]}
+                        width={300}
+                        height={400}
+                        loading="lazy"
+                      />
+                    </Link>
+                  ))}
+                </div>
+                <div className="nox-drop-ctas">
+                  <Link to="/collections/$slug" params={{ slug: lead.slug }}>
+                    دیدن کالکشن <ArrowUpLeft size={17} />
+                  </Link>
+                  <Link to="/lookbook">لوک‌بوک ناکس</Link>
+                </div>
+              </div>
+            </section>
+            <section className="nox-collection-index" aria-labelledby="collections-title">
+              <header>
+                <div>
+                  <p dir="ltr">Our collections</p>
+                  <h2 id="collections-title">کالکشن‌های ناکس</h2>
+                </div>
+                <span>{entries.length.toLocaleString("fa-IR")} روایت از دنیای ما</span>
+              </header>
+              <div className="nox-collection-filter" aria-label="انتخاب کالکشن">
+                <button
+                  type="button"
+                  aria-pressed={filter === "all"}
+                  onClick={() => setFilter("all")}
+                >
+                  همه کالکشن‌ها
+                </button>
+                {entries.map((item) => (
+                  <button
+                    type="button"
+                    key={item.slug}
+                    aria-pressed={filter === item.slug}
+                    onClick={() => setFilter(item.slug)}
+                  >
+                    {item.name}
+                  </button>
+                ))}
+              </div>
+              <div className="nox-collection-rows">
+                {shown.map((item) => (
+                  <article key={item.slug} className="nox-collection-row">
+                    <Link
+                      className="nox-collection-photo"
+                      to="/collections/$slug"
+                      params={{ slug: item.slug }}
+                    >
+                      <img
+                        src={item.cover}
+                        alt={`استایل ${item.name}`}
+                        loading="lazy"
+                        width={900}
+                        height={1100}
+                      />
+                    </Link>
+                    <div className="nox-collection-copy">
+                      <p className="nox-drop-eyebrow">از دنیای ناکس</p>
+                      <h2>{item.name}</h2>
+                      {item.latin && (
+                        <p className="nox-collection-latin" dir="ltr">
+                          {item.latin}
+                        </p>
+                      )}
+                      <p className="nox-drop-description">{item.summary}</p>
+                      {item.tags.length > 0 && (
+                        <ul>
+                          {item.tags.map((tag) => (
+                            <li key={tag}>{tag}</li>
+                          ))}
+                        </ul>
+                      )}
+                      {typeof item.count === "number" && (
+                        <p className="nox-collection-count">
+                          {item.count.toLocaleString("fa-IR")} محصول
+                        </p>
+                      )}
+                      <Link
+                        to="/collections/$slug"
+                        params={{ slug: item.slug }}
+                        className="nox-collection-open"
+                      >
+                        ورود به کالکشن <ArrowUpLeft size={18} />
+                      </Link>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
+          </>
+        )}
       </main>
-      <Footer theme="light" />
+      <Footer theme="dark" />
       <MobileBottomBar />
     </>
   );

@@ -1,3 +1,5 @@
+import { Link } from "@tanstack/react-router";
+import { ProductFacts } from "./ProductFacts";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Heart, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
@@ -5,8 +7,9 @@ import { CtaClasses, StatePanel } from "@/components/lbb/ui/primitives";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import {
-  canAddSelection,
   mediaForColor,
+  canAddSelection,
+  mediaForSelection,
   sizeAvailabilityForColor,
   variantForSelection,
   type ProductDecisionViewModel,
@@ -19,13 +22,18 @@ import { StickyBuyBar } from "./StickyBuyBar";
 export function ProductPurchasePanel({
   model,
   onMediaChange,
+  initialVariantId,
 }: {
   model: ProductDecisionViewModel;
-  onMediaChange: (media: ReturnType<typeof mediaForColor>) => void;
+  initialVariantId?: string;
+  onMediaChange: (media: ReturnType<typeof mediaForSelection>) => void;
 }) {
-  const initialColor = model.colors.length === 1 ? model.colors[0].id : null;
+  const initialVariant = model.variants.find((variant) => variant.id === initialVariantId);
+  const initialColor =
+    initialVariant?.colorId ?? (model.colors.length === 1 ? model.colors[0].id : null);
+  const initialSize = initialVariant?.sizeId ?? null;
   const [colorId, setColorId] = useState<string | null>(initialColor);
-  const [sizeId, setSizeId] = useState<string | null>(null);
+  const [sizeId, setSizeId] = useState<string | null>(initialSize);
   const [selectionError, setSelectionError] = useState(false);
   const [stickyVisible, setStickyVisible] = useState(false);
   const addButtonRef = useRef<HTMLDivElement>(null);
@@ -35,12 +43,11 @@ export function ProductPurchasePanel({
   const liked = has(model.slug);
 
   useEffect(() => {
-    const next = model.colors.length === 1 ? model.colors[0].id : null;
-    setColorId(next);
-    setSizeId(null);
+    setColorId(initialColor);
+    setSizeId(initialSize);
     setSelectionError(false);
-    onMediaChange(mediaForColor(model, next));
-  }, [model, onMediaChange]);
+    onMediaChange(mediaForSelection(model, initialColor, initialVariant));
+  }, [model, onMediaChange, initialColor, initialSize, initialVariant]);
 
   useEffect(() => {
     const element = addButtonRef.current;
@@ -83,11 +90,13 @@ export function ProductPurchasePanel({
 
   const chooseColor = (nextColor: string) => {
     setColorId(nextColor);
-    if (sizeId && sizeAvailabilityForColor(model, sizeId, nextColor) !== "available") {
-      setSizeId(null);
-    }
+    const nextSize =
+      sizeId && sizeAvailabilityForColor(model, sizeId, nextColor) === "available" ? sizeId : null;
+    setSizeId(nextSize);
     setSelectionError(false);
-    onMediaChange(mediaForColor(model, nextColor));
+    onMediaChange(
+      mediaForSelection(model, nextColor, variantForSelection(model, nextColor, nextSize)),
+    );
   };
 
   const onAdd = () => {
@@ -106,6 +115,7 @@ export function ProductPurchasePanel({
     add({
       slug: model.slug,
       name,
+      imageUrl: mediaForColor(model, colorId)[0]?.src ?? model.media[0]?.src,
       price: selectedPrice,
       variantId: backendVariant ? selectedVariant.id : undefined,
       source: backendVariant ? "backend" : "prototype",
@@ -127,7 +137,7 @@ export function ProductPurchasePanel({
         data-testid="pdp-purchase-panel"
         className="flex min-w-0 flex-col gap-5 md:sticky md:top-20 md:self-start lg:top-24 lg:gap-6 lg:rounded-3xl lg:border lg:border-white/10 lg:bg-carbon/70 lg:p-7 lg:shadow-[0_24px_70px_rgba(0,0,0,0.28)] lg:backdrop-blur-sm xl:p-8"
       >
-        <ProductIdentity model={model} />
+        <ProductIdentity model={model} variant={selectedVariant} />
 
         <div className="flex items-center justify-end border-t border-hairline pt-4 lg:pt-5">
           <button
@@ -175,6 +185,13 @@ export function ProductPurchasePanel({
                 selected={sizeId}
                 availabilityFor={(candidate) => sizeAvailabilityForColor(model, candidate, colorId)}
                 onSelect={(nextSize) => {
+                  onMediaChange(
+                    mediaForSelection(
+                      model,
+                      colorId,
+                      variantForSelection(model, colorId, nextSize),
+                    ),
+                  );
                   setSizeId(nextSize);
                   setSelectionError(false);
                 }}
@@ -219,6 +236,34 @@ export function ProductPurchasePanel({
           >
             {statusLabel}
           </p>
+        </div>
+        <div className="nox-pdp-accordions">
+          <details>
+            <summary>
+              جزئیات، جنس و راهنمای سایز<span aria-hidden="true">+</span>
+            </summary>
+            <div className="nox-pdp-facts">
+              <ProductFacts model={model} />
+            </div>
+          </details>
+          <details>
+            <summary>
+              ارسال و مرجوعی<span aria-hidden="true">+</span>
+            </summary>
+            <div>
+              <p>شرایط ارسال و مرجوعی سفارش را پیش از خرید بررسی کن.</p>
+              <Link to="/shipping-returns">مشاهده شرایط ارسال و مرجوعی</Link>
+            </div>
+          </details>
+          <details>
+            <summary>
+              برای انتخابت همراهت هستیم<span aria-hidden="true">+</span>
+            </summary>
+            <div>
+              <p>برای راهنمایی درباره اندازه و استایل این محصول با ناکس در ارتباط باش.</p>
+              <Link to="/contact">ارتباط با ناکس</Link>
+            </div>
+          </details>
         </div>
       </div>
 

@@ -1,3 +1,4 @@
+import { JournalContent } from "@/lib/journal-content";
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { ArrowUpLeft, BookOpenText, Clock3 } from "lucide-react";
 import { Navbar } from "@/components/lbb/Navbar";
@@ -58,7 +59,7 @@ export const Route = createFileRoute("/journal/$slug")({
 
     if (loaderData.source === "live") {
       const article = loaderData.article as ManagedJournalDto;
-      const title = article.metaTitle?.trim() || `${article.title} | ژورنال LBB`;
+      const title = article.metaTitle?.trim() || `${article.title} | ژورنال NOX`;
       const description = article.metaDescription?.trim() || article.excerpt || article.title;
       const path = `/journal/${article.slug}`;
       const articleLd = {
@@ -98,7 +99,7 @@ export const Route = createFileRoute("/journal/$slug")({
     }
 
     const { article } = loaderData;
-    const title = `${article.title} | ژورنال LBB`;
+    const title = `${article.title} | ژورنال NOX`;
     const path = `/journal/${article.slug}`;
     const cover = COVERS[article.cover];
     const articleLd = {
@@ -189,20 +190,7 @@ function JournalDetailPage() {
   );
 }
 
-function liveArticleParagraphs(content: string | undefined) {
-  if (!content) return [];
-  return content
-    .replace(/<br\s*\/?>(?=.)/gi, "\n")
-    .replace(/<\/p>/gi, "\n\n")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .split(/\n+/)
-    .map((part) => part.replace(/\s+/g, " ").trim())
-    .filter(Boolean);
-}
-
 function LiveJournalDetailPage({ article }: { article: StorefrontJournalDto }) {
-  const paragraphs = liveArticleParagraphs(article.content);
   return (
     <>
       <Navbar theme="light" />
@@ -251,16 +239,7 @@ function LiveJournalDetailPage({ article }: { article: StorefrontJournalDto }) {
         ) : null}
         <Band>
           <Shell className="max-w-[760px]">
-            <article className="space-y-6">
-              {paragraphs.map((paragraph, index) => (
-                <p
-                  key={`${index}-${paragraph.slice(0, 24)}`}
-                  className="text-[15px] leading-9 text-metal"
-                >
-                  {paragraph}
-                </p>
-              ))}
-            </article>
+            <JournalContent content={article.content} />
           </Shell>
         </Band>
       </main>

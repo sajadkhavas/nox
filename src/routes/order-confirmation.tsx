@@ -4,17 +4,11 @@ import { Navbar } from "@/components/lbb/Navbar";
 import { Footer } from "@/components/lbb/Footer";
 import { MobileBottomBar } from "@/components/lbb/MobileBottomBar";
 import { CtaClasses, StatePanel } from "@/components/lbb/ui/primitives";
+import { pageMeta } from "@/lib/site";
 
 export const Route = createFileRoute("/order-confirmation")({
   head: () => ({
-    meta: [
-      { title: "تأیید سفارش | LBB" },
-      {
-        name: "description",
-        content: "وضعیت سفارش LBB پس از ثبت و تأیید پرداخت نمایش داده می‌شود.",
-      },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
+    meta: pageMeta({ title: "تأیید سفارش | NOX", description: "وضعیت سفارش NOX پس از ثبت و تأیید پرداخت نمایش داده می‌شود.", path: "/order-confirmation", noindex: true }),
   }),
   component: OrderConfirmation,
 });

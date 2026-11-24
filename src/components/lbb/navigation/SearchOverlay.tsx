@@ -144,7 +144,7 @@ export function SearchOverlay() {
       return;
     }
     await navigate({
-      to: "/$category",
+      to: "/shop/$category",
       params: { category: suggestion.slug },
       replace: true,
     });
@@ -227,7 +227,7 @@ export function SearchOverlay() {
                   aria-activedescendant={
                     activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined
                   }
-                  placeholder="مثلاً هودی، BAGGY یا LBB-H01"
+                  placeholder="مثلاً هودی، BAGGY یا NOX-H01"
                   className="h-16 w-full min-w-0 bg-transparent text-lg font-semibold text-bone outline-none placeholder:text-mute md:text-2xl"
                 />
                 <button

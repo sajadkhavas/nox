@@ -12,20 +12,7 @@ function isHttpsUrl(value: string | null): value is string {
 
 export function TrustMarks({ placement = "footer" }: { placement?: "footer" | "trust-page" }) {
   const { policies } = useStorefrontControl();
-  const enamad =
-    placement === "footer" && !policies.enamad.enabled
-      ? {
-          enabled: true,
-          verification: "verified",
-          identifier: "774761",
-          verificationUrl:
-            "https://trustseal.enamad.ir/?id=774761&Code=pslPwTUJtNnXneJQwC9e0LuaO09OexUP",
-          badgeImageUrl:
-            "https://trustseal.enamad.ir/logo.aspx?id=774761&Code=pslPwTUJtNnXneJQwC9e0LuaO09OexUP",
-          altText: "نماد اعتماد الکترونیکی فروشگاه LBB",
-          displayLocation: "footer",
-        }
-      : policies.enamad;
+  const enamad = policies.enamad;
   const visible = Boolean(
     enamad.enabled &&
     enamad.verification === "verified" &&

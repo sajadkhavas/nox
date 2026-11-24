@@ -25,9 +25,9 @@ import {
   type StorefrontPageDto,
 } from "@/lib/storefront-control";
 
-const TITLE = "درباره LBB | از رگال تا فروشگاه";
+const TITLE = "درباره NOX | از رگال تا فروشگاه";
 const DESC =
-  "داستان LBB؛ برند پوشاک خیابانی و استریت‌ویر در کرج، از شروع مسیر در سال ۱۴۰۰ تا فروشگاه حضوری و فروش آنلاین.";
+  "داستان NOX؛ برند پوشاک خیابانی و استریت‌ویر در تهران، از شروع مسیر در سال ۱۴۰۰ تا فروشگاه حضوری و فروش آنلاین.";
 
 const PRINCIPLES = [
   {
@@ -71,11 +71,11 @@ export const Route = createFileRoute("/about")({
     const control = loaderData?.control;
     const page = loaderData?.page;
     const isLive = control?.source === "live" && page;
-    const title = isLive ? page.metaTitle || `${page.title} | LBB` : TITLE;
+    const title = isLive ? page.metaTitle || `${page.title} | NOX` : TITLE;
     const description = isLive
       ? page.metaDescription || page.excerpt || control.brand.shortIntroduction
       : DESC;
-    const breadcrumbName = isLive ? page.title : "درباره LBB";
+    const breadcrumbName = isLive ? page.title : "درباره NOX";
 
     return {
       meta: pageMeta({
@@ -194,7 +194,7 @@ function PrototypeAboutPage() {
       <Navbar theme="light" />
       <main className="min-h-screen bg-obsidian pb-bottombar pt-16">
         <Shell className="py-3">
-          <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: "درباره LBB" }]} />
+          <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: "درباره NOX" }]} />
         </Shell>
 
         <Band hairline={false} className="pb-10 pt-8 md:pb-14 md:pt-12">
@@ -204,16 +204,16 @@ function PrototypeAboutPage() {
               <h1 className="mt-5 max-w-[14ch] text-display-1 text-bone">از رگال تا فروشگاه</h1>
               <p className="text-lede mt-5 max-w-[58ch]">{BRAND.slogan}</p>
               <p className="mt-6 max-w-[62ch] text-sm leading-8 text-metal">
-                LBB در سال ۱۴۰۰ و پس از سال‌ها فعالیت در حوزه پوشاک، با هدف شکل‌دادن به یک برند شخصی
+                NOX در سال ۱۴۰۰ و پس از سال‌ها فعالیت در حوزه پوشاک، با هدف شکل‌دادن به یک برند شخصی
                 و متفاوت آغاز شد.
               </p>
               <p className="mt-4 max-w-[62ch] text-sm leading-8 text-metal">
                 مسیر ما از تولید تا عرضه محصولات منتخب خارجی ادامه پیدا کرد و امروز با مجموعه‌ای
-                محدود، خاص و انتخاب‌شده در کنار شما هستیم؛ هم در فروشگاه حضوری LBB و هم از طریق
-                فروشگاه آنلاین LBB.
+                محدود، خاص و انتخاب‌شده در کنار شما هستیم؛ هم در فروشگاه حضوری NOX و هم از طریق
+                فروشگاه آنلاین NOX.
               </p>
               <p className="mt-4 max-w-[62ch] text-sm leading-8 text-metal">
-                پوشاک خیابانی، استریت‌ویر، استایل و آیتم‌های وارداتی بخش اصلی هویت انتخاب‌های LBB
+                پوشاک خیابانی، استریت‌ویر، استایل و آیتم‌های وارداتی بخش اصلی هویت انتخاب‌های NOX
                 هستند.
               </p>
               <p className="mt-4 flex items-start gap-2 text-sm leading-7 text-bone">
@@ -232,7 +232,7 @@ function PrototypeAboutPage() {
 
             <Frame
               src={lifestyle1}
-              alt="دو استایل اورسایز LBB در فضای شهری شبانه"
+              alt="دو استایل اورسایز NOX در فضای شهری شبانه"
               ratio="4/5"
               priority
               sizes="(max-width: 1024px) 100vw, 55vw"
@@ -273,7 +273,7 @@ function PrototypeAboutPage() {
           <Shell className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
             <div>
               <TechLabel tone="signal">CONTENT MAP</TechLabel>
-              <h2 className="mt-4 text-display-2 text-bone">آنچه در LBB پیدا می‌کنید</h2>
+              <h2 className="mt-4 text-display-2 text-bone">آنچه در NOX پیدا می‌کنید</h2>
               <p className="mt-4 text-sm leading-8 text-metal">
                 عددها مستقیماً از دادهٔ کاتالوگ و محتوای سایت خوانده می‌شوند و با تغییر محتوا به‌روز
                 می‌مانند.

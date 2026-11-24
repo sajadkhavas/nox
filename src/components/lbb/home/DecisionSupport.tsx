@@ -45,7 +45,7 @@ function DecisionCard({
 }
 
 const CARD_CLASS =
-  "group flex min-h-[220px] flex-col justify-between rounded-2xl border border-hairline-ink bg-bone p-5 shadow-[0_16px_45px_rgba(0,0,0,0.08)] transition-[transform,background-color,box-shadow] hover:-translate-y-1 hover:bg-steam hover:shadow-[0_22px_60px_rgba(0,0,0,0.13)]";
+  "group flex min-h-[220px] w-[min(76vw,18rem)] shrink-0 snap-start flex-col justify-between md:w-auto rounded-2xl border border-hairline-ink bg-bone p-5 shadow-[0_16px_45px_rgba(0,0,0,0.08)] transition-[transform,background-color,box-shadow] hover:-translate-y-1 hover:bg-steam hover:shadow-[0_22px_60px_rgba(0,0,0,0.13)]";
 
 export function DecisionSupport() {
   const { source, decisionSupport } = useStorefrontControl();
@@ -68,7 +68,7 @@ export function DecisionSupport() {
             <div className="flex items-center gap-3">
               <TechLabel tone="signal">04</TechLabel>
               <span aria-hidden="true" className="h-px w-8 bg-hairline" />
-              <TechLabel>{decisionSupport.label}</TechLabel>
+              <TechLabel>YOUR NOX GUIDE / راهنمای خرید از ناکس</TechLabel>
             </div>
             <div className="md:justify-self-end md:text-left">
               <h2 id="decision-support-title" className="text-display-3 text-bone">
@@ -96,7 +96,10 @@ export function DecisionSupport() {
               </ul>
             </div>
             {links.length > 0 ? (
-              <nav aria-label="راهنماهای تصمیم خرید" className="grid gap-3 md:grid-cols-3">
+              <nav
+                aria-label="راهنماهای تصمیم خرید"
+                className="flex snap-x gap-2 overflow-x-auto pb-1 md:grid md:grid-cols-3 md:gap-3 md:overflow-visible md:pb-0"
+              >
                 {links.map((item, index) => (
                   <a
                     key={`${item.href}-${item.label}`}
@@ -120,7 +123,7 @@ export function DecisionSupport() {
     "تن‌خور و جدول اندازه را پیش از انتخاب ببین",
     "رنگ و سایزهای موجود هر محصول را همان لحظه بررسی کن",
     "جنس پارچه و روش نگهداری را در صفحه محصول بخوان",
-    "برای پرو و خرید حضوری به فروشگاه مهستان سر بزن",
+    "برای پرو و خرید حضوری به فروشگاه فردوسی سر بزن",
   ];
   return (
     <section
@@ -133,14 +136,14 @@ export function DecisionSupport() {
           <div className="flex items-center gap-3">
             <TechLabel tone="signal">04</TechLabel>
             <span aria-hidden="true" className="h-px w-8 bg-hairline" />
-            <TechLabel>راهنمای انتخاب</TechLabel>
+            <TechLabel>YOUR NOX GUIDE / راهنمای خرید از ناکس</TechLabel>
           </div>
           <div className="md:justify-self-end md:text-left">
             <h2 id="decision-support-title" className="text-display-3 text-bone">
-              قبل از انتخاب، جواب‌ها را داشته باش
+              برای انتخاب لباس، کنارت هستیم.
             </h2>
             <p className="mt-3 max-w-[58ch] text-sm leading-7 text-metal">
-              اگر بین دو سایز یا مدل مرددی، این راهنماها انتخاب را سریع‌تر و مطمئن‌تر می‌کنند.
+              راهنمای سایز و جزئیات هر لباس را آماده کرده‌ایم تا تیشرت، شلوار یا کت مناسب خودت را راحت‌تر انتخاب کنی.
             </p>
           </div>
         </header>
@@ -160,7 +163,10 @@ export function DecisionSupport() {
               ))}
             </ul>
           </div>
-          <nav aria-label="راهنماهای تصمیم خرید" className="grid gap-3 md:grid-cols-3">
+          <nav
+            aria-label="راهنماهای تصمیم خرید"
+            className="flex snap-x gap-2 overflow-x-auto pb-1 md:grid md:grid-cols-3 md:gap-3 md:overflow-visible md:pb-0"
+          >
             {HOME_DECISION_LINKS.map((item, index) =>
               item.kind === "journal" ? (
                 <Link

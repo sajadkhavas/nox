@@ -7,11 +7,10 @@ import {
   LayoutGrid,
   MessageCircle,
   Search,
-  ShoppingBag,
+  UserRound,
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
 import { useNavigationOverlay } from "@/lib/navigation-overlay";
 
@@ -41,26 +40,26 @@ function FloatingActions() {
   return (
     <div
       dir="rtl"
-      className="fixed bottom-[calc(98px+env(safe-area-inset-bottom))] right-4 z-[calc(var(--z-nav)+1)] flex flex-col items-end gap-2 md:bottom-6 md:right-6"
+      className="nox-floating-actions fixed bottom-[calc(98px+env(safe-area-inset-bottom))] right-4 z-[calc(var(--z-nav)+1)] flex flex-col items-end gap-2 md:bottom-6 md:right-6"
     >
       {supportOpen ? (
         <div className="mb-1 flex flex-col gap-2 rounded-2xl border border-hairline bg-obsidian/95 p-2 shadow-raised backdrop-blur-xl">
           <a
-            href="https://wa.me/989028584879"
+            href="https://t.me/nox_collection"
             target="_blank"
             rel="noopener noreferrer"
             className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-bold text-bone transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
-            aria-label="ارتباط با پشتیبانی در واتساپ"
+            aria-label="ارتباط با پشتیبانی در تلگرام"
           >
             <MessageCircle size={19} aria-hidden="true" />
-            واتساپ
+            تلگرام
           </a>
           <a
-            href="https://www.instagram.com/lbbclo"
+            href="https://www.instagram.com/collection_nox"
             target="_blank"
             rel="noopener noreferrer"
             className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-bold text-bone transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-signal"
-            aria-label="ارتباط با LBB در اینستاگرام"
+            aria-label="ارتباط با NOX در اینستاگرام"
           >
             <Instagram size={19} aria-hidden="true" />
             اینستاگرام
@@ -100,19 +99,13 @@ function FloatingActions() {
 
 export function MobileBottomBar() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
-  const { active, open, dismissForNavigation } = useNavigationOverlay();
-  const { count, openDrawer } = useCart();
+  const { active, open } = useNavigationOverlay();
   const { count: wishlistCount } = useWishlist();
 
   const shopActive =
     pathname === "/shop" || /^\/(hoodies|pants|tshirts|shoes|socks)$/.test(pathname);
   const itemClass = (activeItem: boolean) =>
     `${ITEM} ${activeItem ? "text-signal" : "text-metal hover:text-bone"}`;
-
-  const openCart = () => {
-    dismissForNavigation();
-    openDrawer();
-  };
 
   return (
     <>
@@ -172,19 +165,14 @@ export function MobileBottomBar() {
           <span className="text-[10px] font-semibold">علاقه‌مندی</span>
         </Link>
 
-        <button
-          type="button"
-          onClick={openCart}
-          aria-label={`باز کردن سبد خرید (${count.toLocaleString("fa-IR")})`}
-          aria-haspopup="dialog"
-          className={itemClass(false)}
+        <Link
+          to="/account"
+          className={itemClass(pathname === "/account")}
+          aria-current={pathname === "/account" ? "page" : undefined}
         >
-          <span className="relative" aria-hidden="true">
-            <ShoppingBag size={20} strokeWidth={1.5} />
-            <Badge count={count} />
-          </span>
-          <span className="text-[10px] font-semibold">سبد</span>
-        </button>
+          <UserRound size={20} strokeWidth={1.5} aria-hidden="true" />
+          <span className="text-[10px] font-semibold">حساب کاربری</span>
+        </Link>
       </nav>
     </>
   );

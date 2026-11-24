@@ -21,13 +21,14 @@ import { submitContactInquiry } from "@/lib/final-technical-api";
 import { pageMeta, canonical, absUrl, breadcrumbLd } from "@/lib/site";
 import { resolveStorefrontControl, resolveStorefrontPage } from "@/lib/storefront-control";
 
-const FALLBACK_TITLE = "تماس با LBB";
-const FALLBACK_DESC = "راه‌های ارتباط عمومی و تأییدشده با LBB و اطلاعات فروشگاه حضوری در کرج.";
+const FALLBACK_TITLE = "تماس با NOX";
+const FALLBACK_DESC = "راه‌های ارتباط عمومی و تأییدشده با NOX و اطلاعات فروشگاه حضوری در تهران.";
 
-type ContactKind = "instagram" | "phone" | "whatsapp" | "email";
+type ContactKind = "instagram" | "phone" | "whatsapp" | "email" | "telegram";
 
 function ContactIcon({ kind }: { kind: ContactKind }) {
   if (kind === "instagram") return <Instagram size={18} aria-hidden="true" />;
+  if (kind === "telegram") return <Send size={18} aria-hidden="true" />;
   if (kind === "phone") return <Phone size={18} aria-hidden="true" />;
   if (kind === "email") return <Mail size={18} aria-hidden="true" />;
   return <MessageCircleMore size={18} aria-hidden="true" />;
@@ -46,16 +47,14 @@ export const Route = createFileRoute("/contact")({
     const page = loaderData?.page;
     if (!control) return {};
 
-    const prototypeTitle = `تماس با LBB | ${control.brand.physicalLocation} ${control.contact.city}`;
+    const prototypeTitle = `تماس با NOX | ${control.brand.physicalLocation} ${control.contact.city}`;
     const title =
       page?.metaTitle ||
       page?.title ||
       (control.source === "prototype" ? prototypeTitle : FALLBACK_TITLE);
     const description = page?.metaDescription || page?.excerpt || FALLBACK_DESC;
-    const sameAs = [
-      control.contact.instagramUrl,
-      `https://wa.me/98${control.contact.whatsapp.replace(/\D/g, "").replace(/^0/, "")}`,
-    ];
+    const sameAs = [control.contact.instagramUrl];
+    if (control.contact.telegramChannel) sameAs.push(control.contact.telegramChannel);
     const contactPageLd = {
       "@context": "https://schema.org",
       "@type": "ContactPage",
@@ -118,12 +117,46 @@ function ContactPage() {
       value: control.contact.phone,
       href: `tel:+98${phoneDigits}`,
     },
-    {
-      kind: "whatsapp",
-      label: "واتساپ",
-      value: control.contact.whatsapp,
-      href: `https://wa.me/98${whatsappDigits}`,
-    },
+    ...(control.contact.secondaryPhone
+      ? [
+          {
+            kind: "phone" as const,
+            label: "تلفن دوم",
+            value: control.contact.secondaryPhone,
+            href: "tel:+98" + control.contact.secondaryPhone.replace(/\D/g, "").replace(/^0/, ""),
+          },
+        ]
+      : []),
+    ...(whatsappDigits
+      ? [
+          {
+            kind: "whatsapp" as const,
+            label: "واتساپ",
+            value: control.contact.whatsapp,
+            href: `https://wa.me/98${whatsappDigits}`,
+          },
+        ]
+      : []),
+    ...(control.contact.telegramChannel
+      ? [
+          {
+            kind: "telegram" as const,
+            label: "کانال تلگرام",
+            value: "@noxcolection",
+            href: control.contact.telegramChannel,
+          },
+        ]
+      : []),
+    ...(control.contact.telegramContact
+      ? [
+          {
+            kind: "telegram" as const,
+            label: "ارتباط در تلگرام",
+            value: "@nox_collection",
+            href: control.contact.telegramContact,
+          },
+        ]
+      : []),
     ...(control.contact.email
       ? [
           {
@@ -155,11 +188,11 @@ function ContactPage() {
             <section aria-labelledby="contact-heading">
               <TechLabel tone="signal">CONTACT / VERIFIED CHANNELS</TechLabel>
               <h1 id="contact-heading" className="mt-4 max-w-[14ch] text-display-1 text-bone">
-                {page?.title || "ارتباط با LBB"}
+                {page?.title || "ارتباط با NOX"}
               </h1>
               <p className="text-lede mt-5 max-w-[58ch]">
                 {page?.excerpt ||
-                  "برای پرسش درباره محصول، سایز، موجودی یا سفارش می‌توانید از راه‌های ارتباطی رسمی LBB استفاده کنید."}
+                  "برای پرسش درباره محصول، سایز، موجودی یا سفارش می‌توانید از راه‌های ارتباطی رسمی NOX استفاده کنید."}
               </p>
               {pageParagraphs.length > 0 ? (
                 <div className="mt-5 max-w-[62ch] space-y-3 text-sm leading-8 text-metal">
@@ -172,7 +205,7 @@ function ContactPage() {
               <div className="mt-8 grid gap-3 sm:grid-cols-2" aria-label="راه‌های ارتباطی تأییدشده">
                 {contacts.map((channel) => (
                   <a
-                    key={channel.kind}
+                    key={channel.label}
                     href={channel.href}
                     aria-label={
                       channel.kind === "instagram"
@@ -343,7 +376,7 @@ function LiveContactForm() {
       <div className="flex items-center justify-between gap-4">
         <div>
           <TechLabel tone="signal">فرم تماس با فروشگاه</TechLabel>
-          <h2 className="mt-2 text-xl font-bold text-bone">ارسال پیام به LBB</h2>
+          <h2 className="mt-2 text-xl font-bold text-bone">ارسال پیام به NOX</h2>
         </div>
         <Send size={20} className="text-signal" aria-hidden="true" />
       </div>

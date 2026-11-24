@@ -10,7 +10,7 @@ export function installBackendSsrFetchCredential() {
 
   if (!isLiveBackend() || typeof process === "undefined") return;
 
-  const token = (process.env.LBB_SSR_RATE_LIMIT_TOKEN ?? "").trim();
+  const token = (process.env.NOX_SSR_RATE_LIMIT_TOKEN ?? process.env.LBB_SSR_RATE_LIMIT_TOKEN ?? "").trim();
   if (!token) return;
 
   const backendOrigin = getBackendBaseUrl();

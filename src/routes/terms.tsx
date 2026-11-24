@@ -14,15 +14,15 @@ import { contentParagraphs, resolveOptionalStorefrontPage } from "@/lib/content-
 import { pageMeta, canonical, breadcrumbLd, ROBOTS } from "@/lib/site";
 import { useStorefrontControl } from "@/lib/storefront-control";
 
-const TITLE = "شرایط استفاده | LBB";
+const TITLE = "شرایط استفاده | NOX";
 const DESC =
-  "شرایط استفاده از وب‌سایت LBB و وضعیت انتشار شرایط تجاری؛ سیاست‌های منتشرنشده به‌عنوان تعهد فروش نمایش داده نمی‌شوند.";
+  "شرایط استفاده از وب‌سایت NOX و وضعیت انتشار شرایط تجاری؛ سیاست‌های منتشرنشده به‌عنوان تعهد فروش نمایش داده نمی‌شوند.";
 
 export const Route = createFileRoute("/terms")({
   loader: () => resolveOptionalStorefrontPage("terms"),
   head: ({ loaderData }) => {
     const page = loaderData;
-    const title = page?.metaTitle || (page ? `${page.title} | LBB` : TITLE);
+    const title = page?.metaTitle || (page ? `${page.title} | NOX` : TITLE);
     const description = page?.metaDescription || page?.excerpt || DESC;
     const breadcrumbName = page?.title || "شرایط استفاده";
     return {

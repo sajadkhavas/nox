@@ -1,3 +1,4 @@
+import { ProductDescription } from "./ProductDescription";
 import { StatePanel, TechLabel } from "@/components/lbb/ui/primitives";
 import type { ProductDecisionViewModel } from "@/lib/product-decision";
 import { Identifier } from "@/components/lbb/ui/Identifier";
@@ -32,20 +33,123 @@ export function ProductFacts({ model }: { model: ProductDecisionViewModel }) {
   }
 
   return (
-    <div className="grid min-w-0 gap-8 lg:grid-cols-2" data-testid="pdp-product-facts">
+    <div
+      className="grid min-w-0 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:gap-6"
+      data-testid="pdp-product-facts"
+    >
+      {model.measurements ? (
+        <section
+          aria-labelledby="pdp-measurements-heading"
+          className="min-w-0 rounded-xl border border-hairline bg-carbon/20 p-4 sm:p-6 lg:col-span-2"
+        >
+          <TechLabel tone="signal">MEASUREMENTS / CM</TechLabel>
+          <h2 id="pdp-measurements-heading" className="mt-2 text-xl font-bold text-bone">
+            راهنمای سایز
+          </h2>
+          <p className="mt-2 text-sm leading-7 text-metal">
+            {measurementHeading} · واحد همه اندازه‌ها سانتی‌متر است.
+          </p>
+          {model.measurements.description?.trim() ? (
+            <p className="mt-2 whitespace-pre-line text-sm leading-7 text-metal">
+              {model.measurements.description}
+            </p>
+          ) : null}
+          <div
+            className={`mt-4${model.measurements.image ? " grid min-w-0 items-start gap-4 lg:grid-cols-2 lg:gap-6" : ""}`}
+          >
+            {model.measurements.image ? (
+              <figure className="mx-auto w-full max-w-sm lg:max-w-none overflow-hidden rounded-xl border border-hairline">
+                <img
+                  src={model.measurements.image.url}
+                  alt={model.measurements.image.alt}
+                  loading="lazy"
+                  decoding="async"
+                  className="mx-auto block h-auto max-h-[32rem] max-w-full object-contain"
+                />
+              </figure>
+            ) : null}
+            <div className="grid gap-3 sm:hidden" aria-label="اندازه‌های محصول">
+              {model.measurements.rows.map((row) => (
+                <article
+                  key={row.size}
+                  className="min-w-0 rounded-xl border border-hairline bg-carbon/40 p-4"
+                >
+                  <div className="flex items-center justify-between gap-4 border-b border-hairline pb-3">
+                    <span className="text-sm text-mute">سایز</span>
+                    <strong className="num text-base text-bone">{row.size}</strong>
+                  </div>
+
+                  <dl className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-0">
+                    {model.measurements?.columns.map((column) => (
+                      <div
+                        key={column.key}
+                        className="min-w-0 border-b border-hairline py-3 last:border-b-0"
+                      >
+                        <dt className="break-words text-[11px] leading-5 text-mute [overflow-wrap:anywhere]">
+                          {column.label}
+                        </dt>
+                        <dd className="num mt-1 text-sm font-semibold text-bone">
+                          {row.values[column.key] ?? "—"} cm
+                        </dd>
+                      </div>
+                    ))}
+                  </dl>
+                </article>
+              ))}
+            </div>
+
+            <div
+              className="hidden min-w-0 overflow-x-auto border border-hairline sm:block"
+              tabIndex={0}
+              aria-label="اندازه‌های محصول"
+            >
+              <table
+                className={`w-full min-w-[560px] text-xs${model.measurements.image ? " lg:min-w-0" : ""}`}
+              >
+                <caption className="sr-only">اندازه‌های تأییدشده محصول با واحد سانتی‌متر</caption>
+                <thead>
+                  <tr className="bg-carbon text-metal">
+                    <th scope="col" className="p-3 text-start">
+                      سایز
+                    </th>
+                    {model.measurements.columns.map((column) => (
+                      <th key={column.key} scope="col" className="p-3 text-start">
+                        {column.label} (cm)
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {model.measurements.rows.map((row) => (
+                    <tr key={row.size} className="border-t border-hairline">
+                      <th scope="row" className="num p-3 text-start text-bone">
+                        {row.size}
+                      </th>
+                      {model.measurements?.columns.map((column) => (
+                        <td key={column.key} className="num p-3 text-metal">
+                          {row.values[column.key] ?? "—"}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
       {hasDetails ? (
         <section
           aria-labelledby="pdp-details-heading"
-          className="min-w-0 border-t border-hairline pt-5"
+          className={`min-w-0 rounded-xl border border-hairline bg-carbon/20 p-4 sm:p-6 ${hasDecisionFacts ? "" : "lg:col-span-2"}`}
         >
           <TechLabel tone="signal">DETAILS</TechLabel>
           <h2 id="pdp-details-heading" className="mt-2 text-xl font-bold text-bone">
             جزئیات
           </h2>
           {model.identity.description ? (
-            <p className="mt-3 break-words text-sm leading-8 text-metal [overflow-wrap:anywhere]">
-              {model.identity.description}
-            </p>
+            <ProductDescription description={model.identity.description} />
           ) : null}
           <dl className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
             {model.identity.collection ? (
@@ -69,7 +173,7 @@ export function ProductFacts({ model }: { model: ProductDecisionViewModel }) {
       {hasDecisionFacts ? (
         <section
           aria-labelledby="pdp-wear-heading"
-          className="min-w-0 border-t border-hairline pt-5"
+          className="min-w-0 rounded-xl border border-hairline bg-carbon/20 p-4 sm:p-6"
         >
           <TechLabel tone="signal">WEAR / CARE</TechLabel>
           <h2 id="pdp-wear-heading" className="mt-2 text-xl font-bold text-bone">
@@ -109,84 +213,6 @@ export function ProductFacts({ model }: { model: ProductDecisionViewModel }) {
               </ul>
             </div>
           ) : null}
-        </section>
-      ) : null}
-
-      {model.measurements ? (
-        <section
-          aria-labelledby="pdp-measurements-heading"
-          className="min-w-0 border-t border-hairline pt-5 lg:col-span-2"
-        >
-          <TechLabel tone="signal">MEASUREMENTS / CM</TechLabel>
-          <h2 id="pdp-measurements-heading" className="mt-2 text-xl font-bold text-bone">
-            {measurementHeading}
-          </h2>
-          <p className="mt-2 text-sm leading-7 text-metal">واحد همه اندازه‌ها سانتی‌متر است.</p>
-          <div className="mt-4 grid gap-3 sm:hidden" aria-label="اندازه‌های محصول">
-            {model.measurements.rows.map((row) => (
-              <article
-                key={row.size}
-                className="min-w-0 rounded-xl border border-hairline bg-carbon/40 p-4"
-              >
-                <div className="flex items-center justify-between gap-4 border-b border-hairline pb-3">
-                  <span className="text-sm text-mute">سایز</span>
-                  <strong className="num text-base text-bone">{row.size}</strong>
-                </div>
-
-                <dl className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-0">
-                  {model.measurements?.columns.map((column) => (
-                    <div
-                      key={column.key}
-                      className="min-w-0 border-b border-hairline py-3 last:border-b-0"
-                    >
-                      <dt className="break-words text-[11px] leading-5 text-mute [overflow-wrap:anywhere]">
-                        {column.label}
-                      </dt>
-                      <dd className="num mt-1 text-sm font-semibold text-bone">
-                        {row.values[column.key] ?? "—"} cm
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </article>
-            ))}
-          </div>
-
-          <div
-            className="mt-4 hidden overflow-x-auto border border-hairline sm:block"
-            tabIndex={0}
-            aria-label="اندازه‌های محصول"
-          >
-            <table className="w-full min-w-[560px] text-xs">
-              <caption className="sr-only">اندازه‌های تأییدشده محصول با واحد سانتی‌متر</caption>
-              <thead>
-                <tr className="bg-carbon text-metal">
-                  <th scope="col" className="p-3 text-start">
-                    سایز
-                  </th>
-                  {model.measurements.columns.map((column) => (
-                    <th key={column.key} scope="col" className="p-3 text-start">
-                      {column.label} (cm)
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {model.measurements.rows.map((row) => (
-                  <tr key={row.size} className="border-t border-hairline">
-                    <th scope="row" className="num p-3 text-start text-bone">
-                      {row.size}
-                    </th>
-                    {model.measurements?.columns.map((column) => (
-                      <td key={column.key} className="num p-3 text-metal">
-                        {row.values[column.key] ?? "—"}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
         </section>
       ) : null}
     </div>

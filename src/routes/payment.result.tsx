@@ -1,3 +1,4 @@
+import { OrderInvoiceButton } from "@/components/lbb/OrderInvoiceButton";
 import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle2, Loader2, XCircle } from "lucide-react";
@@ -15,7 +16,7 @@ import { ensureBackendCsrf } from "@/lib/backend-session";
 import { clearPendingCheckoutForOrder } from "@/lib/checkout-continuity";
 import { canonical, pageMeta } from "@/lib/site";
 
-const TITLE = "نتیجه پرداخت | LBB";
+const TITLE = "نتیجه پرداخت | NOX";
 
 export const Route = createFileRoute("/payment/result")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/payment/result")({
   head: () => ({
     meta: pageMeta({
       title: TITLE,
-      description: "بررسی نتیجه پرداخت سفارش در LBB.",
+      description: "بررسی نتیجه پرداخت سفارش در NOX.",
       path: "/payment/result",
       noindex: true,
     }),
@@ -90,8 +91,16 @@ function PaymentResultPage() {
                   است.
                 </span>
               </StatePanel>
-              <Link to="/account" className={CtaClasses("signal")}>
+              <OrderInvoiceButton order={result.order} />
+              <Link to="/account" hash="account-orders-title" className={CtaClasses("signal")}>
                 مشاهده سفارش
+              </Link>
+              <Link
+                to="/track-order"
+                search={{ order: result.order.number }}
+                className={CtaClasses("line")}
+              >
+                پیگیری سفارش
               </Link>
             </div>
           ) : (

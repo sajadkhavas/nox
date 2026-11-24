@@ -21,9 +21,9 @@ import { resolveStorefrontJournal, type StorefrontJournalDto } from "@/lib/store
 import { isLiveBackend } from "@/lib/backend-api";
 import { useStorefrontPresentation } from "@/lib/storefront-presentation";
 
-const TITLE = "ژورنال LBB | راهنمای استایل، پارچه و نگهداری";
+const TITLE = "ژورنال NOX | راهنمای استایل، پارچه و نگهداری";
 const DESC =
-  "ژورنال LBB: راهنماهای کاربردی درباره استایل، ترکیب رنگ، شناخت پارچه و نگهداری، همراه با مسیرهای مرتبط به کالکشن و دسته‌های فروشگاه.";
+  "ژورنال NOX: راهنماهای کاربردی درباره استایل، ترکیب رنگ، شناخت پارچه و نگهداری، همراه با مسیرهای مرتبط به کالکشن و دسته‌های فروشگاه.";
 
 const COVERS = { hero: heroMain, l1: lifestyle1, l2: lifestyle2 };
 
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/journal/")({
     const itemListLd = {
       "@context": "https://schema.org",
       "@type": "ItemList",
-      name: "ژورنال LBB",
+      name: "ژورنال NOX",
       numberOfItems: indexArticles.length,
       itemListElement: indexArticles.map((article, index) => ({
         "@type": "ListItem",
@@ -166,7 +166,7 @@ function PrototypeJournalIndexPage() {
 
         <Band hairline={false} className="pb-8 pt-8 md:pb-12 md:pt-12">
           <Shell>
-            <TechLabel tone="signal">LBB / EDITORIAL NOTES</TechLabel>
+            <TechLabel tone="signal">NOX / EDITORIAL NOTES</TechLabel>
             <h1 className="mt-5 max-w-[15ch] text-display-1 text-bone">
               ژورنال؛ بخوان، زمینه را بفهم، مسیر مرتبط را پیدا کن
             </h1>

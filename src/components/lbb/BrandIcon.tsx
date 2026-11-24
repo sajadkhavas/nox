@@ -81,6 +81,9 @@ export function DeliveryIcon(props: IconProps) {
 }
 
 const CATEGORY_ICONS: Record<CategorySlug, typeof TeeIcon> = {
+  jorts: PantsIcon,
+  jackets: HoodieIcon,
+  "face-masks": TeeIcon,
   hoodies: HoodieIcon,
   pants: PantsIcon,
   tshirts: TeeIcon,

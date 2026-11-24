@@ -9,9 +9,9 @@ import { contentParagraphs, resolveOptionalStorefrontPage } from "@/lib/content-
 import { breadcrumbLd, canonical, pageMeta, ROBOTS } from "@/lib/site";
 import { resolveStorefrontControl } from "@/lib/storefront-control";
 
-const TITLE = "راهنمای انتخاب اندازه LBB | اندازه‌گیری و بررسی تن‌خور";
+const TITLE = "راهنمای انتخاب اندازه NOX | اندازه‌گیری و بررسی تن‌خور";
 const DESC =
-  "راهنمای انتخاب اندازه پوشاک LBB؛ روش اندازه‌گیری بدن، مقایسه با لباس مناسب و بررسی تن‌خور هر محصول پیش از خرید.";
+  "راهنمای انتخاب اندازه پوشاک NOX؛ روش اندازه‌گیری بدن، مقایسه با لباس مناسب و بررسی تن‌خور هر محصول پیش از خرید.";
 
 const STEPS = [
   {
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/size-guide")({
   head: ({ loaderData }) => {
     const page = loaderData?.page;
     const live = loaderData?.control?.source === "live";
-    const title = page?.metaTitle || (page ? `${page.title} | LBB` : TITLE);
+    const title = page?.metaTitle || (page ? `${page.title} | NOX` : TITLE);
     const description = page?.metaDescription || page?.excerpt || DESC;
     return {
       meta: pageMeta({
@@ -126,7 +126,7 @@ function SizeGuide() {
                 مشاهده محصولات
               </Link>
               <Link to="/contact" className={CtaClasses("line")}>
-                تماس با LBB
+                تماس با NOX
               </Link>
             </div>
           </Shell>
@@ -182,7 +182,7 @@ function SizeGuide() {
               مشاهده محصولات
             </Link>
             <Link to="/contact" className={CtaClasses("line")}>
-              تماس با LBB
+              تماس با NOX
             </Link>
           </div>
         </Shell>

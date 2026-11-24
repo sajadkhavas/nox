@@ -32,7 +32,7 @@ const siteUrl = normalizeSiteUrl(configuredUrl);
 const viteCli = path.join(root, "node_modules", "vite", "bin", "vite.js");
 const build = spawnSync(process.execPath, [viteCli, "build", "--mode", mode], {
   cwd: root,
-  env: { ...process.env, VITE_SITE_URL: siteUrl },
+  env: { ...process.env, NITRO_PRESET: "node-server", VITE_SITE_URL: siteUrl },
   stdio: "inherit",
 });
 

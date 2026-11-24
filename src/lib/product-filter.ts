@@ -47,7 +47,7 @@ export const EMPTY_FILTERS: Filters = {
 
 const SORTS: readonly SortKey[] = ["newest", "best", "price-asc", "price-desc", "discount"];
 const BACKEND_SORTS: readonly SortKey[] = ["newest", "price-asc", "price-desc"];
-const CATEGORY_ORDER: readonly CategorySlug[] = ["hoodies", "pants", "tshirts", "shoes", "socks"];
+const CATEGORY_ORDER: readonly CategorySlug[] = ["hoodies", "pants", "tshirts", "jorts", "jackets", "face-masks"];
 
 /**
  * Catalogue-wide defaults are explicit so filter module evaluation never depends on
@@ -75,7 +75,7 @@ const GLOBAL_PRICE_CEIL = 2_400_000;
 
 export const SORT_LABELS: Record<SortKey, string> = {
   newest: "جدیدترین",
-  best: "پرفروش‌ترین",
+  best: "منتخب NOX",
   "price-asc": "ارزان‌ترین",
   "price-desc": "گران‌ترین",
   discount: "بیشترین تخفیف",

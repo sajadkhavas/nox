@@ -1,0 +1,54 @@
+{
+  "source": "code-archive",
+  "capabilities": [
+    {
+      "capability": "frontend routes and commerce contract",
+      "source": "NOX_Frontend_Light.zip",
+      "outcome": "import",
+      "status": "verified_prototype",
+      "next_action": "Real product gallery, size and purchase acceptance blocked on confirmed API data"
+    },
+    {
+      "capability": "schema and backend",
+      "source": "Laravel 12 / Filament / MySQL archive",
+      "outcome": "pending",
+      "status": "blocked",
+      "next_action": "This frontend design pass does not execute PHP or migrate the database"
+    },
+    {
+      "capability": "records and auth identities",
+      "source": "not supplied",
+      "outcome": "pending",
+      "status": "blocked",
+      "next_action": "Production API and identity verification unavailable"
+    },
+    {
+      "capability": "artwork and model bytes",
+      "source": "uploaded archives",
+      "outcome": "import",
+      "status": "verified",
+      "next_action": "Original statue and doll rendered; unchanged source bytes; static failure fallback verified"
+    },
+    {
+      "capability": "payments, email, callbacks, webhooks and schedules",
+      "source": "external Laravel backend",
+      "outcome": "preserve contract",
+      "status": "unverified",
+      "next_action": "Requires operational NOX service; never connect prototype transactions"
+    },
+    {
+      "capability": "secrets and cutover",
+      "source": "not supplied",
+      "outcome": "pending",
+      "status": "blocked",
+      "next_action": "Dedicated NOX origin and production configuration required"
+    },
+    {
+      "capability": "preview verification",
+      "source": "local prototype",
+      "outcome": "verify",
+      "status": "verified_prototype",
+      "next_action": "Nine tests, nineteen routes, responsive widths and failure/reduced-motion checks passed; live shopping flow unverified"
+    }
+  ]
+}

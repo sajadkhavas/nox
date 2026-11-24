@@ -1,3 +1,4 @@
+import { noxCategoryPath } from "./nox-category-paths";
 import type { LinkProps } from "@tanstack/react-router";
 
 export type NavigationItem = {
@@ -19,36 +20,30 @@ export const SHOP_NAVIGATION: NavigationItem[] = [
     label: "تیشرت",
     latin: "T-SHIRTS",
     description: "اورسایز، باکس، یقه‌دار، آستین‌بلند و حلقه‌ای",
-    to: "/$category",
+    to: "/shop/$category",
     params: { category: "tshirts" },
   },
   {
-    label: "سویشرت / هودی",
+    label: "هودی",
     latin: "SWEATSHIRTS",
     description: "در موجودی فعلی، هودی فعال است",
-    to: "/$category",
+    to: "/shop/$category",
     params: { category: "hoodies" },
   },
   {
     label: "شلوار",
     latin: "PANTS",
-    description: "جین، پارچه‌ای، اسلش، جورتز و شرت",
-    to: "/$category",
+    description: "جین، بگ و کتان",
+    to: "/shop/$category",
     params: { category: "pants" },
   },
+  { label: "جورتس", latin: "JORTS", to: "/shop/$category", params: { category: "jorts" } },
+  { label: "جکت", latin: "JACKETS", to: "/shop/$category", params: { category: "jackets" } },
   {
-    label: "کتونی",
-    latin: "SNEAKERS",
-    description: "دسته فیلترمحور بر اساس برند، سایز، رنگ و استایل",
-    to: "/$category",
-    params: { category: "shoes" },
-  },
-  {
-    label: "جوراب",
-    latin: "SOCKS",
-    description: "موجودی فعلی کاتالوگ",
-    to: "/$category",
-    params: { category: "socks" },
+    label: "فیس ماسک",
+    latin: "FACE MASKS",
+    to: "/shop/$category",
+    params: { category: "face-masks" },
   },
 ];
 
@@ -56,7 +51,7 @@ export const EDITORIAL_NAVIGATION: NavigationItem[] = [
   {
     label: "کالکشن‌ها",
     latin: "COLLECTIONS",
-    description: "دراپ‌ها و فصل‌های LBB",
+    description: "دراپ‌ها و فصل‌های NOX",
     to: "/collections",
   },
   { label: "لوک‌بوک", latin: "LOOKBOOK", description: "استایل‌ها در بافت شهری", to: "/lookbook" },
@@ -72,7 +67,7 @@ export const SERVICE_NAVIGATION: NavigationItem[] = [
 ];
 
 export const BRAND_NAVIGATION: NavigationItem[] = [
-  { label: "درباره LBB", latin: "ABOUT", to: "/about" },
+  { label: "درباره NOX", latin: "ABOUT", to: "/about" },
   { label: "قوانین", latin: "TERMS", to: "/terms" },
   { label: "حریم خصوصی", latin: "PRIVACY", to: "/privacy" },
 ];
@@ -84,9 +79,9 @@ export const PERSONAL_NAVIGATION: NavigationItem[] = [
 ];
 
 export function navigationHref(item: NavigationItem): string {
-  if (item.to === "/$category") {
+  if (item.to === "/shop/$category") {
     const params = item.params as { category?: string } | undefined;
-    return params?.category ? `/${params.category}` : "/shop";
+    return params?.category ? noxCategoryPath(params.category) : "/shop";
   }
   return String(item.to);
 }

@@ -1,10 +1,14 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useState, type ReactNode } from "react";
-import { AnnouncementBar, ANNOUNCEMENT_HEIGHT } from "@/components/lbb/AnnouncementBar";
-import { Footer } from "@/components/lbb/Footer";
-import { BrandIntro } from "@/components/lbb/BrandIntro";
-import { InstagramStrip } from "@/components/lbb/InstagramStrip";
+import { NoxVisualsProvider, resolveNoxVisuals, type NoxVisuals } from "@/lib/nox-visuals";
 import { MobileBottomBar } from "@/components/lbb/MobileBottomBar";
+import { NoxAutoModel } from "@/components/lbb/home/NoxAutoModel";
+import { resolveStorefrontJournal, type StorefrontJournalDto } from "@/lib/storefront-control";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { type ReactNode } from "react";
+import { Footer } from "@/components/lbb/Footer";
+import { NoxEntry } from "@/components/lbb/NoxEntry";
+import { NoxReveal } from "@/components/lbb/NoxReveal";
+import { ImageReveal } from "@/components/lbb/ImageReveal";
+import { InstagramStrip } from "@/components/lbb/InstagramStrip";
 import { Navbar } from "@/components/lbb/Navbar";
 import { CategoryGateway } from "@/components/lbb/home/CategoryGateway";
 import { DecisionSupport } from "@/components/lbb/home/DecisionSupport";
@@ -14,11 +18,12 @@ import { LocalStoreVisit } from "@/components/lbb/home/LocalStoreVisit";
 import { ProductMoments } from "@/components/lbb/home/ProductMoments";
 import { TickerStrip } from "@/components/lbb/home/TickerStrip";
 import { TrustStrip } from "@/components/lbb/home/TrustStrip";
-import { BackendApiError, getCollection, getProduct } from "@/lib/backend-api";
+import { BackendApiError, getCollection, getProduct, listProducts } from "@/lib/backend-api";
 import { backendCard, type BackendCatalogCard } from "@/lib/backend-storefront";
 import { listStorefrontCategories, type StorefrontCategoryDto } from "@/lib/final-technical-api";
 import { productImage } from "@/lib/product-images";
 import { absUrl, canonical, pageMeta } from "@/lib/site";
+import heroPhoto from "@/assets/imported/nox-hero-retouched.webp.asset.json";
 import {
   resolveStorefrontControl,
   resolveStorefrontLookbook,
@@ -26,7 +31,6 @@ import {
   type StorefrontLookDto,
 } from "@/lib/storefront-control";
 import {
-  resolveStorefrontHomeProducts,
   resolveStorefrontPresentation,
   type StorefrontPresentation,
 } from "@/lib/storefront-presentation";
@@ -39,35 +43,24 @@ type LiveHeroProduct = {
 };
 
 type HomeLoaderData = {
+  visuals?: NoxVisuals;
+  journal?: StorefrontJournalDto[];
   control: Awaited<ReturnType<typeof resolveStorefrontControl>>;
   presentation: StorefrontPresentation;
   heroProduct: LiveHeroProduct | null;
+  heroProducts?: LiveHeroProduct[];
   categories: StorefrontCategoryDto[] | null;
   products: BackendCatalogCard[] | null;
   lookbook: StorefrontLookDto[] | null;
   featuredStory: LiveFeaturedStory | null;
 };
 
-async function resolveLiveHeroProduct(slug: string): Promise<LiveHeroProduct | null> {
-  if (!slug.trim()) return null;
-  try {
-    const response = await getProduct(slug);
-    return {
-      slug: response.data.slug,
-      name: response.data.name,
-      priceToman: response.data.price.from?.amount ?? null,
-      image: response.data.primaryImage,
-    };
-  } catch (error) {
-    if (
-      error instanceof BackendApiError &&
-      error.status === 404 &&
-      error.code === "resource_not_found"
-    ) {
-      return null;
-    }
-
-    throw error;
+async function loadHomeCatalog() {
+  const products = [];
+  for (let page = 1; ; page++) {
+    const result = await listProducts({ page, per_page: 24, sort: "newest" });
+    products.push(...result.data);
+    if (!result.meta.pagination?.hasMore) return products.map(backendCard);
   }
 }
 
@@ -100,39 +93,65 @@ async function resolveLiveFeaturedStory(
 
 export const Route = createFileRoute("/")({
   loader: async (): Promise<HomeLoaderData> => {
-    const [control, presentation] = await Promise.all([
-      resolveStorefrontControl(),
-      resolveStorefrontPresentation(),
-    ]);
-    if (control.source !== "live") {
+    const loadHome = async (): Promise<HomeLoaderData> => {
+      const [control, presentation] = await Promise.all([
+        resolveStorefrontControl(),
+        resolveStorefrontPresentation(),
+      ]);
+      if (control.source !== "live") {
+        return {
+          control,
+          presentation,
+          heroProduct: null,
+          categories: null,
+          products: null,
+          lookbook: null,
+          featuredStory: null,
+        };
+      }
+
+      const [categories, catalog, lookbook, featuredStory] = await Promise.all([
+        listStorefrontCategories(),
+        loadHomeCatalog(),
+        resolveStorefrontLookbook(),
+        resolveLiveFeaturedStory(control),
+      ]);
+
+      const selected = Array.isArray(control.home.heroProductSlugs)
+        ? control.home.heroProductSlugs
+        : [];
+      const heroProducts = (
+        selected.length
+          ? selected.flatMap((slug) => catalog.filter((item) => item.slug === slug))
+          : catalog
+      ).map((item) => ({
+        slug: item.slug,
+        name: item.name,
+        image: item.primaryImage,
+        priceToman: item.priceFromToman,
+      }));
+      const heroProduct =
+        heroProducts.find((item) => item.slug === control.home.heroProductSlug) ??
+        heroProducts[0] ??
+        null;
+
       return {
         control,
         presentation,
-        heroProduct: null,
-        categories: null,
-        products: null,
-        lookbook: null,
-        featuredStory: null,
+        heroProduct,
+        categories,
+        heroProducts,
+        products: catalog,
+        lookbook: lookbook ?? [],
+        featuredStory,
       };
-    }
-
-    const [heroProduct, categories, curatedProducts, lookbook, featuredStory] = await Promise.all([
-      resolveLiveHeroProduct(control.home.heroProductSlug),
-      listStorefrontCategories(),
-      resolveStorefrontHomeProducts(),
-      resolveStorefrontLookbook(),
-      resolveLiveFeaturedStory(control),
-    ]);
-
-    return {
-      control,
-      presentation,
-      heroProduct,
-      categories,
-      products: curatedProducts.map(backendCard),
-      lookbook: lookbook ?? [],
-      featuredStory,
     };
+    const [home, articles, visuals] = await Promise.all([
+      loadHome(),
+      resolveStorefrontJournal().catch(() => []),
+      resolveNoxVisuals(),
+    ]);
+    return { ...home, visuals, journal: home.control.source === "live" ? (articles ?? []).slice(0, 3) : [] };
   },
   head: ({ loaderData }) => {
     const control = loaderData?.control;
@@ -156,7 +175,7 @@ export const Route = createFileRoute("/")({
       name: control.brand.nameFa,
       alternateName: control.brand.name,
       url: absUrl("/"),
-      logo: absUrl("/brand/lbb-logo.jpeg"),
+      logo: absUrl("/__l5e/assets-v1/fe19b9fb-8e5a-485f-b38f-dc11c0ebee6e/nox-logo.jpg"),
       description: control.brand.shortIntroduction,
       address: {
         "@type": "PostalAddress",
@@ -177,13 +196,14 @@ export const Route = createFileRoute("/")({
           description: control.copy.homepageDescription,
           path: "/",
           type: "website",
-          image: heroImage ?? undefined,
+          image: loaderData?.visuals?.hero ?? heroPhoto.url,
         }),
         { name: "twitter:card", content: "summary_large_image" },
       ],
       links: [
         ...canonical("/"),
-        ...(heroImage ? [{ rel: "preload", as: "image", href: heroImage }] : []),
+        { rel: "preload", as: "image", href: heroPhoto.url },
+        { rel: "preload", as: "fetch", href: "/__l5e/assets-v1/f822fece-bba9-428b-a354-7f5f54607696/nox-statue-lite.glb", crossOrigin: "anonymous" },
       ],
       scripts: [
         { type: "application/ld+json", children: JSON.stringify(websiteJsonLd) },
@@ -195,11 +215,19 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { control, presentation, heroProduct, categories, products, lookbook, featuredStory } =
-    Route.useLoaderData();
-  const [barVisible, setBarVisible] = useState(false);
-  const handleBarVisibility = useCallback((visible: boolean) => setBarVisible(visible), []);
-  const offsetTop = barVisible ? ANNOUNCEMENT_HEIGHT : 0;
+  const {
+    control,
+    presentation,
+    heroProduct,
+    heroProducts,
+    categories,
+    products,
+    lookbook,
+    featuredStory,
+
+    journal,
+    visuals,
+  } = Route.useLoaderData();
 
   const sections: Record<string, ReactNode> = {
     ticker: <TickerStrip />,
@@ -217,24 +245,80 @@ function Home() {
       <a href="#main" className="sr-focusable">
         رفتن به محتوای اصلی
       </a>
-      <AnnouncementBar onVisibilityChange={handleBarVisibility} />
-      <Navbar theme="dark" offsetTop={offsetTop} />
+      <NoxVisualsProvider value={visuals ?? {}}>
+      <Navbar theme="dark" editorialHero />
       <main
         id="main"
-        className="bg-obsidian pb-bottombar text-bone transition-[padding] duration-300 md:pb-0"
-        style={{ paddingTop: offsetTop }}
+        className="nox-home bg-obsidian text-bone"
         data-storefront-source={control.source}
       >
         {presentation.hero.enabled ? (
-          <HeroNarrative heroProduct={heroProduct} liveCategories={categories} />
+          <HeroNarrative
+            heroProduct={heroProduct}
+            heroProducts={heroProducts}
+            liveCategories={categories}
+          />
         ) : null}
-        {control.home.sections.map((key) => (
+        {(control.home.sections.includes("instagram")
+          ? control.home.sections
+          : [...control.home.sections, "instagram"]
+        ).map((key) => (
           <div key={key}>{sections[key] ?? null}</div>
         ))}
+        {journal?.length ? (
+          <section
+            dir="rtl"
+            aria-labelledby="home-journal-title"
+            data-home-journal
+            className="border-t border-hairline py-10 md:py-14"
+          >
+            <div className="lbb-shell">
+              <div className="nox-section-kicker"><span dir="ltr">07 / NOX JOURNAL</span><span>خواندنی‌های ناکس</span></div>
+              <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
+                <h2 id="home-journal-title" className="text-display-3">
+                  از ژورنال NOX
+                </h2>
+                <Link to="/journal" className="text-sm font-bold text-signal">
+                  همه مقاله‌ها
+                </Link>
+              </header>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {journal.map((article, index) => (
+                  <Link
+                    key={article.slug}
+                    to="/journal/$slug"
+                    params={{ slug: article.slug }}
+                    className="group overflow-hidden rounded-2xl border border-hairline bg-carbon"
+                  >
+                    {article.coverUrl && (
+                      <ImageReveal order={index}><img
+                        src={article.coverUrl}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="aspect-[16/9] w-full object-cover"
+                      /></ImageReveal>
+                    )}
+                    <div className="p-4">
+                      <h3 className="text-lg font-bold group-hover:text-signal">{article.title}</h3>
+                      {article.excerpt && (
+                        <p className="mt-2 line-clamp-2 text-sm leading-7 text-metal">
+                          {article.excerpt}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        ) : null}
       </main>
       <Footer theme="dark" />
+      <NoxEntry />
+      <NoxReveal />
       <MobileBottomBar />
-      <BrandIntro />
+      </NoxVisualsProvider>
     </>
   );
 }

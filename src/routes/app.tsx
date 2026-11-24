@@ -14,7 +14,9 @@ import {
   type PushState,
 } from "@/lib/push-notifications";
 
-export const Route = createFileRoute("/app")({ component: AppPage });
+import { pageMeta } from "@/lib/site";
+
+export const Route = createFileRoute("/app")({ head: () => ({ meta: pageMeta({ title: "وب‌اپ و اعلان‌ها | NOX", description: "تنظیمات وب‌اپ و اعلان‌های NOX COLLECTION.", path: "/app", noindex: true }) }), component: AppPage });
 
 function AppPage() {
   const [state, setState] = useState<PushState>("unsupported");
@@ -73,10 +75,10 @@ function AppPage() {
       <Navbar />
       <main className="min-h-screen bg-obsidian px-4 pb-24 pt-28 text-bone">
         <div className="mx-auto max-w-3xl">
-          <p className="tech text-signal">LBB / WEB APP</p>
+          <p className="tech text-signal">NOX / WEB APP</p>
           <h1 className="mt-4 text-display-1">وب‌اپ و اعلان‌ها</h1>
           <p className="mt-4 max-w-2xl text-sm leading-8 text-metal">
-            LBB را روی دستگاه نصب کنید و انتخاب کنید چه اعلان‌هایی دریافت شوند. اجازه اعلان فقط بعد
+            NOX را روی دستگاه نصب کنید و انتخاب کنید چه اعلان‌هایی دریافت شوند. اجازه اعلان فقط بعد
             از فشردن دکمه فعال‌سازی درخواست می‌شود.
           </p>
           <section className="mt-10 grid gap-4 md:grid-cols-2">

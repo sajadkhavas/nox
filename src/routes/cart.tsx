@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { X } from "lucide-react";
+import { CartProductImage } from "@/components/lbb/CartProductImage";
 import { Navbar } from "@/components/lbb/Navbar";
 import { Footer } from "@/components/lbb/Footer";
 import { MobileBottomBar } from "@/components/lbb/MobileBottomBar";
@@ -10,8 +11,8 @@ import { STORE_SETTINGS, getPublicShippingMethods } from "@/lib/store-settings";
 import { fmtToman } from "@/lib/products";
 import { pageMeta, canonical } from "@/lib/site";
 
-const TITLE = "سبد خرید | LBB";
-const DESC = "مرور و ویرایش اقلام سبد خرید LBB پیش از تکمیل سفارش.";
+const TITLE = "سبد خرید | NOX";
+const DESC = "مرور و ویرایش اقلام سبد خرید NOX پیش از تکمیل سفارش.";
 
 export const Route = createFileRoute("/cart")({
   head: () => ({
@@ -84,9 +85,10 @@ function CartPage() {
                     key={`${line.slug}-${line.color ?? ""}-${line.size ?? ""}`}
                     className="flex min-w-0 items-center gap-4 rounded-2xl border border-hairline bg-carbon p-3"
                   >
-                    <div className="tech grid h-16 w-16 shrink-0 place-items-center rounded-xl bg-carbon-2 text-xs font-black text-signal/50">
-                      LBB
-                    </div>
+                    <CartProductImage
+                      line={line}
+                      className="h-16 w-16 shrink-0 rounded-xl object-cover"
+                    />
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-semibold text-bone">{line.name}</p>
                       <p className="text-xs text-metal">

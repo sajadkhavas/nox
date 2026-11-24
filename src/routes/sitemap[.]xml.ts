@@ -1,3 +1,4 @@
+import { NOX_CATEGORY_SLUGS, noxCategoryPath } from "@/lib/nox-category-paths";
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { products } from "@/lib/products";
@@ -37,7 +38,11 @@ const prototypeEditorialEntries: Entry[] = [
 
 function prototypeCommerceEntries(): Entry[] {
   return [
-    ...CATEGORY_SLUGS.map((slug) => ({ path: `/${slug}`, priority: "0.9", changefreq: "weekly" })),
+    ...NOX_CATEGORY_SLUGS.map((slug) => ({
+      path: noxCategoryPath(slug),
+      priority: "0.9",
+      changefreq: "weekly",
+    })),
     ...products
       .filter((product) => evaluateProductEvidence(product).publishable)
       .map((product) => ({
@@ -65,7 +70,7 @@ async function fetchAllPublishedProducts() {
 
 function categoryEntry(category: CategoryDto): Entry {
   return {
-    path: backendCanonicalPath(category.seo, `/${category.slug}`),
+    path: backendCanonicalPath(category.seo, noxCategoryPath(category.slug)),
     priority: "0.9",
     changefreq: "weekly",
     lastmod: sitemapLastmod(category.seo.updatedAt),

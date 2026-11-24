@@ -1,8 +1,13 @@
-import { useEffect, useState } from "react";
+import {
+  AnnouncementBar,
+  ANNOUNCEMENT_HEIGHT,
+  publicAnnouncements,
+} from "@/components/lbb/AnnouncementBar";
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Heart, Menu, Search, ShoppingBag, UserRound, ChevronDown } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useWishlist } from "@/lib/wishlist";
+import { NoxMotif } from "@/components/lbb/NoxMotif";
 import { Logo } from "@/components/lbb/Logo";
 import { useNavigationOverlay } from "@/lib/navigation-overlay";
 import {
@@ -15,6 +20,7 @@ import { SearchOverlay } from "@/components/lbb/navigation/SearchOverlay";
 import { useStorefrontControl } from "@/lib/storefront-control";
 import { useStorefrontPresentation } from "@/lib/storefront-presentation";
 
+
 function CountBadge({ count }: { count: number }) {
   if (count <= 0) return null;
   return (
@@ -25,34 +31,26 @@ function CountBadge({ count }: { count: number }) {
 }
 
 export function Navbar({
-  theme = "dark",
+  theme: _theme = "dark",
   offsetTop = 0,
+  editorialHero = true,
 }: {
   theme?: "dark" | "light";
   offsetTop?: number;
+  editorialHero?: boolean;
 }) {
-  const { navigation, brand } = useStorefrontControl();
+  editorialHero = true;
+  const { navigation, brand, announcements } = useStorefrontControl();
   const presentation = useStorefrontPresentation();
-  const [scrolled, setScrolled] = useState(false);
+  const headerTop =
+    offsetTop + (publicAnnouncements(announcements).length ? ANNOUNCEMENT_HEIGHT : 0);
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const { active, open, dismissForNavigation } = useNavigationOverlay();
   const { count, openDrawer } = useCart();
   const { count: wishlistCount } = useWishlist();
 
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 32);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  const isLight = theme === "light";
   const ink = "text-bone";
-  const barSkin = scrolled
-    ? "border-b border-hairline bg-[var(--lbb-surface-glass)] shadow-raised backdrop-blur-xl"
-    : isLight
-      ? "border-b border-transparent bg-gradient-to-b from-obsidian/85 via-obsidian/55 to-transparent"
-      : "border-b border-transparent bg-gradient-to-b from-obsidian/75 to-transparent";
+  const barSkin = "nox-navbar border-b border-hairline bg-obsidian";
   const iconClass = `relative grid tap-target place-items-center border border-transparent transition-colors ${ink} hover:border-hairline hover:text-signal`;
   const shopActive = navigation.shop.some((item) => isMerchantNavigationItemActive(pathname, item));
 
@@ -61,13 +59,16 @@ export function Navbar({
     openDrawer();
   };
 
+
+
   return (
     <>
+      {!editorialHero && <AnnouncementBar />}
       <nav
-        dir="rtl"
+        dir={editorialHero ? "ltr" : "rtl"}
         aria-label="ناوبری اصلی"
-        className={`fixed inset-x-0 z-[var(--z-nav)] transition-[background-color,border-color,box-shadow] duration-[var(--dur-state)] ${barSkin}`}
-        style={{ top: offsetTop }}
+        className={`fixed inset-x-0 z-[var(--z-nav)] transition-[background-color,border-color,box-shadow] duration-[var(--dur-state)] ${barSkin} ${editorialHero ? "nox-navbar--editorial" : ""}`}
+        style={{ top: editorialHero ? 0 : headerTop }}
       >
         <div
           className="lbb-shell flex items-center justify-between gap-3 lg:grid lg:grid-cols-[auto_minmax(0,1fr)_auto]"
@@ -78,10 +79,10 @@ export function Navbar({
             aria-label={`${brand.nameFa} — خانه`}
             className="flex min-w-0 shrink-0 items-center gap-2"
           >
-            <Logo size={52} square />
+            {editorialHero ? <><Logo size={48}/><span className="nox-editorial-wordmark" dir="ltr">NOX <small>COLLECTION</small></span></> : <><Logo size={52} square /><span className="nox-nav-wordmark" dir="ltr">NOX<span>COLLECTION</span></span></>}
           </Link>
 
-          <div className="hidden min-w-0 items-center justify-center lg:flex">
+          <div dir="rtl" className="hidden min-w-0 items-center justify-center lg:flex">
             <ul className="flex items-center gap-1">
               <li>
                 <button
@@ -102,7 +103,7 @@ export function Navbar({
                       : `${ink} opacity-75 hover:opacity-100`
                   }`}
                 >
-                  {presentation.shell.shopMenuLabel}
+                  {editorialHero ? "دسته‌بندی محصولات" : presentation.shell.shopMenuLabel}
                   <ChevronDown
                     size={13}
                     aria-hidden="true"
@@ -115,7 +116,7 @@ export function Navbar({
                 return (
                   <li key={`${item.href}-${item.label}`}>
                     <MerchantNavigationLink
-                      item={item}
+                      item={editorialHero ? { ...item, label: ({ "/shop": "تازه‌ها", "/collections": "کالکشن‌ها", "/lookbook": "استایل‌ها", "/about": "درباره ناکس", "/contact": "تماس با ما", "/journal": "ژورنال" } as Record<string, string>)[item.href] ?? item.label } : item}
                       onNavigate={dismissForNavigation}
                       className={`tech flex min-h-11 items-center px-4 transition-colors ${
                         current ? "text-signal" : `${ink} opacity-75 hover:opacity-100`
@@ -181,11 +182,12 @@ export function Navbar({
             </button>
           </div>
         </div>
+
       </nav>
 
       {active === "mega" ? (
         <div id="lbb-mega-menu">
-          <MegaMenuOverlay offsetTop={offsetTop} />
+          <MegaMenuOverlay offsetTop={headerTop} />
         </div>
       ) : null}
       {active === "menu" ? <MobileMenuOverlay /> : null}

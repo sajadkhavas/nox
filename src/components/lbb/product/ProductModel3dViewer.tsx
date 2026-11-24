@@ -3,14 +3,26 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
+import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
+
 export function ProductModel3dViewer({
   modelUrl,
   productName,
   onError,
+  presentation = "product",
+  interactive = false,
+  detailUrl,
+  mobileDetailUrl,
+  onReady,
 }: {
+  interactive?: boolean;
+  detailUrl?: string;
+  mobileDetailUrl?: string;
+  onReady?: () => void;
   modelUrl: string;
   productName: string;
   onError: () => void;
+  presentation?: "product" | "showcase";
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const resetViewRef = useRef<(() => void) | null>(null);
@@ -23,6 +35,7 @@ export function ProductModel3dViewer({
     let disposed = false;
     let failed = false;
     let loadedRoot: THREE.Object3D | null = null;
+    let stopRotation: (() => void) | undefined;
     let resizeObserver: ResizeObserver | null = null;
 
     const fail = () => {
@@ -46,14 +59,18 @@ export function ProductModel3dViewer({
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-    renderer.domElement.className = "h-full w-full touch-none";
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.domElement.className =
+      presentation === "showcase" && !interactive
+        ? "h-full w-full pointer-events-none"
+        : "h-full w-full touch-none";
     renderer.domElement.setAttribute("aria-label", `مدل سه‌بعدی ${productName}`);
     renderer.domElement.setAttribute("role", "img");
     host.appendChild(renderer.domElement);
 
     const onContextLost = (event: Event) => {
       event.preventDefault();
+      stopRotation?.();
       fail();
     };
     renderer.domElement.addEventListener("webglcontextlost", onContextLost, false);
@@ -61,12 +78,23 @@ export function ProductModel3dViewer({
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 1000);
     const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enabled = presentation === "product" || interactive;
+    controls.enableRotate = true;
     controls.enablePan = false;
+    controls.enableZoom = presentation === "product";
+    if (interactive) {
+      controls.minPolarAngle = Math.PI * 0.5;
+      controls.maxPolarAngle = Math.PI * 0.5;
+      renderer.domElement.style.touchAction = "pan-y";
+      renderer.domElement.style.cursor = "grab";
+    }
     controls.enableDamping = false;
     controls.rotateSpeed = 0.7;
     controls.zoomSpeed = 0.8;
-    controls.minPolarAngle = Math.PI * 0.08;
-    controls.maxPolarAngle = Math.PI * 0.92;
+    if (!interactive) {
+      controls.minPolarAngle = Math.PI * 0.08;
+      controls.maxPolarAngle = Math.PI * 0.92;
+    }
 
     const hemisphere = new THREE.HemisphereLight(0xffffff, 0x5c6470, 2.2);
     scene.add(hemisphere);
@@ -113,7 +141,7 @@ export function ProductModel3dViewer({
       });
     };
 
-    const loader = new GLTFLoader();
+    const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
     loader.load(
       modelUrl,
       (gltf) => {
@@ -135,11 +163,13 @@ export function ProductModel3dViewer({
 
         const center = box.getCenter(new THREE.Vector3());
         root.position.sub(center);
-        scene.add(root);
-        loadedRoot = root;
+        const pivot = new THREE.Group();
+        pivot.add(root);
+        scene.add(pivot);
+        loadedRoot = pivot;
 
         const halfFov = THREE.MathUtils.degToRad(camera.fov * 0.5);
-        const distance = ((maxDimension * 0.5) / Math.tan(halfFov)) * 1.45;
+        const distance = ((maxDimension * 0.5) / Math.tan(halfFov)) * (interactive ? 1.4 : 1.15);
         const setInitialView = () => {
           camera.near = Math.max(distance / 100, 0.01);
           camera.far = Math.max(distance * 30, 100);
@@ -155,6 +185,80 @@ export function ProductModel3dViewer({
         resetViewRef.current = setInitialView;
         setInitialView();
         setReady(true);
+        onReady?.();
+        const detailSource =
+          mobileDetailUrl &&
+          window.matchMedia("(max-width: 860px), (max-width: 1100px) and (pointer: coarse)").matches
+            ? mobileDetailUrl
+            : detailUrl;
+        if (detailSource && detailSource !== modelUrl) {
+          const upgrade = () => {
+            if (disposed) return;
+            new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).load(
+              detailSource,
+              (detail) => {
+                if (disposed) {
+                  disposeRoot(detail.scene);
+                  return;
+                }
+                const detailBox = new THREE.Box3().setFromObject(detail.scene);
+                detail.scene.position.sub(detailBox.getCenter(new THREE.Vector3()));
+                const previous = root;
+                pivot.remove(previous);
+                disposeRoot(previous);
+                pivot.add(detail.scene);
+                render();
+              },
+              undefined,
+              () => undefined,
+            );
+          };
+          const idle = (
+            window as Window & {
+              requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
+            }
+          ).requestIdleCallback;
+          if (idle) idle.call(window, upgrade, { timeout: 1500 });
+          else window.setTimeout(upgrade, 600);
+        }
+        if (presentation === "showcase") {
+          let dragging = false;
+          controls.addEventListener("start", () => {
+            dragging = true;
+          });
+          controls.addEventListener("end", () => {
+            dragging = false;
+          });
+          const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+          let timer: number | undefined;
+          let inView = false;
+          const updateRotation = () => {
+            if (timer !== undefined) window.clearInterval(timer);
+            timer = undefined;
+            if (!inView || motion.matches || document.hidden || failed) return;
+            let last = performance.now();
+            timer = window.setInterval(() => {
+              const now = performance.now();
+              if (!dragging)
+                pivot.rotation.y += Math.min(now - last, 100) * ((Math.PI * 2) / 45000);
+              last = now;
+              render();
+            }, 1000 / 30);
+          };
+          const observer = new IntersectionObserver(([entry]) => {
+            inView = Boolean(entry?.isIntersecting);
+            updateRotation();
+          });
+          observer.observe(host);
+          motion.addEventListener("change", updateRotation);
+          document.addEventListener("visibilitychange", updateRotation);
+          stopRotation = () => {
+            if (timer !== undefined) window.clearInterval(timer);
+            observer.disconnect();
+            motion.removeEventListener("change", updateRotation);
+            document.removeEventListener("visibilitychange", updateRotation);
+          };
+        }
       },
       undefined,
       () => fail(),
@@ -162,6 +266,7 @@ export function ProductModel3dViewer({
 
     return () => {
       disposed = true;
+      stopRotation?.();
       resetViewRef.current = null;
       resizeObserver?.disconnect();
       controls.removeEventListener("change", render);
@@ -177,19 +282,33 @@ export function ProductModel3dViewer({
       renderer.forceContextLoss();
       renderer.domElement.remove();
     };
-  }, [modelUrl, onError, productName]);
+  }, [
+    modelUrl,
+    detailUrl,
+    mobileDetailUrl,
+    interactive,
+    onError,
+    onReady,
+    presentation,
+    productName,
+  ]);
 
   return (
-    <div className="relative h-full w-full bg-[#f3f1ec]" dir="rtl">
+    <div
+      className={
+        presentation === "showcase" ? "relative h-full w-full" : "relative h-full w-full bg-paper"
+      }
+      dir="rtl"
+    >
       <div ref={hostRef} className="absolute inset-0" />
-      {!ready ? (
+      {presentation === "showcase" ? null : !ready ? (
         <div
-          className="pointer-events-none absolute inset-0 grid place-items-center bg-[#f3f1ec] text-center"
+          className="pointer-events-none absolute inset-0 grid place-items-center bg-paper text-center text-obsidian"
           aria-live="polite"
         >
           <div>
             <span className="mx-auto block h-8 w-8 animate-spin rounded-full border-2 border-obsidian/20 border-t-obsidian" />
-            <p className="mt-3 text-xs font-bold text-obsidian">در حال آماده‌سازی نمای سه‌بعدی…</p>
+            <p className="mt-3 text-xs font-bold">در حال آماده‌سازی نمای سه‌بعدی…</p>
           </div>
         </div>
       ) : (

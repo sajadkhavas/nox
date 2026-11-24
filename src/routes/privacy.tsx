@@ -14,14 +14,14 @@ import { contentParagraphs, resolveOptionalStorefrontPage } from "@/lib/content-
 import { pageMeta, canonical, breadcrumbLd, ROBOTS } from "@/lib/site";
 import { useStorefrontControl } from "@/lib/storefront-control";
 
-const TITLE = "حریم خصوصی | LBB";
-const DESC = "سیاست حریم خصوصی LBB و نحوه حفاظت از اطلاعات کاربران.";
+const TITLE = "حریم خصوصی | NOX";
+const DESC = "سیاست حریم خصوصی NOX و نحوه حفاظت از اطلاعات کاربران.";
 
 export const Route = createFileRoute("/privacy")({
   loader: () => resolveOptionalStorefrontPage("privacy"),
   head: ({ loaderData }) => {
     const page = loaderData;
-    const title = page?.metaTitle || (page ? `${page.title} | LBB` : TITLE);
+    const title = page?.metaTitle || (page ? `${page.title} | NOX` : TITLE);
     const description = page?.metaDescription || page?.excerpt || DESC;
     const breadcrumbName = page?.title || "حریم خصوصی";
     return {

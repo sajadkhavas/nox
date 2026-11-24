@@ -49,7 +49,7 @@ export function NewDropCountdown() {
           </div>
           <div className="rounded-xl border border-hairline bg-carbon px-4 py-5">
             <p className="tech text-mute">ANNOUNCEMENT</p>
-            <p className="mt-2 text-sm font-bold text-bone">فقط از کانال رسمی LBB</p>
+            <p className="mt-2 text-sm font-bold text-bone">فقط از کانال رسمی NOX</p>
           </div>
         </div>
 
